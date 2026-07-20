@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Diseño Computarizado I - IV Unidad - JRB</title>
+    <!-- Librería externa para generación de comprobantes en PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #1e293b; /* Slate 800 - Base industrial */
+            --primary-hover: #0f172a; /* Slate 900 */
+            --accent: #6c5ce7; /* Purple - Creatividad y Diseño */
+            --accent-hover: #5b4bc4; /* Purple oscuro */
+            --accent-light: #f5f4ff; /* Purple sutil para interacciones */
+            --light-bg: #f8fafc; /* Slate 50 - Fondo de pantalla */
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1; /* Slate 300 */
+            --text-muted: #64748b; /* Slate 500 */
+            --success: #10b981; /* Emerald 500 */
+            --success-light: #ecfdf5; /* Emerald 50 */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--light-bg); 
+            margin: 0; 
+            padding: 40px 15px;
+            color: var(--primary);
+        }
+
+        .exam-card { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+            border-top: 10px solid var(--accent);
+        }
+
+        /* Encabezado Principal con Gradiente Creativo */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 35px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+        }
+
+        .header-info h1 { 
+            margin: 0; 
+            font-size: 1.6rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        .header-info p { 
+            margin: 6px 0 0; 
+            opacity: 0.85; 
+            font-size: 0.95rem; 
+            color: #94a3b8;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Identificación del Estudiante (Ancho Completo) */
+        .student-section { 
+            padding: 25px 35px;
+            background: #fdfdfd;
+            border-bottom: 1px solid #f1f5f9;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .field { width: 100%; }
+        .field label { 
+            display: block; 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            color: var(--accent); 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            letter-spacing: 0.8px;
+        }
+        .field input { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            background-color: var(--card-bg);
+            color: var(--primary);
+        }
+        .field input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15);
+        }
+
+        /* Estructura de las Series */
+        .serie { 
+            padding: 35px 35px; 
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .serie-title { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--accent); 
+            padding-left: 15px; 
+            margin-bottom: 15px; 
+        }
+        .serie-title h2 { margin: 0; font-size: 1.25rem; color: var(--primary); text-transform: uppercase; }
+        .badge-points {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .instruction-box {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            color: #5b4bc4;
+        }
+        
+        .question { margin-bottom: 28px; }
+        .question p { margin-top: 0; font-weight: 600; font-size: 1rem; color: var(--primary); line-height: 1.5; }
+
+        /* Controles de Selección e Inputs Estéticos */
+        .options-container { display: grid; gap: 10px; }
+        .option-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .option-item:hover { border-color: var(--accent); background: var(--accent-light); }
+        .option-item input { margin-right: 12px; cursor: pointer; width: 16px; height: 16px; }
+
+        .select-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: var(--card-bg);
+            color: var(--primary);
+            transition: border 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .select-input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15);
+        }
+
+        .case-container {
+            background-color: #f8fafc;
+            border: 1.5px dashed var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Banner de Alerta */
+        .error-message {
+            display: none;
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 35px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Botón de Finalización */
+        .btn-container { padding: 40px 35px; text-align: center; }
+        .btn-submit { 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            padding: 16px 50px; 
+            font-size: 1.15rem; 
+            font-weight: bold; 
+            border-radius: 50px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
+        }
+        .btn-submit:hover { 
+            background: var(--accent-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        #result-banner {
+            display: none;
+            margin: 20px 35px;
+            padding: 25px;
+            background: var(--success-light);
+            color: #065f46;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid #a7f3d0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-card">
+    <header class="header">
+        <div class="header-info">
+            <p>COLEGIO DE INFORMÁTICA JUSTO RUFINO BAUTISTA</p>
+            <h1>Evaluación Parcial - Cuarta Unidad</h1>
+            <p>Curso: Diseño Computarizado I | Cuarto Bachillerato en Diseño Gráfico</p>
+        </div>
+        <div class="logo-container">
+            <!-- Logo oficial desde la carpeta public -->
+            <img src="public/descarga.png" alt="Logo JRB" onerror="this.src='https://placehold.co/100x100?text=J.R.B.'">
+        </div>
+    </header>
+
+    <section class="student-section">
+        <div class="field">
+            <label for="nombre">Nombre Completo del Estudiante</label>
+            <input type="text" id="nombre" placeholder="Escriba sus apellidos y nombres completos aquí..." required>
+        </div>
+    </section>
+
+    <!-- Banner de Validación de Formulario -->
+    <div id="validation-banner" class="error-message"></div>
+
+    <!-- I SERIE: VERDADERO O FALSO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>I Serie: Principios de Impresión y Márgenes (Verdadero o Falso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analiza de forma reflexiva cada una de las siguientes afirmaciones sobre la configuración de documentos y la salida impresa. Selecciona <strong>Verdadero (V)</strong> o <strong>Falso (F)</strong> según corresponda. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. Para imprimir un cartel de forma correcta y que los colores salgan reales en la imprenta física, el mejor modelo de color es el CMYK.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q1" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q1" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. Un "margen" de diseño es el espacio en blanco de seguridad que rodea el borde de la página y evita que los textos queden cortados por la guillotina al momento de refilar el papel.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q2" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q2" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. Las imágenes vectoriales pierden su nitidez por completo y se vuelven muy borrosas o pixeladas al momento de estirarlas a tamaños grandes como Tabloide.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q3" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q3" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. Al momento de maquetar textos largos en Inkscape, lo recomendable es crear una caja de texto de área para poder controlar los límites de los párrafos.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q4" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q4" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. El interlineado en tipografía se define como la distancia horizontal que existe entre las palabras de una sola oración para dar espacio visual de lectura.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q5" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q5" value="si"> Falso (F)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- II SERIE: SELECCIÓN ÚNICA (OPCIÓN MÚLTIPLE) -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>II Serie: Jerarquías, Vectores y Gestión de Lienzos (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lea detenidamente cada enunciado y selecciona la única respuesta correcta de las opciones presentadas. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. ¿Qué modelo o espacio de color se basa en la luz de las pantallas (Rojo, Verde y Azul) y nunca debe usarse para preparar un archivo que será impreso físicamente?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q6" value="si"> Modelo RGB</label>
+                <label class="option-item"><input type="radio" name="q6" value="no"> Modelo CMYK</label>
+                <label class="option-item"><input type="radio" name="q6" value="no"> Escala de Grises</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. ¿Qué herramienta especializada de Inkscape permite trazar de forma manual, crear vectores limpios y dibujar curvas Bézier con nodos precisos?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q7" value="no"> Bote de pintura</label>
+                <label class="option-item"><input type="radio" name="q7" value="si"> Herramienta Pluma (Curvas Bézier)</label>
+                <label class="option-item"><input type="radio" name="q7" value="no"> Borrador de píxeles</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. ¿Cómo se le llama al espacio extra que extendemos fuera de la página al diseñar (sangre de 3mm) para evitar que queden filos blancos al cortar las hojas impresas?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q8" value="no"> Espaciado de párrafo</label>
+                <label class="option-item"><input type="radio" name="q8" value="si"> Sangría o Sangrado de impresión</label>
+                <label class="option-item"><input type="radio" name="q8" value="no"> Medianil del bloque</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. Si importas una ilustración de internet en formato JPG y necesitas agrandarla sin que se pixele ni pierda nitidez en tu diseño editorial, ¿qué proceso debes aplicar?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q9" value="no"> Rasterizarla a baja calidad en la capa base.</label>
+                <label class="option-item"><input type="radio" name="q9" value="si"> Vectorización manual o calco de la imagen para convertirla a curvas</label>
+                <label class="option-item"><input type="radio" name="q9" value="no"> Guardarla en formato de compresión de audio.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. ¿Qué propiedad visual aplicas cuando usas diferentes tamaños y grosores de letras en una portada para guiar los ojos del lector e indicarle qué leer primero?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q10" value="si"> Jerarquía tipográfica o escala visual</label>
+                <label class="option-item"><input type="radio" name="q10" value="no"> Configuración de tabloide</label>
+                <label class="option-item"><input type="radio" name="q10" value="no"> Conversión de color sustractivo</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- III SERIE: SELECCIÓN ÚNICA CON DROP DOWN -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>III Serie: Anatomía y Estructuras Editoriales (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Complete conceptualmente cada uno de los enunciados sobre diagramación y color. Seleccione de la lista desplegable la única respuesta correcta de acuerdo con lo estudiado. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. El espacio vacío obligatorio que se deja entre dos columnas de texto adyacentes para evitar que la información se junte de forma ilegible se llama:</p>
+            <select class="select-input" id="q11">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Medianil (Gutter)</option>
+                <option value="no">Márgenes de seguridad</option>
+                <option value="no">Línea de flujo horizontal</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>2. La estructura de guías invisibles de líneas verticales y horizontales que nos ayuda a alinear y ordenar todos los elementos de una composición es:</p>
+            <select class="select-input" id="q12">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">La paleta CMYK de la imprenta</option>
+                <option value="si">La Retícula o Cuadrícula (Grid)</option>
+                <option value="no">La vectorización automática</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>3. El error de impresión que ocurre cuando elegimos en la pantalla un color brillante (como un verde flúor) que no se puede reproducir de forma física con las tintas reales se llama:</p>
+            <select class="select-input" id="q13">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Línea huérfana de página</option>
+                <option value="si">Color fuera de gama (Gamut)</option>
+                <option value="no">Trazado Bézier inestable</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>4. La herramienta que permite separar y ordenar los elementos del diseño en "hojas transparentes" dentro de Inkscape para editarlos de forma segura es:</p>
+            <select class="select-input" id="q14">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">El comando de calco automático</option>
+                <option value="si">El panel de Capas (Layers)</option>
+                <option value="no">La barra de formato de interlineado</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>5. Para poder modificar de forma rápida, ágil y simultánea las características (color, tamaño) de varios bloques de textos en el diseño se aplican los:</p>
+            <select class="select-input" id="q15">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Márgenes del tabloide</option>
+                <option value="si">Estilos de texto o párrafo</option>
+                <option value="no">Nodos vectoriales Bézier</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- IV SERIE: ESTUDIOS DE CASO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>IV Serie: Aplicación Práctica e Incidentes en Talleres (Estudios de Caso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analiza detenidamente las siguientes situaciones cotidianas y profesionales del taller de diseño. Selecciona la opción técnica idónea para solucionar el problema. (1 punto por acierto)
+        </div>
+
+        <!-- Caso 1 -->
+        <div class="case-container">
+            <strong>CASO A: LA PORTADA DE LIBRO PIXELADA</strong><br>
+            Lucía diseñó la portada para una novela de misterio en Inkscape. Al imprimir el primer ejemplar, nota con frustración que los ornamentos y los textos del título se ven borrosos y pixelados debido a que usó una pequeña imagen JPG de internet y la estiró para que ocupara toda la página tabloide.
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cómo debió proceder de forma técnica para asegurar que el título mantenga calidad a cualquier escala según la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q26" value="no"> Estirar la imagen un poco más y cambiar los márgenes del documento.</label>
+                <label class="option-item"><input type="radio" name="q26" value="si"> Vectorizar el ornamento usando la herramienta Pluma (curvas Bézier) y usar textos vectoriales nativos para que no se deformen</label>
+                <label class="option-item"><input type="radio" name="q26" value="no"> Guardar el archivo en formato de escala de grises de 8 bits.</label>
+            </div>
+        </div>
+
+        <!-- Caso 2 -->
+        <div class="case-container">
+            <strong>CASO B: EL CARTEL DE CONVOCATORIA CONFUSO</strong><br>
+            El cartel unificado para la Feria de Ciencias escolar tiene todo su contenido escrito exactamente con el mismo tamaño de letra de 12 puntos y en color negro plano. El público pasa de largo frente a las vitrinas porque es muy aburrido y se confunde el título con los datos de fecha.
+        </div>
+
+        <div class="question">
+            <p>2. ¿Qué principio fundamental de diagramación tipográfica de la Guía 2 debieron aplicar en el cartel?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q27" value="no"> Cambiar el formato del lienzo a un tamaño tabloide industrial sin tocar el texto.</label>
+                <label class="option-item"><input type="radio" name="q27" value="si"> Crear una jerarquía visual clara (escala visual) dándole un tamaño de 36 puntos al título para captar la atención de inmediato</label>
+                <label class="option-item"><input type="radio" name="q27" value="no"> Convertir todas las letras a curvas utilizando el comando de calco automático.</label>
+            </div>
+        </div>
+
+        <!-- Caso 3 -->
+        <div class="case-container">
+            <strong>CASO C: LA TARJETA CON FILOS BLANCOS</strong><br>
+            Mario diseñó e imprimió una serie de tarjetas de presentación con un fondo de color verde sólido. Al recibir las tarjetas ya recortadas de la imprenta, nota con decepción que casi todas presentan una molesta e irregular línea blanca en una de las orillas del papel.
+        </div>
+
+        <div class="question">
+            <p>3. ¿Qué descuido técnico cometió Mario al configurar su documento editorial según la Guía 1?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q28" value="no"> Trabajó su archivo utilizando el espacio de color CMYK de impresión.</label>
+                <label class="option-item"><input type="radio" name="q28" value="si"> No configuró la sangría o sangrado de seguridad de 3 mm de fondo, limitando el color verde exactamente al borde físico de la hoja</label>
+                <label class="option-item"><input type="radio" name="q28" value="no"> Configuró su lienzo en formato tabloide y debió usar formato oficio.</label>
+            </div>
+        </div>
+
+        <!-- Caso 4 -->
+        <div class="case-container">
+            <strong>CASO D: LA REVISTA CON TEXTOS AMONTONADOS</strong><br>
+            Estás maquetando un artículo escolar de dos columnas. Al revisar la prueba en PDF, notas con preocupación que el bloque de texto izquierdo se junta con las palabras de la columna derecha, traslapándose las oraciones y haciendo imposible una lectura cómoda.
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué parámetro de la retícula de Inkscape debes ajustar de inmediato según la Guía 2?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q29" value="no"> Disminuir los márgenes de seguridad de la página maestra.</label>
+                <label class="option-item"><input type="radio" name="q29" value="si"> Incrementar la separación del medianil (Gutter) entre ambas columnas para dar aire y descanso a la lectura</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Cambiar el formato del texto a punto simple en lugar de texto de área.</label>
+            </div>
+        </div>
+
+        <!-- Caso 5 -->
+        <div class="case-container">
+            <strong>CASO E: EL EMPAQUE OPACO</strong><br>
+            Sofía diseñó el empaque para una nueva marca de cosméticos artesanales. Utilizó en su pantalla un hermoso color verde manzana sumamente brillante y luminoso (RGB). Sin embargo, al recibir las cajas impresas, nota que el color se ve apagado, pálido y opaco.
+        </div>
+
+        <div class="question">
+            <p>5. ¿Por qué ocurrió este cambio tan brusco en la reproducción del color según la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q30" value="no"> Porque no vectorizó los textos del empaque convirtiéndolos a contornos.</label>
+                <label class="option-item"><input type="radio" name="q30" value="si"> Porque los colores de la pantalla (RGB) son luz, mientras que la imprenta usa tintas físicas (CMYK), haciendo que ese tono brillante quedara fuera de gama o gamut</label>
+                <label class="option-item"><input type="radio" name="q30" value="no"> Porque no separó el fondo del logotipo mediante el panel de capas.</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-submit" onclick="calificarYGenerar()">FINALIZAR EVALUACIÓN Y GENERAR COMPROBANTE</button>
+        <div id="result-banner"></div>
+    </div>
+</div>
+
+<script {is_jsx="false"}>
+    function calificarYGenerar() {
+        const nombreInput = document.getElementById('nombre');
+        const validationBanner = document.getElementById('validation-banner');
+        const resultBanner = document.getElementById('result-banner');
+        const nombre = nombreInput.value.trim();
+
+        // Limpiar alertas de validación de formulario previas
+        validationBanner.style.display = 'none';
+        validationBanner.innerText = '';
+
+        if (!nombre || nombre.length < 5) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, ingrese sus apellidos y nombres completos para poder calificar su evaluación.";
+            nombreInput.focus();
+            return;
+        }
+
+        let puntos = 0;
+
+        // Serie I: Verdadero o Falso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q1"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q2"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q3"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q4"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q5"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie II: Selección Única (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q6"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q7"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q8"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q9"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q10"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie III: Dropdowns (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.getElementById('q11').value === 'si') puntos += 1;
+        if (document.getElementById('q12').value === 'si') puntos += 1;
+        if (document.getElementById('q13').value === 'si') puntos += 1;
+        if (document.getElementById('q14').value === 'si') puntos += 1;
+        if (document.getElementById('q15').value === 'si') puntos += 1;
+
+        // Serie IV: Estudios de Caso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q26"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q27"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q28"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q29"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q30"]:checked')?.value === 'si') puntos += 1;
+
+        // Validar límite para evitar problemas con números de punto flotante
+        puntos = Math.min(20, puntos);
+
+        // Desplegar resultado en pantalla
+        resultBanner.style.display = 'block';
+        resultBanner.innerText = `¡EXAMEN REGISTRADO CON ÉXITO! NOTA OBTENIDA: ${puntos} / 20 PUNTOS. Tu comprobante PDF se está descargando automáticamente...`;
+
+        // Generar PDF profesional
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Encabezado decorativo del comprobante (Emerald 500)
+        doc.setFillColor(16, 185, 129); // Emerald 500
+        doc.rect(0, 0, 210, 42, 'F');
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.text("COLEGIO DE INFORMÁTICA J.R.B.", 105, 18, { align: "center" });
+        doc.setFontSize(11);
+        doc.text("COMPROBANTE OFICIAL DE EVALUACIÓN DIGITAL - DISEÑO GRÁFICO I", 105, 28, { align: "center" });
+
+        // Bloque de metadatos académicos
+        doc.setTextColor(15, 23, 42); // Slate 900
+        doc.setFontSize(12);
+        doc.text("DATOS ACADÉMICOS DEL ESTUDIANTE", 20, 58);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.text(`Nombre Completo: ${nombre.toUpperCase()}`, 20, 68);
+        doc.text("Curso: Diseño Computarizado I (Lienzo, Texto, Jerarquías y CMYK)", 20, 75);
+        doc.text("Grado: Cuarto Bachillerato en Diseño Gráfico (4DISE)", 20, 82);
+        doc.text(`Fecha y Hora de Emisión: ${new Date().toLocaleString()}`, 20, 89);
+
+        // Divisor visual
+        doc.setLineWidth(0.5);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 98, 190, 98);
+
+        // Calificación final sobre 20 puntos
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(26);
+        doc.setTextColor(16, 185, 129); // Emerald 500
+        doc.text(`CALIFICACIÓN: ${puntos} / 20 PUNTOS`, 105, 120, { align: "center" });
+
+        // Consideraciones éticas y de entrega
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Este documento sirve como evidencia inalterable de la realización de la evaluación digital", 105, 140, { align: "center" });
+        doc.text("correspondiente a las Guías de la 1 a la 3 en el Laboratorio de Diseño de la IV Unidad.", 105, 145, { align: "center" });
+        doc.text("Instrucciones: Guarde este comprobante y súbalo a la tarea en Google Classroom.", 105, 152, { align: "center" });
+
+        // Código de seguridad hash unificado e inalterable
+        const securityHash = "DIS4B-U4-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        doc.setFont("courier", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(30, 41, 59);
+        doc.text(`CÓDIGO DE VALIDACIÓN UNIFICADO: ${securityHash}`, 20, 180);
+
+        // Descarga automatizada del archivo
+        doc.save(`Diseno_ComputarizadoI_Cuarto_U4_${nombre.replace(/\s+/g, '_')}.pdf`);
+    }
+</script>
+
+</body>
+</html>

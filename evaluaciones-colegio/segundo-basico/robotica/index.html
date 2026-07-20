@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Robótica Segundo Básico - IV Unidad - JRB</title>
+    <!-- Librería externa para generación de comprobantes en PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #0f172a; /* Slate 900 - Textos y cabeceras sólidas */
+            --primary-light: #1e293b; /* Slate 800 */
+            --accent: #10b981; /* Emerald 500 - Identidad y tecnología */
+            --accent-hover: #059669; /* Emerald 600 */
+            --accent-light: #ecfdf5; /* Emerald 50 - Fondos de interacción */
+            --light-bg: #f8fafc; /* Slate 50 - Fondo general de pantalla */
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1; /* Slate 300 */
+            --text-muted: #64748b; /* Slate 500 */
+            --success: #10b981; /* Emerald 500 */
+            --success-light: #ecfdf5; /* Emerald 50 */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--light-bg); 
+            margin: 0; 
+            padding: 40px 15px;
+            color: var(--primary);
+        }
+
+        .exam-card { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+            border-top: 10px solid var(--accent);
+        }
+
+        /* Encabezado Principal */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 35px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+        }
+
+        .header-info h1 { 
+            margin: 0; 
+            font-size: 1.6rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        .header-info p { 
+            margin: 6px 0 0; 
+            opacity: 0.85; 
+            font-size: 0.95rem; 
+            color: #94a3b8;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Identificación del Estudiante (Ancho Completo) */
+        .student-section { 
+            padding: 25px 35px;
+            background: #fdfdfd;
+            border-bottom: 1px solid #f1f5f9;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .field { width: 100%; }
+        .field label { 
+            display: block; 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            color: var(--accent); 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            letter-spacing: 0.8px;
+        }
+        .field input { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            background-color: var(--card-bg);
+            color: var(--primary);
+        }
+        .field input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Estructura de las Series */
+        .serie { 
+            padding: 35px 35px; 
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .serie-title { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--accent); 
+            padding-left: 15px; 
+            margin-bottom: 15px; 
+        }
+        .serie-title h2 { margin: 0; font-size: 1.25rem; color: var(--primary); text-transform: uppercase; }
+        .badge-points {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .instruction-box {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            color: #065f46;
+        }
+        
+        .question { margin-bottom: 28px; }
+        .question p { margin-top: 0; font-weight: 600; font-size: 1rem; color: var(--primary); line-height: 1.5; }
+
+        /* Controles de Selección e Inputs Estéticos */
+        .options-container { display: grid; gap: 10px; }
+        .option-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .option-item:hover { border-color: var(--accent); background: var(--accent-light); }
+        .option-item input { margin-right: 12px; cursor: pointer; width: 16px; height: 16px; }
+
+        .select-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: var(--card-bg);
+            color: var(--primary);
+            transition: border 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .select-input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        .case-container {
+            background-color: #f8fafc;
+            border: 1.5px dashed var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Banner de Alerta */
+        .error-message {
+            display: none;
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 35px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Botón de Finalización */
+        .btn-container { padding: 40px 35px; text-align: center; }
+        .btn-submit { 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            padding: 16px 50px; 
+            font-size: 1.15rem; 
+            font-weight: bold; 
+            border-radius: 50px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+        }
+        .btn-submit:hover { 
+            background: var(--accent-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        #result-banner {
+            display: none;
+            margin: 20px 35px;
+            padding: 25px;
+            background: var(--success-light);
+            color: #065f46;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid #a7f3d0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-card">
+    <header class="header">
+        <div class="header-info">
+            <p>COLEGIO DE INFORMÁTICA JUSTO RUFINO BAUTISTA</p>
+            <h1>Evaluación Parcial - Cuarta Unidad</h1>
+            <p>Curso: Robótica Educativa | Segundo Básico</p>
+        </div>
+        <div class="logo-container">
+            <!-- Logo oficial desde la carpeta public descarga.png -->
+            <img src="public/descarga.png" alt="Logo JRB" onerror="this.src='https://placehold.co/100x100?text=J.R.B.'">
+        </div>
+    </header>
+
+    <section class="student-section">
+        <div class="field">
+            <label for="nombre">Nombre Completo del Estudiante</label>
+            <input type="text" id="nombre" placeholder="Escriba sus apellidos y nombres completos aquí..." required>
+        </div>
+    </section>
+
+    <!-- Banner de Validación de Formulario -->
+    <div id="validation-banner" class="error-message"></div>
+
+    <!-- I SERIE: VERDADERO O FALSO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>I Serie: Vehículos Eléctricos e Iluminación LED (Verdadero o Falso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analice de forma reflexiva cada enunciado teórico sobre los vehículos eléctricos y el comportamiento de la tecnología LED. Seleccione <strong>Verdadero (V)</strong> o <strong>Falso (F)</strong> según corresponda. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. Los vehículos eléctricos tradicionales utilizan motores de combustión interna que requieren gasolina para iniciar la marcha física de su chasis.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q1" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q1" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. De acuerdo con las siglas en inglés, L.E.D. significa técnicamente "Light Emitting Diode" (Diodo Emisor de Luz).</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q2" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q2" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. En mBlock 5, al programar la simulación de un semáforo inteligente, el bloque condicional "si... entonces" es inútil porque el semáforo cambia de luces de forma aleatoria.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q3" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q3" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. Las tiras de LED RGB integradas en la robótica permiten generar miles de variaciones de colores mezclando diferentes proporciones de luz Roja, Verde y Azul.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q4" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q4" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. Una de las mayores ventajas de los diodos LED frente a las bombillas incandescentes antiguas es que consumen hasta un 90% más de energía eléctrica para brillar.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q5" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q5" value="si"> Falso (F)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- II SERIE: SELECCIÓN ÚNICA (EDICIÓN DE VIDEO) -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>II Serie: Edición de Video en CapCut (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lea detenidamente cada planteamiento técnico sobre la interfaz y el funcionamiento del editor de video CapCut. Seleccione la única respuesta correcta de las opciones presentadas. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. ¿En qué consiste técnicamente el proceso de "Edición de Video" en la comunicación y explicación de tus proyectos de robótica?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q6" value="no"> Consiste en soldar con estaño las luces LED de forma directa en la placa.</label>
+                <label class="option-item"><input type="radio" name="q6" value="si"> Consiste en organizar, cortar, unir y mejorar clips de video, sonidos o imágenes para transmitir de forma clara una idea.</label>
+                <label class="option-item"><input type="radio" name="q6" value="no"> Consiste en programar variables de distancia en la base del mBot2.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. ¿Cómo se define el espacio de trabajo en CapCut donde se arrastran e importan los recursos brutos (videos, música, fotos) antes de colocarlos en el montaje?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q7" value="no"> Línea de Tiempo (Timeline)</label>
+                <label class="option-item"><input type="radio" name="q7" value="si"> Biblioteca de Medios (Media Library)</label>
+                <label class="option-item"><input type="radio" name="q7" value="no"> Panel de propiedades de la CyberPi</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. ¿Qué nombre recibe la barra horizontal o regla interactiva en CapCut donde se apilan, recortan y ordenan cronológicamente las pistas de video, audio y textos?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q8" value="no"> Menú de exportación digital</label>
+                <label class="option-item"><input type="radio" name="q8" value="si"> Línea de Tiempo (Timeline)</label>
+                <label class="option-item"><input type="radio" name="q8" value="no"> Panel de visualización de semáforo</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Por qué es útil organizar tu video utilizando "múltiples pistas de medios" independientes en lugar de colocar todo en una sola pista plana?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q9" value="si"> Porque te permite superponer un audio de fondo, efectos de sonido y títulos de texto sobre el clip de video sin que se borren entre sí.</label>
+                <label class="option-item"><input type="radio" name="q9" value="no"> Porque reduce de forma automática el tamaño físico del chasis de tu robot.</label>
+                <label class="option-item"><input type="radio" name="q9" value="no"> Porque incrementa el consumo de corriente directa en las baterías.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. ¿Qué acción inmediata de edición en CapCut debes aplicar si un clip de video que importaste es demasiado largo y tiene partes aburridas que distraen al espectador?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q10" value="no"> Cambiar el formato de exportación a archivo de audio MP3.</label>
+                <label class="option-item"><input type="radio" name="q10" value="si"> Utilizar la herramienta de "Dividir" (Split) para cortar el video y eliminar los fragmentos innecesarios.</label>
+                <label class="option-item"><input type="radio" name="q10" value="no"> Cambiar el color de las luces LED del mBot2 a azul.</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- III SERIE: SEMÁFORO EN MBLOCK Y COMPONENTES LED -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>III Serie: Semáforo de Colores y Clasificación de LED (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Complete conceptualmente cada uno de los enunciados sobre el comportamiento lógico del semáforo en mBlock y la física de los LED. Seleccione de la lista desplegable la única respuesta correcta. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. En mBlock 5, ¿cuál es el bloque lógico condicional indispensable para simular de forma interactiva que un semáforo cambie a VERDE solo cuando se presiona el botón físico A de la CyberPi?</p>
+            <select class="select-input" id="q11">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">si [¿botón A presionado?] entonces [encender luces en verde]</option>
+                <option value="no">repite 4 veces [reproducir nota musical 60]</option>
+                <option value="no">fijar velocidad de motores encoder a 100</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>2. Tipo de diodo emisor de luz avanzado que integra tres terminales de color internos dentro de una misma cápsula y permite cambiar rítmicamente el color por programación:</p>
+            <select class="select-input" id="q12">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">LED monocromático antiguo</option>
+                <option value="si">LED RGB (Red, Green, Blue)</option>
+                <option value="no">Buzzer activo de un solo pin</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>3. En el proyecto del "Vehículo Inteligente", ¿cuál es el papel principal de la Inteligencia Artificial y los sensores para la seguridad de la movilidad moderna?</p>
+            <select class="select-input" id="q13">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Consumir más combustible fósil para acelerar el chasis.</option>
+                <option value="si">Detectar obstáculos en tiempo real y tomar decisiones autónomas como frenar o cambiar de carril para evitar choques accidentales.</option>
+                <option value="no">Rediseñar el color de las pistas impresas en el set.</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Por qué es un estándar de seguridad de hardware en robótica conectar una resistencia en serie con un diodo LED antes de mandarle energía directa?</p>
+            <select class="select-input" id="q14">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Para que el LED emita sonido en lugar de luz.</option>
+                <option value="si">Para limitar el paso de corriente eléctrica y evitar que el diodo LED sufra un daño físico irreversible por sobrecalentamiento.</option>
+                <option value="no">Para sincronizar los fotogramas clave de la animación digital.</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>5. En el software CapCut, ¿cuál es el comando técnico que permite exportar y consolidar todo tu proyecto de la línea de tiempo en un solo archivo de video para compartirlo?</p>
+            <select class="select-input" id="q15">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Importar medios en biblioteca</option>
+                <option value="si">Exportar (Export)</option>
+                <option value="no">Fijar marcador de audio</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- IV SERIE: ESTUDIOS DE CASO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>IV Serie: Aplicación Práctica por Especialidades (Estudios de Caso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analice detenidamente las siguientes situaciones del laboratorio e incidentes de programación y edición digital. Seleccione la alternativa que solucione técnicamente el problema. (1 punto por acierto)
+        </div>
+
+        <!-- Caso 1 -->
+        <div class="case-container">
+            <strong>CASO A: EL SEMÁFORO QUE SE QUEDA PEGADO</strong><br>
+            Diego programa un semáforo lógico en mBlock 5. Al presionar el Botón A de la CyberPi, el semáforo cambia a VERDE y, luego de 3 segundos, cambia a ROJO, pero se queda en ese estado de color de forma permanente por más que presione el botón A de nuevo.
+        </div>
+
+        <div class="question">
+            <p>1. Al auditar la lógica de bloques de Diego en la Guía 1, ¿qué error técnico debes corregir de inmediato?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q26" value="no"> El robot necesita un puerto Jack de pared hembra para restablecer sus colores.</label>
+                <label class="option-item"><input type="radio" name="q26" value="si"> El programa carece de un ciclo repetitivo; se debe envolver la condición <code>si... entonces</code> dentro de un bucle <code>para siempre</code> para que evalúe de forma continua el estado del botón A</label>
+                <label class="option-item"><input type="radio" name="q26" value="no"> Reemplazar los diodos LED de la CyberPi por un altavoz de electroimán.</label>
+            </div>
+        </div>
+
+        <!-- Caso 2 -->
+        <div class="case-container">
+            <strong>CASO B: LA MEZCLA DE AUDIO SATURADA EN CAPCUT</strong><br>
+            Estás editando el video explicativo de tu robot para la feria del 06 de junio. Importas un clip donde estás hablando, pero al añadirle una canción de rock de fondo de la biblioteca de medios, tu voz se escucha sumamente sorda y es imposible entender tu explicación de robótica.
+        </div>
+
+        <div class="question">
+            <p>2. ¿Cómo debes resolver este problema de mezcla utilizando las múltiples pistas de la línea de tiempo en CapCut (Guía 3)?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q27" value="no"> Borrar la pista de voz y escribir toda la explicación con letras mayúsculas sostenidas en el centro de la pantalla.</label>
+                <label class="option-item"><input type="radio" name="q27" value="si"> Separar el audio de la música en una pista independiente de la línea de tiempo y bajar su volumen o nivel de decibelios (dB) para que no tape tu diálogo de voz</label>
+                <label class="option-item"><input type="radio" name="q27" value="no"> Cambiar el formato del video a un archivo de imagen estática de tipo PNG.</label>
+            </div>
+        </div>
+
+        <!-- Caso 3 -->
+        <div class="case-container">
+            <strong>CASO C: LA TIRA LED QUE CONSUME DEMASIADA BATERÍA</strong><br>
+            Un estudiante de robótica diseña un vehículo inteligente con una tira de luces LED de 1 metro colocada alrededor del chasis. Al encender las luces a máxima intensidad por largo tiempo, la batería recargable de la CyberPi se drena en menos de 10 minutos.
+        </div>
+
+        <div class="question">
+            <p>3. ¿Qué técnica física de optimización energética de la Guía 3 debió aplicar en su proyecto?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q28" value="no"> Cambiar los motores ópticos de tipo Encoder por motores de combustión de gasolina.</label>
+                <label class="option-item"><input type="radio" name="q28" value="si"> Programar un ciclo intermitente en las luces o reducir su brillo mediante modulación por ancho de pulsos (PWM) en el código mBlock para limitar el consumo energético</label>
+                <label class="option-item"><input type="radio" name="q28" value="no"> Eliminar la resistencia en serie colocada con el diodo LED para que pase más corriente directa.</label>
+            </div>
+        </div>
+
+        <!-- Caso 4 -->
+        <div class="case-container">
+            <strong>CASO D: EL VIDEO EXPLICATIVO DESORDENADO</strong><br>
+            Al presentar tu primer borrador de video de robótica en clase, el profesor te indica que las tomas de la CyberPi aparecen desordenadas, que se salta directamente de la demostración física a la teoría del cuaderno de golpe y de forma confusa.
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué técnica y espacio de trabajo de CapCut debes utilizar para reorganizar y estructurar tu video de forma fluida de acuerdo a la Guía 2?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q29" value="si"> Utilizar la Línea de Tiempo de CapCut para arrastrar, ordenar de forma lógica y cronológica los clips de video y colocar transiciones suaves entre ellos</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Programar un semáforo de colores en la CyberPi para distraer la vista de los evaluadores.</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Exportar las imágenes en modo de color CMYK para impresión en plotter de gran formato.</label>
+            </div>
+        </div>
+
+        <!-- Caso 5 -->
+        <div class="case-container">
+            <strong>CASO E: AUDITORÍA DE VEHÍCULOS ELÉCTRICOS</strong><br>
+            En la feria del 06 de junio, un juez te pide que expliques la diferencia entre tu robot vehículo inteligente y un automóvil ordinario de combustión interna, centrándote en el cuidado ambiental y la eficiencia física de los motores.
+        </div>
+
+        <div class="question">
+            <p>5. ¿Cuál es el argumento técnico idóneo que debes presentar de acuerdo con el tema de la Guía 1?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q30" value="no"> Los vehículos tradicionales cuidan más el medio ambiente porque no requieren baterías recargables pesadas de litio.</label>
+                <label class="option-item"><input type="radio" name="q30" value="si"> Los vehículos eléctricos no emiten gases contaminantes (emisión cero), aprovechan mejor la energía al recargar baterías al frenar y sus motores eléctricos son mecánicamente más eficientes y limpios</label>
+                <label class="option-item"><input type="radio" name="q30" value="no"> Los motores de combustión interna son más autónomos porque se guían de forma exclusiva por sensores ultrasónicos.</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-submit" onclick="calificarYGenerar()">FINALIZAR EVALUACIÓN Y GENERAR COMPROBANTE</button>
+        <div id="result-banner"></div>
+    </div>
+</div>
+
+<script {is_jsx="false"}>
+    function calificarYGenerar() {
+        const nombreInput = document.getElementById('nombre');
+        const validationBanner = document.getElementById('validation-banner');
+        const resultBanner = document.getElementById('result-banner');
+        const nombre = nombreInput.value.trim();
+
+        // Limpiar alertas de validación previas
+        validationBanner.style.display = 'none';
+        validationBanner.innerText = '';
+
+        if (!nombre || nombre.length < 5) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, ingrese sus apellidos y nombres completos para poder procesar y calificar su evaluación.";
+            nombreInput.focus();
+            return;
+        }
+
+        let puntos = 0;
+
+        // Serie I: Verdadero o Falso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q1"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q2"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q3"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q4"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q5"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie II: Selección Única (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q6"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q7"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q8"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q9"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q10"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie III: Dropdowns (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.getElementById('q11').value === 'si') puntos += 1;
+        if (document.getElementById('q12').value === 'si') puntos += 1;
+        if (document.getElementById('q13').value === 'si') puntos += 1;
+        if (document.getElementById('q14').value === 'si') puntos += 1;
+        if (document.getElementById('q15').value === 'si') puntos += 1;
+
+        // Serie IV: Estudios de Caso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q26"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q27"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q28"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q29"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q30"]:checked')?.value === 'si') puntos += 1;
+
+        // Validar límite para evitar desfases matemáticos
+        puntos = Math.min(20, puntos);
+
+        // Desplegar resultado en pantalla
+        resultBanner.style.display = 'block';
+        resultBanner.innerText = `¡EXAMEN REGISTRADO CON ÉXITO! NOTA OBTENIDA: ${puntos} / 20 PUNTOS. Tu comprobante PDF se está descargando automáticamente...`;
+
+        // Generar PDF profesional
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Encabezado decorativo del comprobante (Emerald 500)
+        doc.setFillColor(16, 185, 129); // Emerald 500
+        doc.rect(0, 0, 210, 42, 'F');
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.text("COLEGIO DE INFORMÁTICA J.R.B.", 105, 18, { align: "center" });
+        doc.setFontSize(11);
+        doc.text("COMPROBANTE OFICIAL DE EVALUACIÓN DIGITAL - ROBÓTICA", 105, 28, { align: "center" });
+
+        // Bloque de metadatos académicos
+        doc.setTextColor(15, 23, 42); // Slate 900
+        doc.setFontSize(12);
+        doc.text("DATOS ACADÉMICOS DEL ESTUDIANTE", 20, 58);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.text(`Nombre Completo: ${nombre.toUpperCase()}`, 20, 68);
+        doc.text("Curso: Robótica Educativa II (Semáforos, Edición CapCut y Tecnología LED)", 20, 75);
+        doc.text("Grado: Segundo Básico", 20, 82);
+        doc.text(`Fecha y Hora de Emisión: ${new Date().toLocaleString()}`, 20, 89);
+
+        // Divisor visual
+        doc.setLineWidth(0.5);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 98, 190, 98);
+
+        // Calificación final sobre 20 puntos
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(26);
+        doc.setTextColor(16, 185, 129); // Emerald 500
+        doc.text(`CALIFICACIÓN: ${puntos} / 20 PUNTOS`, 105, 120, { align: "center" });
+
+        // Consideraciones éticas y de entrega
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Este documento sirve como evidencia inalterable de la realización de la evaluación digital", 105, 140, { align: "center" });
+        doc.text("correspondiente a las Guías de la 1 a la 3 en el Laboratorio de Robótica de la IV Unidad.", 105, 145, { align: "center" });
+        doc.text("Instrucciones: Guarde este comprobante y súbalo a la tarea en Google Classroom.", 105, 152, { align: "center" });
+
+        // Código de seguridad hash unificado e inalterable
+        const securityHash = "ROB2B-U4-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        doc.setFont("courier", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(30, 41, 59);
+        doc.text(`CÓDIGO DE VALIDACIÓN UNIFICADO: ${securityHash}`, 20, 180);
+
+        // Descarga automatizada del archivo
+        doc.save(`Robotica_Segundo_Basico_U4_${nombre.replace(/\s+/g, '_')}.pdf`);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación TAC Primero Básico - IV Unidad - JRB</title>
+    <!-- Librería externa para generación de comprobantes en PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #0f172a; /* Slate 900 - Textos y cabeceras sólidas */
+            --primary-light: #1e293b; /* Slate 800 */
+            --accent: #10b981; /* Emerald 500 - Identidad y tecnologías */
+            --accent-hover: #059669; /* Emerald 600 */
+            --accent-light: #ecfdf5; /* Emerald 50 - Fondos de interacción */
+            --light-bg: #f8fafc; /* Slate 50 - Fondo general de pantalla */
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1; /* Slate 300 */
+            --text-muted: #64748b; /* Slate 500 */
+            --success: #10b981; /* Emerald 500 */
+            --success-light: #ecfdf5; /* Emerald 50 */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--light-bg); 
+            margin: 0; 
+            padding: 40px 15px;
+            color: var(--primary);
+        }
+
+        .exam-card { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+            border-top: 10px solid var(--accent);
+        }
+
+        /* Encabezado Principal */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 35px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+        }
+
+        .header-info h1 { 
+            margin: 0; 
+            font-size: 1.6rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        .header-info p { 
+            margin: 6px 0 0; 
+            opacity: 0.85; 
+            font-size: 0.95rem; 
+            color: #94a3b8;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Identificación del Estudiante (Ancho Completo) */
+        .student-section { 
+            padding: 25px 35px;
+            background: #fdfdfd;
+            border-bottom: 1px solid #f1f5f9;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .field { width: 100%; }
+        .field label { 
+            display: block; 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            color: var(--accent); 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            letter-spacing: 0.8px;
+        }
+        .field input { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            background-color: var(--card-bg);
+            color: var(--primary);
+        }
+        .field input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Estructura de las Series */
+        .serie { 
+            padding: 35px 35px; 
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .serie-title { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--accent); 
+            padding-left: 15px; 
+            margin-bottom: 15px; 
+        }
+        .serie-title h2 { margin: 0; font-size: 1.25rem; color: var(--primary); text-transform: uppercase; }
+        .badge-points {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .instruction-box {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            color: #065f46;
+        }
+        
+        .question { margin-bottom: 28px; }
+        .question p { margin-top: 0; font-weight: 600; font-size: 1rem; color: var(--primary); line-height: 1.5; }
+
+        /* Controles de Selección e Inputs Estéticos */
+        .options-container { display: grid; gap: 10px; }
+        .option-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .option-item:hover { border-color: var(--accent); background: var(--accent-light); }
+        .option-item input { margin-right: 12px; cursor: pointer; width: 16px; height: 16px; }
+
+        .select-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: var(--card-bg);
+            color: var(--primary);
+            transition: border 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .select-input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        .case-container {
+            background-color: #f8fafc;
+            border: 1.5px dashed var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Banner de Alerta */
+        .error-message {
+            display: none;
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 35px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Botón de Finalización */
+        .btn-container { padding: 40px 35px; text-align: center; }
+        .btn-submit { 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            padding: 16px 50px; 
+            font-size: 1.15rem; 
+            font-weight: bold; 
+            border-radius: 50px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+        }
+        .btn-submit:hover { 
+            background: var(--accent-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        #result-banner {
+            display: none;
+            margin: 20px 35px;
+            padding: 25px;
+            background: var(--success-light);
+            color: #065f46;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid #a7f3d0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-card">
+    <header class="header">
+        <div class="header-info">
+            <p>COLEGIO DE INFORMÁTICA JUSTO RUFINO BAUTISTA</p>
+            <h1>Evaluación Parcial - Cuarta Unidad</h1>
+            <p>Curso: Tecnologías de la Aprendizaje y la Comunicación (TAC) | Primero Básico</p>
+        </div>
+        <div class="logo-container">
+            <!-- Logo oficial desde la carpeta public descarga.png -->
+            <img src="public/descarga.png" alt="Logo JRB" onerror="this.src='https://placehold.co/100x100?text=J.R.B.'">
+        </div>
+    </header>
+
+    <section class="student-section">
+        <div class="field">
+            <label for="nombre">Nombre Completo del Estudiante</label>
+            <input type="text" id="nombre" placeholder="Escriba sus apellidos y nombres completos aquí..." required>
+        </div>
+    </section>
+
+    <!-- Banner de Validación de Formulario -->
+    <div id="validation-banner" class="error-message"></div>
+
+    <!-- I SERIE: VERDADERO O FALSO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>I Serie: Búsqueda Avanzada y Confiabilidad (Verdadero o Falso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lea detenidamente cada enunciado sobre la confiabilidad de la información en internet y operadores de búsqueda. Seleccione <strong>Verdadero (V)</strong> o <strong>Falso (F)</strong> según corresponda. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. Google Chrome es clasificado técnicamente como un buscador de internet, mientras que Google Académico es un navegador web.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q1" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q1" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. Para saber si una página de internet es confiable, se deben analizar criterios éticos como la autoridad (autor responsable) y la fecha de actualización de la información.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q2" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q2" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. El uso de comillas `" "` al realizar una búsqueda en internet le indica al motor de búsqueda que filtre y encuentre únicamente la frase exacta escrita.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q3" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q3" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. El plagio académico consiste en utilizar información respetuosa de internet citando el nombre del autor y respetando las licencias de uso de la obra.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q4" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q4" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. Cualquier persona puede publicar contenido falso o erróneo en internet, por lo que es vital auditar y verificar las fuentes antes de agregarlas a nuestras tareas.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q5" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q5" value="no"> Falso (F)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- II SERIE: SELECCIÓN ÚNICA (OPCIÓN MÚLTIPLE) -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>II Serie: Seguridad y Netiqueta Escolar (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lea detenidamente cada enunciado sobre ciberseguridad escolar y normas de convivencia virtual. Seleccione la única respuesta correcta de las opciones disponibles. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cuál de las siguientes es una recomendación básica y segura al estructurar contraseñas para tus cuentas educativas?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q6" value="no"> Usar tu fecha de nacimiento o números correlativos sencillos como 123456.</label>
+                <label class="option-item"><input type="radio" name="q6" value="si"> Combinar letras mayúsculas, minúsculas, números y caracteres especiales sin incluir información personal visible.</label>
+                <label class="option-item"><input type="radio" name="q6" value="no"> Utilizar tu nombre completo para recordarla fácilmente sin necesidad de apuntarla.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. De acuerdo con las normas de netiqueta escolar en Classroom o foros, ¿qué interpretación tiene escribir un mensaje completo en letras MAYÚSCULAS?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q7" value="no"> Indica que el texto es un título decorativo de gran jerarquía visual.</label>
+                <label class="option-item"><input type="radio" name="q7" value="si"> Equivale a gritarle de forma irrespetuosa al maestro o a los compañeros del grupo.</label>
+                <label class="option-item"><input type="radio" name="q7" value="no"> Se utiliza únicamente para corregir la ortografía de los textos en la nube.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. Si un anuncio publicitario o un desconocido en una red social te solicita tu nombre completo, dirección física y teléfono para obsequiarte un premio, tú debes:</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q8" value="no"> Proporcionar los datos de inmediato para evitar perder la oportunidad de ganar.</label>
+                <label class="option-item"><input type="radio" name="q8" value="si"> No compartir datos privados bajo ninguna circunstancia y notificar inmediatamente a tus padres o maestros.</label>
+                <label class="option-item"><input type="radio" name="q8" value="no"> Escribir los datos de contacto de tus compañeros de estudio para proteger tu privacidad.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Cómo se define técnicamente al software dañino o malintencionado diseñado por ciberdelincuentes para ingresar en secreto a tu equipo escolar y robar tus datos?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q9" value="no"> Software de código abierto (Open Source)</label>
+                <label class="option-item"><input type="radio" name="q9" value="si"> Malware o virus informático</label>
+                <label class="option-item"><input type="radio" name="q9" value="no"> Suite de ofimática integrada de Google Drive</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. Si tienes un conflicto o malentendido con un compañero en un chat grupal del colegio, ¿cuál es la forma asertiva de resolverlo según la netiqueta?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q10" value="no"> Escribir reclamos con mayúsculas en el foro general para que todos se enteren del problema.</label>
+                <label class="option-item"><input type="radio" name="q10" value="si"> Conversar con la persona de forma privada, educada y calmada para buscar una solución respetuosa sin humillarla.</label>
+                <label class="option-item"><input type="radio" name="q10" value="no"> Ignorar el problema y compartir capturas de pantalla de sus mensajes privados en redes sociales.</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- III SERIE: SELECCIÓN ÚNICA CON DROP DOWN -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>III Serie: Computación en la Nube y Google Drive (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Complete conceptualmente cada enunciado de almacenamiento digital. Seleccione del menú desplegable la única respuesta correcta de acuerdo a lo estudiado en la Guía 3. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. Servicio informático que permite almacenar, procesar y acceder a archivos y programas a través de internet en servidores remotos en lugar de usar el disco duro físico local:</p>
+            <select class="select-input" id="q11">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Computación en la Nube (Cloud Computing)</option>
+                <option value="no">Unidad de CD-ROM física</option>
+                <option value="no">Tarjeta madre analógica</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>2. Permiso o política de acceso en Google Drive que permite que un usuario consulte un documento escolar compartido pero le impide hacer cambios o eliminar el contenido:</p>
+            <select class="select-input" id="q12">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Permiso de Editor</option>
+                <option value="si">Permiso de Lector</option>
+                <option value="no">Permiso de Comentarista</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>3. Permiso avanzado de Google Drive que otorga el control total al usuario para modificar, añadir, colaborar y borrar elementos de una carpeta de tareas:</p>
+            <select class="select-input" id="q13">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Permiso de Lector</option>
+                <option value="si">Permiso de Editor</option>
+                <option value="no">Permiso de Comentarista</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>4. Para mantener un portafolio de tareas sumamente ordenado en Google Drive, el procedimiento técnico e higiénico correcto es:</p>
+            <select class="select-input" id="q14">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Dejar todos los documentos sueltos en "Mi Unidad" sin asignarle nombres claros.</option>
+                <option value="si">Crear carpetas y subcarpetas organizadas bajo una estructura jerárquica clara por materias y unidades.</option>
+                <option value="no">Guardar las tareas únicamente en la papelera de reciclaje temporal.</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>5. ¿Cuáles de las siguientes opciones corresponden a servicios populares de almacenamiento alternativos a Google Drive en la nube?</p>
+            <select class="select-input" id="q15">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Google Chrome y Safari</option>
+                <option value="si">Dropbox y OneDrive (Microsoft)</option>
+                <option value="no">Word y Excel locales</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- IV SERIE: ESTUDIOS DE CASO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>IV Serie: Aplicación Práctica y Ciudadanía Digital (Estudios de Caso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analice detenidamente las situaciones escolares e hipotéticas planteadas. Seleccione la alternativa que solucione de forma ética y técnica el caso de estudio. (1 punto por acierto)
+        </div>
+
+        <!-- Caso 1 -->
+        <div class="case-container">
+            <strong>CASO A: EL ESCRITORIO CONGESTIONADO DE MARIO</strong><br>
+            El escritorio de la computadora escolar de Mario tiene más de 100 archivos de tareas sueltos, con nombres como "tarea1", "doc3" o "captura_final", lo que le hace perder muchísimo tiempo buscando sus trabajos para entregarlos a tiempo.
+        </div>
+
+        <div class="question">
+            <p>1. ¿De qué manera debe resolver Mario su problema aplicando los criterios técnicos de la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q26" value="no"> Comprar un disco duro físico portátil de gran masa.</label>
+                <label class="option-item"><input type="radio" name="q26" value="si"> Crear un portafolio digital estructurado en Google Drive usando carpetas codificadas por materia y subcarpetas por unidades académicas</label>
+                <label class="option-item"><input type="radio" name="q26" value="no"> Borrar el sistema de archivos completo del monitor de la PC.</label>
+            </div>
+        </div>
+
+        <!-- Caso 2 -->
+        <div class="case-container">
+            <strong>CASO B: EL CORREO SOSPECHOSO DE SUPLANTACIÓN</strong><br>
+            Carlos recibe un mensaje en Discord de un usuario desconocido que simula ser un moderador de su juego favorito, indicándole que su cuenta ha sido bloqueada y exigiéndole que le envíe el código numérico de verificación que acaba de llegar a su teléfono.
+        </div>
+
+        <div class="question">
+            <p>2. ¿A qué amenaza técnica corresponde este escenario y qué debe hacer Carlos según la Guía 2?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q27" value="no"> Es un procedimiento estándar del juego; debe compartir el código para no perder sus datos.</label>
+                <label class="option-item"><input type="radio" name="q27" value="si"> Es un intento de Ingeniería Social / Phishing; debe ignorar el mensaje, bloquear al usuario y jamás entregar códigos confidenciales</label>
+                <label class="option-item"><input type="radio" name="q27" value="no"> Es una actualización de software; debe desinstalar el juego en ese instante.</label>
+            </div>
+        </div>
+
+        <!-- Caso 3 -->
+        <div class="case-container">
+            <strong>CASO C: LA CLÍNICA DENTAL INFANTIL</strong><br>
+            Lucía tiene la tarea de hacer una infografía sobre salud dental para el 06 de junio. Encuentra en un sitio web de internet un texto científico perfecto. Ella copia el texto idéntico y lo presenta en su infografía final con su propio nombre sin mencionar de dónde lo extrajo.
+        </div>
+
+        <div class="question">
+            <p>3. ¿Qué mala práctica cometió Lucía según la Guía 2 y de qué manera debió corregir su actuar?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q28" value="no"> Cometió un virus informático; debió descargar un software de tipo Freeware.</label>
+                <label class="option-item"><input type="radio" name="q28" value="si"> Cometió plagio académico; debió citar la fuente original, dar crédito al autor e indicar que la información no es suya</label>
+                <label class="option-item"><input type="radio" name="q28" value="no"> Cometió una alteración de Netiqueta; debió redactar la sinopsis con letras mayúsculas sostenidas.</label>
+            </div>
+        </div>
+
+        <!-- Caso 4 -->
+        <div class="case-container">
+            <strong>CASO D: TRABAJO COLABORATIVO EN LÍNEA</strong><br>
+            El equipo de Carlos tiene que elaborar un documento de investigación grupal en línea sobre la ciberseguridad. Quieren que todos los miembros puedan redactar, corregir la ortografía y añadir información de forma simultánea en la nube.
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué nivel de permiso o acceso debe configurar el creador de la carpeta en Google Drive para permitir este trabajo?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q29" value="no"> Permiso de Lector únicamente.</label>
+                <label class="option-item"><input type="radio" name="q29" value="si"> Permiso de Editor para todos los miembros del grupo</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Configurar el archivo en modo restringido y enviarlo por cable de red local.</label>
+            </div>
+        </div>
+
+        <!-- Caso 5 -->
+        <div class="case-container">
+            <strong>CASO E: EL BLOG DE CIENCIAS SOSPECHOSO</strong><br>
+            Para su tarea de TAC, Sofía encuentra un blog que contiene información científica sorprendente sobre la contaminación en Guatemala. Al revisar la página, no encuentra el nombre de ningún autor responsable, no hay fecha de publicación y tiene muchos anuncios de videojuegos invasivos.
+        </div>
+
+        <div class="question">
+            <p>5. ¿Por qué este sitio web se clasifica de dudosa confiabilidad según los criterios de la Guía 1?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q30" value="no"> Porque requiere una licencia Creative Commons de tipo "Compartir Igual" para cargarse.</label>
+                <label class="option-item"><input type="radio" name="q30" value="si"> Porque carece de criterios clave de credibilidad de la información, como la autoridad (autor/institución responsable) y actualización (fecha visible)</label>
+                <label class="option-item"><input type="radio" name="q30" value="no"> Porque los datos se cargaron mediante un enrutador cableado LAN.</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-submit" onclick="calificarYGenerar()">FINALIZAR EVALUACIÓN Y GENERAR COMPROBANTE</button>
+        <div id="result-banner"></div>
+    </div>
+</div>
+
+<script {is_jsx="false"}>
+    function calificarYGenerar() {
+        const nombreInput = document.getElementById('nombre');
+        const validationBanner = document.getElementById('validation-banner');
+        const resultBanner = document.getElementById('result-banner');
+        const nombre = nombreInput.value.trim();
+
+        // Limpiar alertas de validación previas
+        validationBanner.style.display = 'none';
+        validationBanner.innerText = '';
+
+        if (!nombre || nombre.length < 5) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, ingrese sus apellidos y nombres completos para poder procesar y calificar su evaluación.";
+            nombreInput.focus();
+            return;
+        }
+
+        let puntos = 0;
+
+        // Serie I: Verdadero o Falso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q1"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q2"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q3"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q4"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q5"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie II: Selección Única (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q6"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q7"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q8"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q9"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q10"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie III: Dropdowns (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.getElementById('q11').value === 'si') puntos += 1;
+        if (document.getElementById('q12').value === 'si') puntos += 1;
+        if (document.getElementById('q13').value === 'si') puntos += 1;
+        if (document.getElementById('q14').value === 'si') puntos += 1;
+        if (document.getElementById('q15').value === 'si') puntos += 1;
+
+        // Serie IV: Estudios de Caso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q26"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q27"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q28"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q29"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q30"]:checked')?.value === 'si') puntos += 1;
+
+        // Asegurarse de no exceder los 20 puntos por decimales de coma flotante
+        puntos = Math.min(20, Math.round(puntos * 10) / 10);
+
+        // Desplegar resultado en pantalla
+        resultBanner.style.display = 'block';
+        resultBanner.innerText = `¡EXAMEN REGISTRADO CON ÉXITO! NOTA OBTENIDA: ${puntos} / 20 PUNTOS. Tu comprobante PDF se está descargando automáticamente...`;
+
+        // Generar PDF profesional
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Encabezado decorativo del comprobante (Emerald 500)
+        doc.setFillColor(16, 185, 129); // Emerald 500
+        doc.rect(0, 0, 210, 42, 'F');
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.text("COLEGIO DE INFORMÁTICA J.R.B.", 105, 18, { align: "center" });
+        doc.setFontSize(11);
+        doc.text("COMPROBANTE OFICIAL DE EVALUACIÓN DIGITAL - TAC", 105, 28, { align: "center" });
+
+        // Bloque de metadatos académicos
+        doc.setTextColor(15, 23, 42); // Slate 900
+        doc.setFontSize(12);
+        doc.text("DATOS ACADÉMICOS DEL ESTUDIANTE", 20, 58);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.text(`Nombre Completo: ${nombre.toUpperCase()}`, 20, 68);
+        doc.text("Curso: Tecnologías de la Aprendizaje y la Comunicación (TAC)", 20, 75);
+        doc.text("Grado: Primero Básico", 20, 82);
+        doc.text(`Fecha y Hora de Emisión: ${new Date().toLocaleString()}`, 20, 89);
+
+        // Divisor visual
+        doc.setLineWidth(0.5);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 98, 190, 98);
+
+        // Calificación final sobre 20 puntos
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(26);
+        doc.setTextColor(16, 185, 129); // Emerald 500
+        doc.text(`CALIFICACIÓN: ${puntos} / 20 PUNTOS`, 105, 120, { align: "center" });
+
+        // Consideraciones éticas y de entrega
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Este documento sirve como evidencia inalterable de la realización de la evaluación digital", 105, 140, { align: "center" });
+        doc.text("correspondiente a las Guías de la 1 a la 3 en el Laboratorio de TAC de la IV Unidad.", 105, 145, { align: "center" });
+        doc.text("Instrucciones: Guarde este comprobante y súbalo a la tarea en Google Classroom.", 105, 152, { align: "center" });
+
+        // Código de seguridad hash unificado e inalterable
+        const securityHash = "TAC1B-U4-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        doc.setFont("courier", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(30, 41, 59);
+        doc.text(`CÓDIGO DE VALIDACIÓN UNIFICADO: ${securityHash}`, 20, 180);
+
+        // Descarga automatizada del archivo
+        doc.save(`TAC_Primero_Basico_U4_${nombre.replace(/\s+/g, '_')}.pdf`);
+    }
+</script>
+
+</body>
+</html>

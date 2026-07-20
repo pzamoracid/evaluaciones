@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Computación Aplicada - IV Unidad - JRB</title>
+    <!-- Librería externa para generación de comprobantes en PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #0f172a; /* Slate 900 - Textos y cabeceras sólidas */
+            --primary-light: #1e293b; /* Slate 800 */
+            --accent: #10b981; /* Emerald 500 - Identidad y tecnología */
+            --accent-hover: #059669; /* Emerald 600 */
+            --accent-light: #ecfdf5; /* Emerald 50 - Fondos de interacción */
+            --light-bg: #f8fafc; /* Slate 50 - Fondo general de pantalla */
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1; /* Slate 300 */
+            --text-muted: #64748b; /* Slate 500 */
+            --success: #10b981; /* Emerald 500 */
+            --success-light: #ecfdf5; /* Emerald 50 */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--light-bg); 
+            margin: 0; 
+            padding: 40px 15px;
+            color: var(--primary);
+        }
+
+        .exam-card { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+            border-top: 10px solid var(--accent);
+        }
+
+        /* Encabezado Principal */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 35px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+        }
+
+        .header-info h1 { 
+            margin: 0; 
+            font-size: 1.6rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        .header-info p { 
+            margin: 6px 0 0; 
+            opacity: 0.85; 
+            font-size: 0.95rem; 
+            color: #94a3b8;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Identificación del Estudiante (Ancho Completo y Especialidad) */
+        .student-section { 
+            padding: 25px 35px;
+            background: #fdfdfd;
+            border-bottom: 1px solid #f1f5f9;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .student-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .field { width: 100%; }
+        .field label { 
+            display: block; 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            color: var(--accent); 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            letter-spacing: 0.8px;
+        }
+        .field input, .field select { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            background-color: var(--card-bg);
+            color: var(--primary);
+        }
+        .field input:focus, .field select:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Estructura de las Series */
+        .serie { 
+            padding: 35px 35px; 
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .serie-title { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--accent); 
+            padding-left: 15px; 
+            margin-bottom: 15px; 
+        }
+        .serie-title h2 { margin: 0; font-size: 1.25rem; color: var(--primary); text-transform: uppercase; }
+        .badge-points {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .instruction-box {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            color: #065f46;
+        }
+        
+        .question { margin-bottom: 28px; }
+        .question p { margin-top: 0; font-weight: 600; font-size: 1rem; color: var(--primary); line-height: 1.5; }
+
+        /* Controles de Selección e Inputs Estéticos */
+        .options-container { display: grid; gap: 10px; }
+        .option-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .option-item:hover { border-color: var(--accent); background: var(--accent-light); }
+        .option-item input { margin-right: 12px; cursor: pointer; width: 16px; height: 16px; }
+
+        .select-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: var(--card-bg);
+            color: var(--primary);
+            transition: border 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .select-input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        .case-container {
+            background-color: #f8fafc;
+            border: 1.5px dashed var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Banner de Alerta */
+        .error-message {
+            display: none;
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 35px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Botón de Finalización */
+        .btn-container { padding: 40px 35px; text-align: center; }
+        .btn-submit { 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            padding: 16px 50px; 
+            font-size: 1.15rem; 
+            font-weight: bold; 
+            border-radius: 50px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+        }
+        .btn-submit:hover { 
+            background: var(--accent-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        #result-banner {
+            display: none;
+            margin: 20px 35px;
+            padding: 25px;
+            background: var(--success-light);
+            color: #065f46;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid #a7f3d0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-card">
+    <header class="header">
+        <div class="header-info">
+            <p>COLEGIO DE INFORMÁTICA JUSTO RUFINO BAUTISTA</p>
+            <h1>Evaluación Parcial - Cuarta Unidad</h1>
+            <p>Curso: Computación Aplicada | Cuarto Bachillerato</p>
+        </div>
+        <div class="logo-container">
+            <!-- Logo oficial desde la carpeta public descarga.png -->
+            <img src="public/descarga.png" alt="Logo JRB" onerror="this.src='https://placehold.co/100x100?text=J.R.B.'">
+        </div>
+    </header>
+
+    <section class="student-section">
+        <div class="field">
+            <label for="nombre">Nombre Completo del Estudiante</label>
+            <input type="text" id="nombre" placeholder="Escriba sus apellidos y nombres completos aquí..." required>
+        </div>
+        <div class="field">
+            <label for="orientacion">Especialidad / Orientación</label>
+            <select id="orientacion" required>
+                <option value="">-- Seleccione su especialidad --</option>
+                <option value="Computación (BACO)">Computación (BACO)</option>
+                <option value="Diseño Gráfico (DISE)">Diseño Gráfico (DISE)</option>
+                <option value="Biología (BIOLO)">Biología (BIOLO)</option>
+            </select>
+        </div>
+    </section>
+
+    <!-- Banner de Validación de Formulario -->
+    <div id="validation-banner" class="error-message"></div>
+
+    <!-- I SERIE: DISEÑO TIPOGRÁFICO Y COMPOSICIÓN -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>I Serie: Composición y Estructuras de Presentación (Verdadero o Falso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analiza de forma reflexiva cada una de las siguientes afirmaciones relacionadas con el diseño con WordArt, diagramas y alineación en software de presentación. Selecciona <strong>Verdadero (V)</strong> o <strong>Falso (F)</strong> según corresponda. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. El exceso de texto plano en una diapositiva aumenta el impacto del mensaje porque le da al público toda la información de forma detallada.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q1" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q1" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. WordArt se define técnicamente como un objeto gráfico tipográfico que nos permite darle estilo visual, color y relieve a un texto para jerarquizarlo.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q2" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q2" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. En el diseño de diapositivas profesionales, las herramientas de "Alineación" sirven exclusivamente para cambiar el tamaño de las fuentes a 30 puntos.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q3" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q3" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. El balance tipográfico y la alineación matemática de todos los objetos en una presentación ayudan a guiar la lectura y reducir la fatiga visual del espectador.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q4" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q4" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. Para insertar diagramas lógicos organizativos en Google Slides, se deben dibujar todas las formas a mano en el cuaderno de forma obligatoria.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q5" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q5" value="si"> Falso (F)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- II SERIE: ARQUITECTURA DE LA INFORMACIÓN -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>II Serie: Arquitectura de la Información y UX (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lea detenidamente cada planteamiento técnico sobre experiencia de usuario (UX) y arquitectura de información. Seleccione la única respuesta correcta. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cómo se conoce a la regla clásica de usabilidad web que aconseja que el usuario debe poder encontrar cualquier información clave de un sitio en un máximo de tres interacciones?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q6" value="no"> Regla de los Tres Segundos</label>
+                <label class="option-item"><input type="radio" name="q6" value="si"> Regla de los Tres Clics</label>
+                <label class="option-item"><input type="radio" name="q6" value="no"> Regla de Tercios</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. ¿Cómo se define el diagrama de árbol jerárquico estructurado que representa de forma lógica todas las páginas, secciones y enlaces que componen un sitio web?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q7" value="no"> Retícula de Manuscrito</label>
+                <label class="option-item"><input type="radio" name="q7" value="si"> Mapa de Navegación</label>
+                <label class="option-item"><input type="radio" name="q7" value="no"> Ficha de Confiabilidad</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. ¿Cuál es el principal objetivo de planificar la "Arquitectura de la Información" de un sitio web antes de comenzar a diseñarlo en una plataforma en línea?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q8" value="no"> Evitar que el servidor local de base de datos se quede sin memoria RAM.</label>
+                <label class="option-item"><input type="radio" name="q8" value="si"> Organizar y clasificar el contenido de forma lógica y fluida para asegurar una navegación intuitiva y sin frustración para el usuario</label>
+                <label class="option-item"><input type="radio" name="q8" value="no"> Traducir el código HTML al idioma español automáticamente.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué diferencia fundamental existe entre una estructura de navegación "Plana" (pocos niveles jerárquicos) y una "Profunda" (muchas subcarpetas y niveles)?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q9" value="no"> La estructura plana consume más energía eléctrica en dispositivos móviles.</label>
+                <label class="option-item"><input type="radio" name="q9" value="si"> La estructura plana permite acceder a la información con menos clics, mientras que la profunda requiere navegar por múltiples submenús</label>
+                <label class="option-item"><input type="radio" name="q9" value="no"> No existe ninguna diferencia técnica; ambas se maquetan sobre la misma retícula.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. ¿Para qué sirve usar un "diagrama de flujo de datos" al estructurar un supermercado físico o un sitio web según la Guía de Trabajo No. 2?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q10" value="no"> Para cambiar los colores corporativos de la marca a CMYK.</label>
+                <label class="option-item"><input type="radio" name="q10" value="si"> Para agrupar y categorizar los recursos por departamentos lógicos, facilitando que el cliente o usuario encuentre lo que busca con facilidad</label>
+                <label class="option-item"><input type="radio" name="q10" value="no"> Para programar los bucles condicionales de la CyberPi.</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- III SERIE: CREACIÓN DE PORTAFOLIOS Y PRIVACIDAD -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>III Serie: Creación de Sitios Web y Ciberseguridad (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Complete de manera técnica cada uno de los siguientes enunciados sobre maquetación en la nube, CMS y pautas de privacidad de datos. Seleccione del menú desplegable la única respuesta correcta. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. Página principal de bienvenida de un sitio o portafolio web que actúa como la puerta de acceso y debe presentar la propuesta visual de forma clara:</p>
+            <select class="select-input" id="q11">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Página de Inicio (Home Page)</option>
+                <option value="no">Página "Sobre mí" (About)</option>
+                <option value="no">Sección de Contacto (Contact)</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>2. Plataformas en línea especializadas (como Google Sites, Wix o WordPress) que facilitan la creación y administración de contenidos web sin requerir programar código en crudo:</p>
+            <select class="select-input" id="q12">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Navegadores web locales</option>
+                <option value="si">Sistemas de Gestión de Contenido o CMS</option>
+                <option value="no">Buscadores de información académica</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>3. Protocolo de comunicación seguro en internet que cifra los datos entre tu navegador y el servidor, indicado por un candado verde en la barra de direcciones:</p>
+            <select class="select-input" id="q13">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Protocolo HTTPS (Hypertext Transfer Protocol Secure)</option>
+                <option value="no">Protocolo HTTP estándar sin cifrar</option>
+                <option value="no">Asignación dinámica de direcciones MAC</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Por qué se aconseja utilizar un avatar, silueta o ilustración neutral en lugar de una fotografía personal real y sensible en tu portafolio de acceso público en internet?</p>
+            <select class="select-input" id="q14">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Para que la página web cargue el triple de rápido en computadoras antiguas.</option>
+                <option value="si">Para proteger tu identidad y privacidad, previniendo ataques de ingeniería social o suplantación en entornos virtuales globales</option>
+                <option value="no">Porque el formato PNG no acepta fotos realistas con fondo de color.</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>5. Para proteger tus credenciales e información de base de datos de tu sitio web escolar, la recomendación técnica básica de seguridad es:</p>
+            <select class="select-input" id="q15">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Escribir tus usuarios y contraseñas de forma pública en la página de inicio (Home Page).</option>
+                <option value="si">Registrarte utilizando tu cuenta de correo escolar o institucional y activar la verificación en dos pasos</option>
+                <option value="no">Desactivar el candado de seguridad HTTPS de tu navegador web.</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- IV SERIE: ESTUDIOS DE CASO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>IV Serie: Aplicación Práctica por Especialidades (Estudios de Caso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analice detenidamente las situaciones del laboratorio e incidentes de usabilidad y ciberseguridad. Seleccione la alternativa que solucione técnicamente el problema. (1 punto por acierto)
+        </div>
+
+        <!-- Caso 1 -->
+        <div class="case-container">
+            <strong>CASO COMPUTACIÓN (BACO): EL FORMULARIO DE SOPORTE</strong><br>
+            Estás diseñando la estructura de navegación de una aplicación de soporte para el laboratorio. El mapa de navegación requiere que el usuario haga clic en: "Inicio", luego "Soporte", luego "Servicios", luego "Reportes de Hardware", luego "Registrar", y finalmente "Formulario", lo que causa que los usuarios se aburran y abandonen el proceso.
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cómo debes optimizar la usabilidad y navegación del sitio aplicando la teoría de la Guía 2?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q26" value="no"> Eliminar la sección de registro y pedir los reportes de hardware por mensajes de voz de WhatsApp.</label>
+                <label class="option-item"><input type="radio" name="q26" value="si"> Diseñar una arquitectura de información más plana, aplicando la "Regla de los Tres Clics" para que el usuario acceda al formulario en máximo 3 pasos desde el Home Page</label>
+                <label class="option-item"><input type="radio" name="q26" value="no"> Cambiar los cables Ethernet del laboratorio por conectores de tornillos VGA antiguos.</label>
+            </div>
+        </div>
+
+        <!-- Caso 2 -->
+        <div class="case-container">
+            <strong>CASO BIOLOGÍA (BIOLO): EL PORTAFOLIO BOTÁNICO</strong><br>
+            Una estudiante de biología está maquetando su portafolio web en Google Sites para la feria del 06 de junio. Al diseñar la sección "Sobre mí", desea incluir una fotografía suya de cuerpo completo frente a su casa, detallando su dirección física exacta y su número de teléfono para que los jueces la feliciten.
+        </div>
+
+        <div class="question">
+            <p>2. Basándote en las pautas de privacidad de la Guía 3, ¿qué recomendación técnica de seguridad debes darle de inmediato?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q27" value="no"> Es correcto publicar toda su información para facilitar el contacto directo y ganar puntos extra de diseño.</label>
+                <label class="option-item"><input type="radio" name="q27" value="si"> Debe excluir datos personales sensibles (teléfono, dirección) por ciberseguridad y utilizar una ilustración o avatar profesional para prevenir amenazas de ingeniería social</label>
+                <label class="option-item"><input type="radio" name="q27" value="no"> Cambiar el protocolo de red de su Google Sites a modo analógico sin cifrar.</label>
+            </div>
+        </div>
+
+        <!-- Caso 3 -->
+        <div class="case-container">
+            <strong>CASO DISEÑO GRÁFICO (DISE): BALANCE EN EL BRIEF CREATIVO</strong><br>
+            Un grupo de diseño está preparando una diapositiva en PowerPoint para presentar un "Brief Creativo". Colocaron un párrafo de texto muy largo de 20 líneas en fuente Script pequeña que tapa una imagen decorativa colocada al centro de la diapositiva.
+        </div>
+
+        <div class="question">
+            <p>3. ¿Cómo deben corregir la diapositiva aplicando las reglas tipográficas y de dibujo de la Guía 1?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q28" value="no"> Dejar la diapositiva idéntica e imprimirla para que se lea con lupa física de mano.</label>
+                <label class="option-item"><input type="radio" name="q28" value="si"> Reducir el texto a frases clave, jerarquizar los títulos usando la herramienta WordArt Sans Serif y alinear los objetos de forma equilibrada dejando espacios en blanco</label>
+                <label class="option-item"><input type="radio" name="q28" value="no"> Utilizar una tipografía Display de fantasía muy decorativa y cambiar el fondo a color amarillo chillante.</label>
+            </div>
+        </div>
+
+        <!-- Caso 4 -->
+        <div class="case-container">
+            <strong>CASO DE CIBERSEGURIDAD: EL ROBO DE DATOS EN LA RED</strong><br>
+            Al ingresar a tu portafolio web escolar de pruebas, notas que tu navegador de internet muestra una advertencia en letras rojas que dice: "Este sitio no es seguro / Conexión no cifrada", a pesar de que la maquetación y los botones funcionan a la perfección.
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué parámetro de red o protocolo de seguridad te hace falta configurar para corregir el error según la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q29" value="si"> Debes asegurar la instalación y redirección del protocolo seguro HTTPS mediante un certificado SSL activo en el servidor del CMS</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Debes cambiar la dirección lógica IP del servidor de la base de datos de estática a dinámica por DHCP.</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Debes rehacer el mapa de navegación web agregándole al menos 5 subniveles profundos.</label>
+            </div>
+        </div>
+
+        <!-- Caso 5 -->
+        <div class="case-container">
+            <strong>SITUACIÓN E: LA CLASIFICACIÓN DEL SUPERMERCADO</strong><br>
+            Para la feria del 06 de junio, vas a presentar un proyecto web para una cooperativa agrícola comunitaria. El sitio tiene listados de verduras, herramientas, reportes financieros, historias de la comunidad y un formulario de contacto, todo suelto en un solo menú enorme y desordenado.
+        </div>
+
+        <div class="question">
+            <p>5. ¿Qué paso de diseño de arquitectura de información debes aplicar de forma inmediata de acuerdo con la Guía 2?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q30" value="no"> Eliminar todos los textos e imágenes del sitio web y exportarlo en formato de audio MP3.</label>
+                <label class="option-item"><input type="radio" name="q30" value="si"> Clasificar los recursos por categorías o departamentos lógicos (Tienda, Nosotros, Contacto, Finanzas) y estructurarlos mediante un Mapa de Navegación jerárquico</label>
+                <label class="option-item"><input type="radio" name="q30" value="no"> Cambiar el nombre del dispositivo de red a formato de variable booleana.</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-submit" onclick="calificarYGenerar()">FINALIZAR EVALUACIÓN Y GENERAR COMPROBANTE</button>
+        <div id="result-banner"></div>
+    </div>
+</div>
+
+<script {is_jsx="false"}>
+    function calificarYGenerar() {
+        const nombreInput = document.getElementById('nombre');
+        const orientacionSelect = document.getElementById('orientacion');
+        const validationBanner = document.getElementById('validation-banner');
+        const resultBanner = document.getElementById('result-banner');
+        
+        const nombre = nombreInput.value.trim();
+        const orientacion = orientacionSelect.value;
+
+        // Limpiar alertas de validación previas
+        validationBanner.style.display = 'none';
+        validationBanner.innerText = '';
+
+        if (!nombre || nombre.length < 5) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, ingrese sus apellidos y nombres completos para poder procesar y calificar su evaluación.";
+            nombreInput.focus();
+            return;
+        }
+
+        if (!orientacion) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, seleccione su Especialidad / Orientación para registrar su prueba académica.";
+            orientacionSelect.focus();
+            return;
+        }
+
+        let puntos = 0;
+
+        // Serie I: Verdadero o Falso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q1"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q2"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q3"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q4"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q5"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie II: Selección Única (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q6"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q7"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q8"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q9"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q10"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie III: Dropdowns (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.getElementById('q11').value === 'si') puntos += 1;
+        if (document.getElementById('q12').value === 'si') puntos += 1;
+        if (document.getElementById('q13').value === 'si') puntos += 1;
+        if (document.getElementById('q14').value === 'si') puntos += 1;
+        if (document.getElementById('q15').value === 'si') puntos += 1;
+
+        // Serie IV: Estudios de Caso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q26"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q27"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q28"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q29"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q30"]:checked')?.value === 'si') puntos += 1;
+
+        // Validar límite para evitar desfases matemáticos
+        puntos = Math.min(20, puntos);
+
+        // Desplegar resultado en pantalla
+        resultBanner.style.display = 'block';
+        resultBanner.innerText = `¡EXAMEN REGISTRADO CON ÉXITO! NOTA OBTENIDA: ${puntos} / 20 PUNTOS. Tu comprobante PDF se está descargando automáticamente...`;
+
+        // Generar PDF profesional
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Encabezado decorativo del comprobante (Emerald 500)
+        doc.setFillColor(16, 185, 129); // Emerald 500
+        doc.rect(0, 0, 210, 42, 'F');
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.text("COLEGIO DE INFORMÁTICA J.R.B.", 105, 18, { align: "center" });
+        doc.setFontSize(11);
+        doc.text("COMPROBANTE OFICIAL DE EVALUACIÓN DIGITAL - COMP. APLICADA", 105, 28, { align: "center" });
+
+        // Bloque de metadatos académicos
+        doc.setTextColor(15, 23, 42); // Slate 900
+        doc.setFontSize(12);
+        doc.text("DATOS ACADÉMICOS DEL ESTUDIANTE", 20, 58);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.text(`Nombre Completo: ${nombre.toUpperCase()}`, 20, 68);
+        doc.text("Curso: Computación Aplicada (UI/UX, Navegación, WordArt e Infraestructura Web)", 20, 75);
+        doc.text(`Grado: Cuarto Bachillerato en Ciencias y Letras con Orientación en ${orientacion}`, 20, 82);
+        doc.text(`Fecha y Hora de Emisión: ${new Date().toLocaleString()}`, 20, 89);
+
+        // Divisor visual
+        doc.setLineWidth(0.5);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 98, 190, 98);
+
+        // Calificación final sobre 20 puntos
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(26);
+        doc.setTextColor(16, 185, 129); // Emerald 500
+        doc.text(`CALIFICACIÓN: ${puntos} / 20 PUNTOS`, 105, 120, { align: "center" });
+
+        // Consideraciones éticas y de entrega
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Este documento sirve como evidencia inalterable de la realización de la evaluación digital", 105, 140, { align: "center" });
+        doc.text("correspondiente a las Guías de la 1 a la 3 en el Laboratorio de Computación de la IV Unidad.", 105, 145, { align: "center" });
+        doc.text("Instrucciones: Guarde este comprobante y súbalo a la tarea en Google Classroom.", 105, 152, { align: "center" });
+
+        // Código de seguridad hash unificado e inalterable
+        const securityHash = "COMPAPL4-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        doc.setFont("courier", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(30, 41, 59);
+        doc.text(`CÓDIGO DE VALIDACIÓN UNIFICADO: ${securityHash}`, 20, 180);
+
+        // Descarga automatizada del archivo
+        doc.save(`Computacion_Aplicada_Cuarto_U4_${nombre.replace(/\s+/g, '_')}.pdf`);
+    }
+</script>
+
+</body>
+</html>

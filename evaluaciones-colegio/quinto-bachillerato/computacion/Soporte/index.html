@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Soporte de Computadoras - IV Unidad - JRB</title>
+    <!-- Librería externa para generación de comprobantes en PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #0f172a; /* Slate 900 - Textos y cabeceras sólidas */
+            --primary-light: #1e293b; /* Slate 800 */
+            --accent: #10b981; /* Emerald 500 - Identidad y tecnología */
+            --accent-hover: #059669; /* Emerald 600 */
+            --accent-light: #ecfdf5; /* Emerald 50 - Fondos de interacción */
+            --light-bg: #f8fafc; /* Slate 50 - Fondo general de pantalla */
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1; /* Slate 300 */
+            --text-muted: #64748b; /* Slate 500 */
+            --success: #10b981; /* Emerald 500 */
+            --success-light: #ecfdf5; /* Emerald 50 */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--light-bg); 
+            margin: 0; 
+            padding: 40px 15px;
+            color: var(--primary);
+        }
+
+        .exam-card { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+            border-top: 10px solid var(--accent);
+        }
+
+        /* Encabezado Principal */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 35px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+        }
+
+        .header-info h1 { 
+            margin: 0; 
+            font-size: 1.6rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        .header-info p { 
+            margin: 6px 0 0; 
+            opacity: 0.85; 
+            font-size: 0.95rem; 
+            color: #94a3b8;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Identificación del Estudiante (Ancho Completo) */
+        .student-section { 
+            padding: 25px 35px;
+            background: #fdfdfd;
+            border-bottom: 1px solid #f1f5f9;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .field { width: 100%; }
+        .field label { 
+            display: block; 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            color: var(--accent); 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            letter-spacing: 0.8px;
+        }
+        .field input { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            background-color: var(--card-bg);
+            color: var(--primary);
+        }
+        .field input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Estructura de las Series */
+        .serie { 
+            padding: 35px 35px; 
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .serie-title { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--accent); 
+            padding-left: 15px; 
+            margin-bottom: 15px; 
+        }
+        .serie-title h2 { margin: 0; font-size: 1.25rem; color: var(--primary); text-transform: uppercase; }
+        .badge-points {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .instruction-box {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            color: #065f46;
+        }
+        
+        .question { margin-bottom: 28px; }
+        .question p { margin-top: 0; font-weight: 600; font-size: 1rem; color: var(--primary); line-height: 1.5; }
+
+        /* Controles de Selección e Inputs Estéticos */
+        .options-container { display: grid; gap: 10px; }
+        .option-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .option-item:hover { border-color: var(--accent); background: var(--accent-light); }
+        .option-item input { margin-right: 12px; cursor: pointer; width: 16px; height: 16px; }
+
+        .select-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: var(--card-bg);
+            color: var(--primary);
+            transition: border 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .select-input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        .case-container {
+            background-color: #f8fafc;
+            border: 1.5px dashed var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Banner de Alerta */
+        .error-message {
+            display: none;
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 35px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Botón de Finalización */
+        .btn-container { padding: 40px 35px; text-align: center; }
+        .btn-submit { 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            padding: 16px 50px; 
+            font-size: 1.15rem; 
+            font-weight: bold; 
+            border-radius: 50px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+        }
+        .btn-submit:hover { 
+            background: var(--accent-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        #result-banner {
+            display: none;
+            margin: 20px 35px;
+            padding: 25px;
+            background: var(--success-light);
+            color: #065f46;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid #a7f3d0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-card">
+    <header class="header">
+        <div class="header-info">
+            <p>COLEGIO DE INFORMÁTICA JUSTO RUFINO BAUTISTA</p>
+            <h1>Evaluación Parcial - Cuarta Unidad</h1>
+            <p>Curso: Soporte de Computadoras | Quinto Bachillerato en Computación</p>
+        </div>
+        <div class="logo-container">
+            <!-- Logo oficial desde la carpeta public descarga.png -->
+            <img src="public/descarga.png" alt="Logo JRB" onerror="this.src='https://placehold.co/100x100?text=J.R.B.'">
+        </div>
+    </header>
+
+    <section class="student-section">
+        <div class="field">
+            <label for="nombre">Nombre Completo del Estudiante</label>
+            <input type="text" id="nombre" placeholder="Escriba sus apellidos y nombres completos aquí..." required>
+        </div>
+    </section>
+
+    <!-- Banner de Validación de Formulario -->
+    <div id="validation-banner" class="error-message"></div>
+
+    <!-- I SERIE: CONCEPTOS Y MEDIDAS DE SEGURIDAD -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>I Serie: Seguridad en el Taller y Ensamblado de Hardware (Verdadero o Falso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analice de forma lógica cada enunciado relacionado con las medidas de seguridad del técnico de hardware, electricidad estática, tornillería y bases lógicas de ensamble. Seleccione <strong>Verdadero (V)</strong> o <strong>Falso (F)</strong> según corresponda. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. El alcohol de farmacia común es el ideal para limpiar circuitos electrónicos porque se evapora al instante y no tiene agua en su composición.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q1" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q1" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. La pulsera antiestática (ESD) contiene una resistencia interna de $1\text{ M}\Omega$ (un megaohmio) con la función de proteger la vida del técnico en caso de tocar accidentalmente una línea eléctrica activa.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q2" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q2" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. Los tornillos de rosca fina M3 de $3\text{ mm}$ se utilizan comúnmente en el taller para asegurar de forma correcta los discos duros mecánicos grandes de 3.5 pulgadas al chasis.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q3" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q3" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. Los postes o espaciadores de cobre se colocan en el chasis para separar físicamente la tarjeta madre del metal y evitar cortocircuitos eléctricos que apaguen el equipo de golpe.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q4" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q4" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. Retirar la pila CR2032 de la tarjeta madre por unos minutos es un método físico válido para restablecer la configuración de la BIOS a sus valores de fábrica (Clear CMOS).</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q5" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q5" value="no"> Falso (F)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- II SERIE: DIAGNÓSTICO QUÍMICO Y TÉRMICO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>II Serie: Limpieza Química y Diagnósticos BIOS (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lea detenidamente cada planteamiento técnico relacionado con el uso de solventes dieléctricos, mantenimiento térmico e interpretación de señales acústicas. Seleccione la única respuesta correcta de las opciones presentadas. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. ¿Qué componente químico de alta pureza se debe utilizar en el taller para remover la pasta térmica seca sin dejar humedad sobre el procesador?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q6" value="si"> Alcohol Isopropílico al 99%</label>
+                <label class="option-item"><input type="radio" name="q6" value="no"> Agua destilada con jabón líquido</label>
+                <label class="option-item"><input type="radio" name="q6" value="no"> Thinner de uso industrial</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. Si al encender la computadora escuchas un pitido largo y repetitivo sin parar (Beep Codes), ¿qué componente suele estar fallando o mal colocado en la placa?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q7" value="si"> La memoria RAM</label>
+                <label class="option-item"><input type="radio" name="q7" value="no"> El disco duro secundario</label>
+                <label class="option-item"><input type="radio" name="q7" value="no"> El ventilador del chasis</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. ¿Cuál es la función principal de la pasta térmica que se aplica entre la superficie de la CPU y la base del disipador de calor?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q8" value="no"> Pegar físicamente de forma permanente el disipador al chip para evitar que se mueva.</label>
+                <label class="option-item"><input type="radio" name="q8" value="si"> Rellenar los microespacios de aire (que es un mal conductor térmico) para mejorar la transferencia de calor</label>
+                <label class="option-item"><input type="radio" name="q8" value="no"> Limpiar químicamente los residuos de óxido del silicio del procesador.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué herramienta manual del taller de soporte se utiliza para soplar y retirar el polvo suelto acumulado en los rincones más difíciles de la tarjeta madre de forma segura?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q9" value="no"> Un paño humedecido en agua destilada.</label>
+                <label class="option-item"><input type="radio" name="q9" value="si"> Aire comprimido o sopladora dieléctrica</label>
+                <label class="option-item"><input type="radio" name="q9" value="no"> Cepillo de cerdas de plástico cargado de estática.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. Si al terminar de ensamblar una computadora, los ventiladores giran por un segundo y el equipo se apaga por completo de golpe de manera súbita, ¿cuál es el problema físico más probable?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q10" value="si"> Un cortocircuito debido a que la tarjeta madre toca directamente el chasis de metal por falta de espaciadores</label>
+                <label class="option-item"><input type="radio" name="q10" value="no"> Que el sistema operativo no está instalado en el disco duro.</label>
+                <label class="option-item"><input type="radio" name="q10" value="no"> Que el cable de red LAN del puerto RJ45 está desconectado.</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- III SERIE: SELECCIÓN ÚNICA CON DROP DOWN -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>III Serie: Elementos Químicos y Mecánicos (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Complete conceptualmente cada uno de los siguientes enunciados técnicos. Seleccione del menú desplegable la única respuesta correcta de acuerdo con lo estudiado en las Guías 1, 2 y 3. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. Líquido dieléctrico especial que se evapora al instante y sirve para limpiar residuos de suciedad y grasa dentro de ranuras de RAM y puertos de la PC:</p>
+            <select class="select-input" id="q11">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Limpiador de Contactos (Contact Cleaner)</option>
+                <option value="no">Alcohol etílico de farmacia común</option>
+                <option value="no">Agua desmineralizada</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>2. Secuencia de pitidos cortos de la BIOS que nos indica que el sistema pasó el autodiagnóstico inicial (POST) con éxito y todo el hardware básico funciona:</p>
+            <select class="select-input" id="q12">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Un pitido corto</option>
+                <option value="no">Tres pitidos largos continuos</option>
+                <option value="no">Ningún pitido y pantalla negra</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>3. Método físico que consiste en unir temporalmente con un desarmador metálico los dos pines marcados como "JBAT1" o "CLRTC" en la tarjeta madre para restablecer la BIOS:</p>
+            <select class="select-input" id="q13">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Puente de Clear CMOS</option>
+                <option value="no">Prueba de continuidad con tester</option>
+                <option value="no">Conexión de cable de energía</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>4. Tipo de tornillo con rosca gruesa estándar (#6-32) que se utiliza de forma correcta para asegurar las tapas del chasis y las fuentes de poder:</p>
+            <select class="select-input" id="q14">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Tornillo de rosca gruesa #6-32</option>
+                <option value="no">Tornillo de rosca fina M3</option>
+                <option value="no">Poste espaciador de plástico</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>5. Fenómeno de descarga de electricidad estática que acumulamos en el cuerpo y que puede quemar de forma irreversible circuitos muy sensibles si los tocamos sin protección:</p>
+            <select class="select-input" id="q15">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Descarga Electrostática (ESD)</option>
+                <option value="no">Cortocircuito de chasis</option>
+                <option value="no">Retorno de señal de red</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- IV SERIE: ESTUDIOS DE CASO (PROBLEMAS PRÁCTICOS DE SOPORTE) -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>IV Serie: Aplicación Práctica e Incidentes en Taller (Estudios de Caso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analice de manera técnica cada situación hipotética de soporte basada en casos reales del taller de desensamble, limpieza térmica y armado. Seleccione la opción adecuada. (1 punto por acierto)
+        </div>
+
+        <!-- Caso 1 -->
+        <div class="case-container">
+            <strong>CASO A: EL PROCESADOR QUE SE APAGA POR CALOR</strong><br>
+            Un cliente trae una computadora que se apaga sola después de 15 minutos de uso continuo. Al desarmar el disipador, observas que la pasta térmica está completamente reseca, dura y quebradiza, pareciendo un yeso viejo sobre el procesador.
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cómo solucionas este problema de soporte de forma correcta según los procedimientos de la Guía 2?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q26" value="no"> Aplicar una capa gruesa de pasta térmica nueva encima de la vieja para rellenar los espacios sin limpiar la anterior.</label>
+                <label class="option-item"><input type="radio" name="q26" value="si"> Limpiar los residuos secos con alcohol isopropílico de 99% usando un paño que no deje pelusa, aplicar una pequeña gota de pasta térmica nueva al centro y reensamblar</label>
+                <label class="option-item"><input type="radio" name="q26" value="no"> Retirar el disipador de calor de forma definitiva para que el procesador respire aire fresco del ambiente.</label>
+            </div>
+        </div>
+
+        <!-- Caso 2 -->
+        <div class="case-container">
+            <strong>CASO B: LA PC ENCIENDE PERO NO DA VIDEO</strong><br>
+            Presionas el botón de encendido de un equipo de escritorio. Los ventiladores giran con fuerza y la pantalla se queda totalmente en negro de forma inerte, pero la computadora no emite ningún pitido en absoluto y la tarjeta madre carece de LEDs de estado activos.
+        </div>
+
+        <div class="question">
+            <p>2. ¿Qué acción técnica debes realizar primero para diagnosticar la falla según la Guía 1?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q27" value="no"> Reemplazar el disco duro secundario por un SSD de rosca fina M3.</label>
+                <label class="option-item"><input type="radio" name="q27" value="si"> Conectar una bocina interna (speaker) a los pines correspondientes de la tarjeta madre para poder escuchar los pitidos (Beep Codes) que revelen la falla</label>
+                <label class="option-item"><input type="radio" name="q27" value="no"> Realizar un Clear CMOS usando agua destilada sobre la pila CR2032.</label>
+            </div>
+        </div>
+
+        <!-- Caso 3 -->
+        <div class="case-container">
+            <strong>CASO C: LA COMPUTADORA SE APAGA AL INSTANTE</strong><br>
+            Tras realizar una limpieza física profunda y armar los componentes en un chasis metálico nuevo, conectas la computadora. Al encenderla, los ventiladores giran por medio segundo y el equipo se apaga por completo. Si presionas el botón de encendido otra vez, no reacciona en absoluto.
+        </div>
+
+        <div class="question">
+            <p>3. ¿Qué error de ensamble o cortocircuito de la Guía 3 debes inspeccionar inmediatamente?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q28" value="no"> Que la pasta térmica se aplicó usando un paño con pelusa.</label>
+                <label class="option-item"><input type="radio" name="q28" value="si"> Desarmar la PC y verificar que se hayan colocado los postes espaciadores de cobre para evitar que la tarjeta madre toque el metal del chasis</label>
+                <label class="option-item"><input type="radio" name="q28" value="no"> Cambiar el orden de arranque de la BIOS de disco mecánico a lectora de CD.</label>
+            </div>
+        </div>
+
+        <!-- Caso 4 -->
+        <div class="case-container">
+            <strong>CASO D: CONTRASEÑA DE BIOS OLVIDADA</strong><br>
+            Un estudiante de computación olvidó la contraseña de seguridad de acceso a la BIOS de un equipo de laboratorio y necesita cambiar el orden de arranque para reinstalar el sistema operativo desde una memoria USB.
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué método de soporte técnico debes aplicar para resolver el caso de forma rápida según la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q29" value="no"> Formatear el disco duro utilizando la pulsera antiestática para borrar los datos.</label>
+                <label class="option-item"><input type="radio" name="q29" value="si"> Realizar un Clear CMOS retirando la pila de la tarjeta madre por unos minutos o puenteando temporalmente los pines "JBAT1" con un desarmador</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Cambiar los tornillos de rosca gruesa por rosca fina para resetear la placa madre.</label>
+            </div>
+        </div>
+
+        <!-- Caso 5 -->
+        <div class="case-container">
+            <strong>CASO E: LA COMPUTADORA SUCIA Y SULFATADA</strong><br>
+            Un cliente trae una computadora que estuvo guardada en un sótano muy húmedo durante dos años. La tarjeta madre tiene una capa gruesa de polvo compacto y los puertos de memoria RAM se ven opacos y sulfatados (con una capa verdosa de óxido).
+        </div>
+
+        <div class="question">
+            <p>5. ¿Cuál es el procedimiento químico e higiénico correcto de limpieza de acuerdo con la Guía 2?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q30" value="no"> Lavar la tarjeta madre con agua directa del lavamanos y secarla con una sopladora de aire caliente.</label>
+                <label class="option-item"><input type="radio" name="q30" value="si"> Retirar el polvo suelto con aire comprimido, limpiar los puertos sulfatados con alcohol isopropílico al 99% y aplicar solvente dieléctrico limpiador de contactos</label>
+                <label class="option-item"><input type="radio" name="q30" value="no"> Untar pasta térmica sobre los puertos sulfatados para aislar el óxido de los pines.</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-submit" onclick="calificarYGenerar()">FINALIZAR EVALUACIÓN Y GENERAR COMPROBANTE</button>
+        <div id="result-banner"></div>
+    </div>
+</div>
+
+<script {is_jsx="false"}>
+    function calificarYGenerar() {
+        const nombreInput = document.getElementById('nombre');
+        const validationBanner = document.getElementById('validation-banner');
+        const resultBanner = document.getElementById('result-banner');
+        const nombre = nombreInput.value.trim();
+
+        // Limpiar alertas de validación de formulario previas
+        validationBanner.style.display = 'none';
+        validationBanner.innerText = '';
+
+        if (!nombre || nombre.length < 5) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, ingrese sus apellidos y nombres completos para poder calificar su evaluación.";
+            nombreInput.focus();
+            return;
+        }
+
+        let puntos = 0;
+
+        // Serie I: Verdadero o Falso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q1"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q2"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q3"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q4"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q5"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie II: Selección Única (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q6"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q7"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q8"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q9"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q10"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie III: Dropdowns (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.getElementById('q11').value === 'si') puntos += 1;
+        if (document.getElementById('q12').value === 'si') puntos += 1;
+        if (document.getElementById('q13').value === 'si') puntos += 1;
+        if (document.getElementById('q14').value === 'si') puntos += 1;
+        if (document.getElementById('q15').value === 'si') puntos += 1;
+
+        // Serie IV: Estudios de Caso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q26"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q27"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q28"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q29"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q30"]:checked')?.value === 'si') puntos += 1;
+
+        // Validar límite para evitar problemas con números de punto flotante
+        puntos = Math.min(20, puntos);
+
+        // Desplegar resultado en pantalla
+        resultBanner.style.display = 'block';
+        resultBanner.innerText = `¡EXAMEN REGISTRADO CON ÉXITO! NOTA OBTENIDA: ${puntos} / 20 PUNTOS. Tu comprobante PDF se está descargando automáticamente...`;
+
+        // Generar PDF profesional
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Encabezado decorativo del comprobante (Emerald 500)
+        doc.setFillColor(16, 185, 129); // Emerald 500
+        doc.rect(0, 0, 210, 42, 'F');
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.text("COLEGIO DE INFORMÁTICA J.R.B.", 105, 18, { align: "center" });
+        doc.setFontSize(11);
+        doc.text("COMPROBANTE OFICIAL DE EVALUACIÓN DIGITAL - SOPORTE TÉCNICO", 105, 28, { align: "center" });
+
+        // Bloque de metadatos académicos
+        doc.setTextColor(15, 23, 42); // Slate 900
+        doc.setFontSize(12);
+        doc.text("DATOS ACADÉMICOS DEL ESTUDIANTE", 20, 58);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.text(`Nombre Completo: ${nombre.toUpperCase()}`, 20, 68);
+        doc.text("Curso: Soporte de Computadoras (ESD, Pasta Térmica, Beep Codes y Ensamble)", 20, 75);
+        doc.text("Grado: Quinto Bachillerato en Computación (5BACO)", 20, 82);
+        doc.text(`Fecha y Hora de Emisión: ${new Date().toLocaleString()}`, 20, 89);
+
+        // Divisor visual
+        doc.setLineWidth(0.5);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 98, 190, 98);
+
+        // Calificación final sobre 20 puntos
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(26);
+        doc.setTextColor(16, 185, 129); // Emerald 500
+        doc.text(`CALIFICACIÓN: ${puntos} / 20 PUNTOS`, 105, 120, { align: "center" });
+
+        // Consideraciones éticas y de entrega
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Este documento sirve como evidencia inalterable de la realización de la evaluación digital", 105, 140, { align: "center" });
+        doc.text("correspondiente a las Guías de la 1 a la 3 en el Laboratorio de Computación de la IV Unidad.", 105, 145, { align: "center" });
+        doc.text("Instrucciones: Guarde este comprobante y súbalo a la tarea en Google Classroom.", 105, 152, { align: "center" });
+
+        // Código de seguridad hash unificado e inalterable
+        const securityHash = "SUPP5B-U4-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        doc.setFont("courier", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(30, 41, 59);
+        doc.text(`CÓDIGO DE VALIDACIÓN UNIFICADO: ${securityHash}`, 20, 180);
+
+        // Descarga automatizada del archivo
+        doc.save(`Soporte_Computadoras_Quinto_U4_${nombre.replace(/\s+/g, '_')}.pdf`);
+    }
+</script>
+
+</body>
+</html>

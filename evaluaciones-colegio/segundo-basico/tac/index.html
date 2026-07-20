@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación TAC Segundo Básico - IV Unidad - JRB</title>
+    <!-- Librería externa para generación de comprobantes en PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #0f172a; /* Slate 900 - Textos y cabeceras sólidas */
+            --primary-light: #1e293b; /* Slate 800 */
+            --accent: #10b981; /* Emerald 500 - Identidad y tecnologías */
+            --accent-hover: #059669; /* Emerald 600 */
+            --accent-light: #ecfdf5; /* Emerald 50 - Fondos de interacción */
+            --light-bg: #f8fafc; /* Slate 50 - Fondo general de pantalla */
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1; /* Slate 300 */
+            --text-muted: #64748b; /* Slate 500 */
+            --success: #10b981; /* Emerald 500 */
+            --success-light: #ecfdf5; /* Emerald 50 */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--light-bg); 
+            margin: 0; 
+            padding: 40px 15px;
+            color: var(--primary);
+        }
+
+        .exam-card { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+            border-top: 10px solid var(--accent);
+        }
+
+        /* Encabezado Principal */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 35px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+        }
+
+        .header-info h1 { 
+            margin: 0; 
+            font-size: 1.6rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        .header-info p { 
+            margin: 6px 0 0; 
+            opacity: 0.85; 
+            font-size: 0.95rem; 
+            color: #94a3b8;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Identificación del Estudiante (Ancho Completo) */
+        .student-section { 
+            padding: 25px 35px;
+            background: #fdfdfd;
+            border-bottom: 1px solid #f1f5f9;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .field { width: 100%; }
+        .field label { 
+            display: block; 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            color: var(--accent); 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            letter-spacing: 0.8px;
+        }
+        .field input { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            background-color: var(--card-bg);
+            color: var(--primary);
+        }
+        .field input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Estructura de las Series */
+        .serie { 
+            padding: 35px 35px; 
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .serie-title { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--accent); 
+            padding-left: 15px; 
+            margin-bottom: 15px; 
+        }
+        .serie-title h2 { margin: 0; font-size: 1.25rem; color: var(--primary); text-transform: uppercase; }
+        .badge-points {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .instruction-box {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            color: #065f46;
+        }
+        
+        .question { margin-bottom: 28px; }
+        .question p { margin-top: 0; font-weight: 600; font-size: 1rem; color: var(--primary); line-height: 1.5; }
+
+        /* Controles de Selección e Inputs Estéticos */
+        .options-container { display: grid; gap: 10px; }
+        .option-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .option-item:hover { border-color: var(--accent); background: var(--accent-light); }
+        .option-item input { margin-right: 12px; cursor: pointer; width: 16px; height: 16px; }
+
+        .select-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: var(--card-bg);
+            color: var(--primary);
+            transition: border 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .select-input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        .case-container {
+            background-color: #f8fafc;
+            border: 1.5px dashed var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Banner de Alerta */
+        .error-message {
+            display: none;
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 35px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Botón de Finalización */
+        .btn-container { padding: 40px 35px; text-align: center; }
+        .btn-submit { 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            padding: 16px 50px; 
+            font-size: 1.15rem; 
+            font-weight: bold; 
+            border-radius: 50px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+        }
+        .btn-submit:hover { 
+            background: var(--accent-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        #result-banner {
+            display: none;
+            margin: 20px 35px;
+            padding: 25px;
+            background: var(--success-light);
+            color: #065f46;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid #a7f3d0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-card">
+    <header class="header">
+        <div class="header-info">
+            <p>COLEGIO DE INFORMÁTICA JUSTO RUFINO BAUTISTA</p>
+            <h1>Evaluación Parcial - Cuarta Unidad</h1>
+            <p>Curso: Tecnologías de la Aprendizaje y la Comunicación (TAC) | Segundo Básico</p>
+        </div>
+        <div class="logo-container">
+            <!-- Logo oficial desde la carpeta public descarga.png -->
+            <img src="public/descarga.png" alt="Logo JRB" onerror="this.src='https://placehold.co/100x100?text=J.R.B.'">
+        </div>
+    </header>
+
+    <section class="student-section">
+        <div class="field">
+            <label for="nombre">Nombre Completo del Estudiante</label>
+            <input type="text" id="nombre" placeholder="Escriba sus apellidos y nombres completos aquí..." required>
+        </div>
+    </section>
+
+    <!-- Banner de Validación de Formulario -->
+    <div id="validation-banner" class="error-message"></div>
+
+    <!-- I SERIE: VERDADERO O FALSO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>I Serie: Búsqueda de Información y Convivencia Digital (Verdadero o Falso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lea detenidamente cada enunciado basado en las normas de Netiqueta, confiabilidad de fuentes y validación académica. Seleccione <strong>Verdadero (V)</strong> o <strong>Falso (F)</strong> según corresponda. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. Para asegurarnos de que la información de una página web es confiable, es indispensable verificar criterios como la autoridad del autor, el rigor científico y la actualización de los datos.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q1" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q1" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. Al buscar información sobre un tema académico en Google, el uso del operador `" "` (comillas) sirve para excluir de forma automática la palabra escrita dentro de las comillas.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q2" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q2" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. El decálogo de Netiqueta escolar busca establecer un ambiente de comunicación cordial, asertivo y de respeto mutuo en salones virtuales y Classroom.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q3" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q3" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. Las noticias falsas o "fake news" se identifican fácilmente porque siempre proceden de portales institucionales de universidades o del gobierno local.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q4" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q4" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. Para debatir de forma asertiva en un foro en línea, se debe argumentar con base en información validada y objetiva, evitando atacar de forma personal a los demás compañeros.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q5" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q5" value="no"> Falso (F)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- II SERIE: SELECCIÓN MÚLTIPLE -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>II Serie: Almacenamiento Jerárquico y Gestión en la Nube (Selección Múltiple)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lea detenidamente cada planteamiento técnico sobre la administración lógica de carpetas en Google Drive. Seleccione <strong>las dos alternativas correctas</strong> de las opciones presentadas. (1 punto por reactivo completo; 0.5 puntos por acierto parcial)
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cuáles de las siguientes opciones describen beneficios de aplicar una nomenclatura estricta y lógica de archivos al almacenar tus tareas en Google Drive?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="checkbox" name="q11" value="si"> Facilita la búsqueda rápida de archivos mediante filtros y evita confusiones con nombres repetidos</label>
+                <label class="option-item"><input type="checkbox" name="q11" value="no"> Convierte de forma automática todos los archivos PDF locales a formato de hoja de cálculo</label>
+                <label class="option-item"><input type="checkbox" name="q11" value="si"> Permite mantener una estructura organizada del portafolio digital, facilitando la auditoría de tareas para el docente</label>
+                <label class="option-item"><input type="checkbox" name="q11" value="no"> Bloquea la cuenta para que ningún usuario con permiso de editor pueda consultar los documentos</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. ¿Cuáles son componentes de una estructura jerárquica u organización por "diagrama de árbol" en el almacenamiento en la nube (Guía 2)?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="checkbox" name="q12" value="si"> Una carpeta raíz o principal bien identificada que actúa como el tronco del almacenamiento</label>
+                <label class="option-item"><input type="checkbox" name="q12" value="no"> El puerto SQL 1433 asignado al firewall de Google Drive</label>
+                <label class="option-item"><input type="checkbox" name="q12" value="si"> Subcarpetas específicas ordenadas por materias, unidades o fases del proyecto para categorizar los datos</label>
+                <label class="option-item"><input type="checkbox" name="q12" value="no"> Un actuador inercial buzzer para alertar de desbordes en el disco duro</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. Si compartes un enlace de Google Drive con permisos de "Lector" a tus compañeros de equipo, ¿qué acciones se les restringe de forma estricta según las políticas de acceso?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="checkbox" name="q13" value="si"> Modificar el contenido del documento o eliminar de forma imprevista elementos guardados</label>
+                <label class="option-item"><input type="checkbox" name="q13" value="no"> Visualizar el contenido a través de una pantalla de computadora</label>
+                <label class="option-item"><input type="checkbox" name="q13" value="si"> Cambiar el nombre de las carpetas o agregar archivos nuevos dentro del portafolio compartido</label>
+                <label class="option-item"><input type="checkbox" name="q13" value="no"> Abrir el archivo desde una conexión inalámbrica de tipo Wi-Fi</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Cuáles de las siguientes son ventajas reales de almacenar tu información académica en servicios en la nube en comparación con almacenamiento local (USB/Disco Duro)?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="checkbox" name="q14" value="no"> Inmunidad absoluta contra cualquier tipo de malware o intentos de ingeniería social</label>
+                <label class="option-item"><input type="checkbox" name="q14" value="si"> Acceso inmediato a tus documentos desde cualquier dispositivo con conexión a internet</label>
+                <label class="option-item"><input type="checkbox" name="q14" value="si"> Resguardo y respaldo seguro de tus tareas en caso de que tu computadora sufra un daño físico</label>
+                <label class="option-item"><input type="checkbox" name="q14" value="no"> Exclusividad de uso sin necesidad de registrar un correo electrónico o contraseña</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. ¿Qué directrices forman parte de un decálogo de políticas de acceso seguro al compartir recursos en la nube en el entorno educativo?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="checkbox" name="q15" value="si"> Otorgar permisos de "Editor" únicamente a los miembros de confianza que deben modificar el archivo de forma colaborativa</label>
+                <label class="option-item"><input type="checkbox" name="q15" value="no"> Configurar todos los enlaces de tus tareas en modo "Cualquier persona con el enlace" como editor</label>
+                <label class="option-item"><input type="checkbox" name="q15" value="si"> Utilizar la opción de "Lector" o "Comentarista" al entregar las tareas finales a los profesores para evitar alteraciones accidentales</label>
+                <label class="option-item"><input type="checkbox" name="q15" value="no"> Compartir las contraseñas de tu correo estudiantil para que tus compañeros suban los archivos por ti</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- III SERIE: SELECCIÓN ÚNICA CON DROP DOWN -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>III Serie: Colaboración Sincrónica e Historial de Cambios (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Complete conceptualmente cada enunciado sobre el trabajo colaborativo sincrónico. Seleccione de la lista desplegable la única respuesta correcta de acuerdo a lo estudiado en la Guía 3. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. La metodología de trabajo donde un grupo de estudiantes edita, escribe y debate de forma simultánea en un único documento digital en tiempo real se denomina:</p>
+            <select class="select-input" id="q6">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Edición Sincrónica y Colaborativa</option>
+                <option value="no">Edición Asincrónica Segmentada</option>
+                <option value="no">Auditoría física de archivos locales</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>2. Herramienta integrada en Google Docs que permite registrar con precisión el historial de cambios, los nombres de los autores, y restaurar una versión anterior del archivo ante fallos de edición:</p>
+            <select class="select-input" id="q7">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Panel de Netiqueta</option>
+                <option value="si">Historial de Versiones</option>
+                <option value="no">Administrador de Estilos (F3)</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>3. Permiso intermedio en la nube que permite a un usuario añadir sugerencias o notas de revisión en los costados de una hoja sin alterar de forma directa el texto redactado por el autor original:</p>
+            <select class="select-input" id="q8">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Permiso de Editor</option>
+                <option value="si">Permiso de Comentarista</option>
+                <option value="no">Permiso de Lector</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué grave riesgo de seguridad y control lógico corremos al compartir un documento de trabajo grupal configurado como público para cualquier persona con el enlace en modo de editor?</p>
+            <select class="select-input" id="q9">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Que el procesador de textos se desactive físicamente.</option>
+                <option value="si">Que usuarios anónimos o personas externas puedan ingresar al archivo, vandalizar el contenido o borrar datos críticos sin dejar rastro en la auditoría.</option>
+                <option value="no">Que cambie el estándar de ponchado de cables UTP de tu red local.</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>5. Para verificar quién realizó un aporte específico en un trabajo colaborativo grupal que fue copiado de internet, un docente de TAC debe:</p>
+            <select class="select-input" id="q10">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Cambiar el SSID del enrutador inalámbrico Wi-Fi.</option>
+                <option value="si">Consultar el Historial de Versiones en Google Docs para rastrear qué autor redactó ese fragmento de texto de forma exacta</option>
+                <option value="no">Revertir el controlador de la tarjeta madre al estado anterior.</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- IV SERIE: ESTUDIOS DE CASO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>IV Serie: Aplicación Práctica e Incidentes en la Nube (Estudios de Caso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analice de forma lógica cada caso práctico adaptado a las situaciones del trabajo en equipo, la ciberseguridad y la convivencia digital de Segundo Básico. Seleccione la opción adecuada. (1 punto por acierto)
+        </div>
+
+        <!-- Caso 1 -->
+        <div class="case-container">
+            <strong>CASO A: EL TRABAJO EN EQUIPO DESINTEGRADO</strong><br>
+            Un grupo de estudiantes de TAC debe elaborar un reporte de investigación. El líder decide enviar un archivo unificado y que cada integrante trabaje de forma "asincrónica" por su cuenta desde casa, enviándole las partes por separado en correos. Al final, el documento se desordena, la redacción es incoherente y duplican información de forma innecesaria.
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cómo debieron optimizar la entrega de su proyecto aplicando los principios de la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q26" value="no"> Imprimir cada sección y unirlas con engrapadora física antes de enviarlas al colegio.</label>
+                <label class="option-item"><input type="radio" name="q26" value="si"> Crear un único documento en Google Docs y trabajar de forma sincrónica y colaborativa en tiempo real, utilizando comentarios y debates internos para unificar el estilo</label>
+                <label class="option-item"><input type="radio" name="q26" value="no"> Configurar el puerto SQL 1433 en cada una de las computadoras locales.</label>
+            </div>
+        </div>
+
+        <!-- Caso 2 -->
+        <div class="case-container">
+            <strong>CASO B: EL VANDALISMO DE LA MONOGRAFÍA</strong><br>
+            Durante la noche anterior a la entrega, un documento compartido en Google Drive para una exposición de ciencias fue vandalizado: se borró la introducción completa y se escribieron chistes irrespetuosos. La carpeta de trabajo estaba configurada con el enlace público en modo de editor ("Cualquier persona con el enlace puede editar").
+        </div>
+
+        <div class="question">
+            <p>2. ¿Cómo resuelves de forma técnica la restauración de la información y qué medida de seguridad aplicas para el futuro según las Guías 2 y 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q27" value="no"> Volver a escribir todo a mano en tu cuaderno de TAC y eliminar la cuenta de Drive.</label>
+                <label class="option-item"><input type="radio" name="q27" value="si"> Acceder al Historial de Versiones para restaurar el documento al estado de la última versión correcta, y cambiar el acceso restringiendo los permisos de editor únicamente a los correos institucionales de los integrantes del grupo</label>
+                <label class="option-item"><input type="radio" name="q27" value="no"> Cambiar el cable patch cord de red UTP por uno cruzado 568A.</label>
+            </div>
+        </div>
+
+        <!-- Caso 3 -->
+        <div class="case-container">
+            <strong>CASO C: LA ENTREGA DE LA TAREA FINAL</strong><br>
+            Sofía ha terminado de maquetar la infografía final de la feria de robótica del 06 de junio y debe compartir el enlace de su carpeta en Classroom al profesor para que la califique. Ella quiere asegurarse de que el docente pueda ver todo pero que ningún compañero o visitante pueda editar o alterar accidentalmente los archivos de su entrega final.
+        </div>
+
+        <div class="question">
+            <p>3. ¿Qué configuración y permiso de compartición de recursos debe aplicar según las directrices de la Guía 2?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q28" value="no"> Configurar la carpeta como pública en modo de "Editor" general.</label>
+                <label class="option-item"><input type="radio" name="q28" value="si"> Compartir el enlace con el permiso exclusivo de "Lector" para evitar modificaciones accidentales en el portafolio final</label>
+                <label class="option-item"><input type="radio" name="q28" value="no"> Enviar el archivo original comprimido mediante una base de datos SQL remota.</label>
+            </div>
+        </div>
+
+        <!-- Caso 4 -->
+        <div class="case-container">
+            <strong>CASO D: LA AUDITORÍA DE APORTES GRUPALES</strong><br>
+            Un integrante de un grupo de TAC asegura que trabajó durante 5 horas seguidas en la redacción del marco teórico grupal en Google Docs. Sin embargo, al revisar el documento unificado, el texto se ve idéntico a una página de Wikipedia y con errores lógicos.
+        </div>
+
+        <div class="question">
+            <p>4. ¿Cómo puede auditar el coordinador del grupo de forma objetiva los aportes reales de cada integrante basándose en la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q29" value="no"> Eliminar la cuenta de Google Docs del estudiante de forma definitiva.</label>
+                <label class="option-item"><input type="radio" name="q29" value="si"> Abrir el Historial de Versiones de Google Docs para revisar de forma visual qué párrafos redactó cada usuario por su color asignado de autor</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Configurar un margen de sangría de 3mm en el documento impreso.</label>
+            </div>
+        </div>
+
+        <!-- Caso 5 -->
+        <div class="case-container">
+            <strong>CASO E: EL DIAGRAMA DE PORTAFOLIO DE MARIO</strong><br>
+            Mario debe organizar más de 50 archivos de tareas de distintas materias que tiene guardados sueltos en la nube. Sabe que necesita un sistema estructurado de carpetas ordenado de forma lógica y representarlo en su cuaderno de TAC para que no se le pierda nada.
+        </div>
+
+        <div class="question">
+            <p>5. ¿Qué herramienta organizativa técnica de la Guía 2 debe emplear Mario para diseñar la estructura de almacenamiento?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q30" value="no"> Crear una tabla con un modelo de base de datos relacional de tres entidades.</label>
+                <label class="option-item"><input type="radio" name="q30" value="si"> Diseñar un diagrama de árbol jerárquico que desglose visualmente la carpeta raíz y las subcarpetas organizadas por materia y unidades escolares</label>
+                <label class="option-item"><input type="radio" name="q30" value="no"> Cambiar el nombre de los archivos a formato de variables booleanas.</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-submit" onclick="calificarYGenerar()">FINALIZAR EVALUACIÓN Y GENERAR COMPROBANTE</button>
+        <div id="result-banner"></div>
+    </div>
+</div>
+
+<script {is_jsx="false"}>
+    function calificarYGenerar() {
+        const nombreInput = document.getElementById('nombre');
+        const validationBanner = document.getElementById('validation-banner');
+        const resultBanner = document.getElementById('result-banner');
+        const nombre = nombreInput.value.trim();
+
+        // Limpiar alertas de validación previas
+        validationBanner.style.display = 'none';
+        validationBanner.innerText = '';
+
+        if (!nombre || nombre.length < 5) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, ingrese sus apellidos y nombres completos para poder procesar y calificar su evaluación.";
+            nombreInput.focus();
+            return;
+        }
+
+        let puntos = 0;
+
+        // Serie I: Verdadero o Falso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q1"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q2"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q3"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q4"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q5"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie II: Selección Múltiple (5 ítems, 1 punto c/u -> Max 5.0: 0.5 puntos por cada check correcto)
+        // Item 11 (si = a, c)
+        const q11Options = document.querySelectorAll('input[name="q11"]:checked');
+        let q11CorrectCount = 0;
+        q11Options.forEach(opt => { if (opt.value === 'si') q11CorrectCount++; });
+        if (q11Options.length <= 2) { puntos += q11CorrectCount * 0.5; }
+
+        // Item 12 (si = a, c)
+        const q12Options = document.querySelectorAll('input[name="q12"]:checked');
+        let q12CorrectCount = 0;
+        q12Options.forEach(opt => { if (opt.value === 'si') q12CorrectCount++; });
+        if (q12Options.length <= 2) { puntos += q12CorrectCount * 0.5; }
+
+        // Item 13 (si = a, c)
+        const q13Options = document.querySelectorAll('input[name="q13"]:checked');
+        let q13CorrectCount = 0;
+        q13Options.forEach(opt => { if (opt.value === 'si') q13CorrectCount++; });
+        if (q13Options.length <= 2) { puntos += q13CorrectCount * 0.5; }
+
+        // Item 14 (si = b, c)
+        const q14Options = document.querySelectorAll('input[name="q14"]:checked');
+        let q14CorrectCount = 0;
+        q14Options.forEach(opt => { if (opt.value === 'si') q14CorrectCount++; });
+        if (q14Options.length <= 2) { puntos += q14CorrectCount * 0.5; }
+
+        // Item 15 (si = a, c)
+        const q15Options = document.querySelectorAll('input[name="q15"]:checked');
+        let q15CorrectCount = 0;
+        q15Options.forEach(opt => { if (opt.value === 'si') q15CorrectCount++; });
+        if (q15Options.length <= 2) { puntos += q15CorrectCount * 0.5; }
+
+        // Serie III: Selección Única (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.getElementById('q6').value === 'si') puntos += 1;
+        if (document.getElementById('q7').value === 'si') puntos += 1;
+        if (document.getElementById('q8').value === 'si') puntos += 1;
+        if (document.getElementById('q9').value === 'si') puntos += 1;
+        if (document.getElementById('q10').value === 'si') puntos += 1;
+
+        // Serie IV: Estudio de Caso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q26"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q27"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q28"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q29"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q30"]:checked')?.value === 'si') puntos += 1;
+
+        // Asegurarse de no exceder los 20 puntos por decimales de coma flotante
+        puntos = Math.min(20, Math.round(puntos * 10) / 10);
+
+        // Desplegar resultado en pantalla
+        resultBanner.style.display = 'block';
+        resultBanner.innerText = `¡EXAMEN REGISTRADO CON ÉXITO! NOTA OBTENIDA: ${puntos} / 20 PUNTOS. Tu comprobante PDF se está descargando automáticamente...`;
+
+        // Generar PDF profesional
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Encabezado decorativo del comprobante (Emerald 500)
+        doc.setFillColor(16, 185, 129); // Emerald 500
+        doc.rect(0, 0, 210, 42, 'F');
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.text("COLEGIO DE INFORMÁTICA J.R.B.", 105, 18, { align: "center" });
+        doc.setFontSize(11);
+        doc.text("COMPROBANTE OFICIAL DE EVALUACIÓN DIGITAL - TAC", 105, 28, { align: "center" });
+
+        // Bloque de metadatos académicos
+        doc.setTextColor(15, 23, 42); // Slate 900
+        doc.setFontSize(12);
+        doc.text("DATOS ACADÉMICOS DEL ESTUDIANTE", 20, 58);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.text(`Nombre Completo: ${nombre.toUpperCase()}`, 20, 68);
+        doc.text("Curso: Tecnologías de la Aprendizaje y la Comunicación (TAC)", 20, 75);
+        doc.text("Grado: Segundo Básico", 20, 82);
+        doc.text(`Fecha y Hora de Emisión: ${new Date().toLocaleString()}`, 20, 89);
+
+        // Divisor visual
+        doc.setLineWidth(0.5);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 98, 190, 98);
+
+        // Calificación final sobre 20 puntos
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(26);
+        doc.setTextColor(16, 185, 129); // Emerald 500
+        doc.text(`CALIFICACIÓN: ${puntos} / 20 PUNTOS`, 105, 120, { align: "center" });
+
+        // Consideraciones éticas y de entrega
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Este documento sirve como evidencia inalterable de la realización de la evaluación digital", 105, 140, { align: "center" });
+        doc.text("correspondiente a las Guías de la 1 a la 3 en el Laboratorio de TAC de la IV Unidad.", 105, 145, { align: "center" });
+        doc.text("Instrucciones: Guarde este comprobante y súbalo a la tarea en Google Classroom.", 105, 152, { align: "center" });
+
+        // Código de seguridad hash unificado e inalterable
+        const securityHash = "TAC2B-U4-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        doc.setFont("courier", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(30, 41, 59);
+        doc.text(`CÓDIGO DE VALIDACIÓN UNIFICADO: ${securityHash}`, 20, 180);
+
+        // Descarga automatizada del archivo
+        doc.save(`TAC_Segundo_Basico_U4_${nombre.replace(/\s+/g, '_')}.pdf`);
+    }
+</script>
+
+</body>
+</html>

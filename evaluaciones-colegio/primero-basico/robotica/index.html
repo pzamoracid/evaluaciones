@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Robótica Primero Básico - IV Unidad - JRB</title>
+    <!-- Librería externa para generación de comprobantes en PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #0f172a; /* Slate 900 - Textos y cabeceras sólidas */
+            --primary-light: #1e293b; /* Slate 800 */
+            --accent: #10b981; /* Emerald 500 - Identidad y tecnología */
+            --accent-hover: #059669; /* Emerald 600 */
+            --accent-light: #ecfdf5; /* Emerald 50 - Fondos de interacción */
+            --light-bg: #f8fafc; /* Slate 50 - Fondo general de pantalla */
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1; /* Slate 300 */
+            --text-muted: #64748b; /* Slate 500 */
+            --success: #10b981; /* Emerald 500 */
+            --success-light: #ecfdf5; /* Emerald 50 */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--light-bg); 
+            margin: 0; 
+            padding: 40px 15px;
+            color: var(--primary);
+        }
+
+        .exam-card { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+            border-top: 10px solid var(--accent);
+        }
+
+        /* Encabezado Principal */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 35px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+        }
+
+        .header-info h1 { 
+            margin: 0; 
+            font-size: 1.6rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        .header-info p { 
+            margin: 6px 0 0; 
+            opacity: 0.85; 
+            font-size: 0.95rem; 
+            color: #94a3b8;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Identificación del Estudiante (Ancho Completo) */
+        .student-section { 
+            padding: 25px 35px;
+            background: #fdfdfd;
+            border-bottom: 1px solid #f1f5f9;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .field { width: 100%; }
+        .field label { 
+            display: block; 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            color: var(--accent); 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            letter-spacing: 0.8px;
+        }
+        .field input { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            background-color: var(--card-bg);
+            color: var(--primary);
+        }
+        .field input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Estructura de las Series */
+        .serie { 
+            padding: 35px 35px; 
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .serie-title { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--accent); 
+            padding-left: 15px; 
+            margin-bottom: 15px; 
+        }
+        .serie-title h2 { margin: 0; font-size: 1.25rem; color: var(--primary); text-transform: uppercase; }
+        .badge-points {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .instruction-box {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            color: #065f46;
+        }
+        
+        .question { margin-bottom: 28px; }
+        .question p { margin-top: 0; font-weight: 600; font-size: 1rem; color: var(--primary); line-height: 1.5; }
+
+        /* Controles de Selección e Inputs Estéticos */
+        .options-container { display: grid; gap: 10px; }
+        .option-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .option-item:hover { border-color: var(--accent); background: var(--accent-light); }
+        .option-item input { margin-right: 12px; cursor: pointer; width: 16px; height: 16px; }
+
+        .select-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: var(--card-bg);
+            color: var(--primary);
+            transition: border 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .select-input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        .case-container {
+            background-color: #f8fafc;
+            border: 1.5px dashed var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Banner de Alerta */
+        .error-message {
+            display: none;
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 35px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Botón de Finalización */
+        .btn-container { padding: 40px 35px; text-align: center; }
+        .btn-submit { 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            padding: 16px 50px; 
+            font-size: 1.15rem; 
+            font-weight: bold; 
+            border-radius: 50px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+        }
+        .btn-submit:hover { 
+            background: var(--accent-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        #result-banner {
+            display: none;
+            margin: 20px 35px;
+            padding: 25px;
+            background: var(--success-light);
+            color: #065f46;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid #a7f3d0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-card">
+    <header class="header">
+        <div class="header-info">
+            <p>COLEGIO DE INFORMÁTICA JUSTO RUFINO BAUTISTA</p>
+            <h1>Evaluación Parcial - Cuarta Unidad</h1>
+            <p>Curso: Robótica Educativa | Primero Básico</p>
+        </div>
+        <div class="logo-container">
+            <!-- Logo oficial desde la carpeta public descarga.png -->
+            <img src="public/descarga.png" alt="Logo JRB" onerror="this.src='https://placehold.co/100x100?text=J.R.B.'">
+        </div>
+    </header>
+
+    <section class="student-section">
+        <div class="field">
+            <label for="nombre">Nombre Completo del Estudiante</label>
+            <input type="text" id="nombre" placeholder="Escriba sus apellidos y nombres completos aquí..." required>
+        </div>
+    </section>
+
+    <!-- Banner de Validación de Formulario -->
+    <div id="validation-banner" class="error-message"></div>
+
+    <!-- I SERIE: EL SENSOR CUÁDRUPLE RGB -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>I Serie: El Sensor Cuádruple RGB y Seguidor de Líneas (Verdadero o Falso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lea detenidamente cada enunciado sobre el funcionamiento físico y la programación del sensor cuádruple RGB en mBot2. Seleccione <strong>Verdadero (V)</strong> o <strong>Falso (F)</strong> según corresponda. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. Un sensor es un componente electrónico capaz de detectar estímulos del entorno físico (como luz, color o distancia) y convertirlos en señales eléctricas procesables.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q1" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q1" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. El sensor cuádruple RGB del mBot2 únicamente detecta la escala de grises y es físicamente incapaz de reconocer colores aditivos como el Rojo, Verde y Azul.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q2" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q2" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. La "luz reflejada" mide la intensidad de la luz que emite el propio sensor y rebota en la superficie, mientras que la "luz ambiental" mide la iluminación general del entorno.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q3" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q3" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. Para programar un seguidor de líneas autónomo básico, se debe usar la lógica condicional ("si... entonces") para evaluar si el sensor detecta el color negro de la pista.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q4" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q4" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. Al calibrar el sensor cuádruple RGB, los valores de color se configuran al azar sin importar si la superficie de la pista es blanca o negra.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q5" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q5" value="si"> Falso (F)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- II SERIE: SELECCIÓN ÚNICA (ANIMACIÓN Y SIMULACIÓN) -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>II Serie: Animación y Simulación en Animaker (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lea detenidamente cada planteamiento sobre los principios de animación y simulación de proyectos científicos. Seleccione la única respuesta correcta. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. ¿Qué es la animación digital y cuál es su objetivo principal en la explicación de proyectos científicos y de robótica?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q6" value="no"> Es un tipo de base de datos relacional para guardar códigos de mBlock.</label>
+                <label class="option-item"><input type="radio" name="q6" value="si"> Es una simulación visual que permite mostrar de forma dinámica e interactiva el funcionamiento lógico de un robot.</label>
+                <label class="option-item"><input type="radio" name="q6" value="no"> Es un puerto físico que conecta el mBot2 a la red inalámbrica LAN.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. ¿Cómo se conoce técnicamente al elemento de control que permite organizar de manera cronológica la aparición de personajes, fondos, audios y efectos en Animaker?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q7" value="no"> Panel de Capas</label>
+                <label class="option-item"><input type="radio" name="q7" value="si"> Línea de Tiempo (Timeline)</label>
+                <label class="option-item"><input type="radio" name="q7" value="no"> Sensor cuádruple de rotación</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. ¿Para qué sirven las "transiciones de escena" en un proyecto de animación o simulación visual?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q8" value="no"> Para calibrar los sensores de luz reflejada del mBot2.</label>
+                <label class="option-item"><input type="radio" name="q8" value="si"> Para asegurar un paso suave, fluido y narrativamente claro de una toma o escena a la siguiente.</label>
+                <label class="option-item"><input type="radio" name="q8" value="no"> Para cambiar la velocidad angular de rotación de los motores.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué es un fotograma clave (keyframe) en la lógica de la animación 2D en plataformas digitales?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q9" value="no"> Una regla que divide la pantalla en 3 columnas simétricas.</label>
+                <label class="option-item"><input type="radio" name="q9" value="no"> El chasis de plástico que sostiene la CyberPi del mBot2.</label>
+                <label class="option-item"><input type="radio" name="q9" value="si"> El punto específico que registra el inicio o el fin de un cambio de movimiento u opacidad de un objeto.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. De acuerdo con la Guía de Trabajo No. 2, antes de construir físicamente un prototipo robótico, ¿por qué es útil realizar su animación digital?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q10" value="no"> Porque la animación reemplaza la necesidad de programar el robot final.</label>
+                <label class="option-item"><input type="radio" name="q10" value="si"> Porque permite previsualizar la lógica del funcionamiento del robot, reduciendo errores y desperdicio de materiales.</label>
+                <label class="option-item"><input type="radio" name="q10" value="no"> Para configurar el direccionamiento dinámico IP por DHCP de las CyberPi.</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- III SERIE: EL ESPECTRO DE SONIDO Y LAS ONDAS -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>III Serie: Ondas Mecánicas y Actuadores de Sonido (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Complete conceptualmente cada uno de los enunciados sobre el espectro acústico y el hardware del sonido en robótica. Seleccione la única respuesta correcta de la lista desplegable. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. El sonido es físicamente una onda mecánica que se propaga a través de vibraciones y que requiere de forma obligatoria de:</p>
+            <select class="select-input" id="q11">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Un medio elástico (sólido, líquido o gaseoso) para poder propagarse.</option>
+                <option value="no">El vacío absoluto del espacio exterior para no dispersar su energía.</option>
+                <option value="no">Una dirección MAC grabada físicamente de fábrica.</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>2. De acuerdo con la física acústica de la Guía No. 3, ¿en qué medio elástico viajan las ondas de sonido a una velocidad significativamente mayor?</p>
+            <select class="select-input" id="q12">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">En medios gaseosos (como el aire de la atmósfera).</option>
+                <option value="no">En medios líquidos (como el agua de una piscina).</option>
+                <option value="si">En medios sólidos (como el metal o madera), debido a la alta cohesión de sus moléculas.</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>3. ¿Cuál es la diferencia fundamental entre un Buzzer Activo y un Buzzer Pasivo en los sistemas de robótica y CyberPi?</p>
+            <select class="select-input" id="q13">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">El buzzer activo requiere un cable coaxial de 15 pines y el pasivo se conecta de forma inalámbrica.</option>
+                <option value="si">El buzzer activo emite un zumbido a una frecuencia fija al recibir voltaje directo; el pasivo requiere señales oscilantes para programar notas y melodías.</option>
+                <option value="no">El buzzer activo lee la luz reflejada y el pasivo emite ondas ultrasónicas.</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué componente de hardware emisor de sonido utiliza un electroimán y un cono flexible para reproducir un rango amplio de frecuencias de audio complejas (como voz humana)?</p>
+            <select class="select-input" id="q14">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Buzzer Pasivo limitado</option>
+                <option value="si">Altavoz (Parlante)</option>
+                <option value="no">Sensor cuádruple de color</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>5. ¿Qué sucede físicamente con la propagación del sonido si intentamos reproducir una alerta acústica en el vacío completo del espacio exterior?</p>
+            <select class="select-input" id="q15">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">El sonido se duplica en volumen debido a la falta de gravedad.</option>
+                <option value="si">El sonido no se propaga en absoluto porque no existen moléculas físicas para transmitir la vibración de la onda.</option>
+                <option value="no">Las ondas mecánicas se transforman en luz reflejada de color rojo.</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- IV SERIE: ESTUDIOS DE CASO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>IV Serie: Aplicación Práctica e Ingeniería de Campo (Estudios de Caso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analice detenidamente las siguientes situaciones planteadas de las guías de estudio unificadas de la IV unidad. Seleccione la respuesta idónea de forma ética y técnica. (1 punto por acierto)
+        </div>
+
+        <!-- Caso 1 -->
+        <div class="case-container">
+            <strong>CASO A: EL SEGUIDOR DE LÍNEAS QUE PIERDE EL RUMBO</strong><br>
+            Estás probando tu mBot2 seguidor de líneas autónomo en el laboratorio. Al encenderlo cerca de la ventana, donde entra mucha luz solar directa, el robot se confunde, se sale de la pista negra y empieza a dar vueltas de forma descontrolada.
+        </div>
+
+        <div class="question">
+            <p>1. ¿A qué se debe este fallo técnico y cómo lo solucionas aplicando los conocimientos de la Guía 1?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q26" value="no"> Los motores encoder sufrieron inercia estática; se debe reconfigurar el buzzer activo.</label>
+                <label class="option-item"><input type="radio" name="q26" value="si"> La luz ambiental del sol interfiere con los fototransistores del sensor RGB; se debe calibrar el sensor bajo las condiciones de luz del entorno o sombrear la pista</label>
+                <label class="option-item"><input type="radio" name="q26" value="no"> El robot necesita un permiso de "Lector" en Google Drive para guardar sus variables.</label>
+            </div>
+        </div>
+
+        <!-- Caso 2 -->
+        <div class="case-container">
+            <strong>CASO B: PRESENTACIÓN EN LA FERIA DE ROBÓTICA</strong><br>
+            Para la feria escolar del 06 de junio, tu grupo diseñó una animación 2D en Animaker para explicar la lógica de los sensores. Al reproducir la simulación, los profesores notan que los textos se superponen con los personajes de golpe y las escenas cambian bruscamente, haciendo confuso el mensaje.
+        </div>
+
+        <div class="question">
+            <p>2. ¿Qué herramientas de maquetación y principios de animación de la Guía 2 debieron ajustar para corregir el video?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q27" value="no"> Instalar un controlador de video VGA con tornillos de sujeción manual.</label>
+                <label class="option-item"><input type="radio" name="q27" value="si"> Sincronizar los elementos en la Línea de Tiempo utilizando fotogramas clave y aplicar transiciones de escena suaves</label>
+                <label class="option-item"><input type="radio" name="q27" value="no"> Cambiar el formato de color de las imágenes de CMYK a RGB digital.</label>
+            </div>
+        </div>
+
+        <!-- Caso 3 -->
+        <div class="case-container">
+            <strong>CASO C: PROTOTIPO DE MONITOREO DE LLUVIA</strong><br>
+            Diseñas un prototipo inteligente para alertar a una comunidad cuando empiece a llover de forma brusca. Deseas que el robot mBot2 emita una alarma con diferentes tonos (notas musicales agudas y graves) para que sea claramente reconocible a distancia.
+        </div>
+
+        <div class="question">
+            <p>3. ¿Qué actuador de sonido es el adecuado para programar las notas musicales de tu alarma según la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q28" value="no"> Un Buzzer Activo de tono fijo.</label>
+                <label class="option-item"><input type="radio" name="q28" value="si"> Un Buzzer Pasivo, ya que permite controlar la frecuencia de oscilación eléctrica para crear diferentes tonos musicales</label>
+                <label class="option-item"><input type="radio" name="q28" value="no"> El sensor cuádruple RGB en modo de luz reflejada.</label>
+            </div>
+        </div>
+
+        <!-- Caso 4 -->
+        <div class="case-container">
+            <strong>CASO D: SISTEMA DE COMUNICACIÓN ACÚSTICA SUBMARINA</strong><br>
+            Estás planificando un robot autónomo que sumergirás en un estanque de agua para monitorear muestras biológicas. El robot debe enviar pulsos acústicos (sonidos cortos de alerta) a un receptor flotante en la superficie del agua.
+        </div>
+
+        <div class="question">
+            <p>4. Con base en la física de las ondas, ¿cómo se comportará la velocidad de propagación del sonido de la alerta submarina?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q29" value="si"> Viajará más rápido en el agua líquida que en el aire gaseoso porque las moléculas de agua están más juntas, transmitiendo la vibración con mayor velocidad</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Viajará más lento porque la viscosidad del agua destruye la energía de la onda inercial.</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Se detendrá por completo debido a la falta de oxígeno libre para las ondas.</label>
+            </div>
+        </div>
+
+        <!-- Caso 5 -->
+        <div class="case-container">
+            <strong>CASO E: ALARMA PERIMETRAL SEGUIDORA</strong><br>
+            Deseas que tu mBot2 se detenga y reproduzca una nota musical de alerta únicamente cuando el sensor cuádruple detecte una tarjeta de color ROJO en el suelo de la pista. Al cargar el programa, el robot pasa encima de la tarjeta roja pero continúa avanzando sin detenerse.
+        </div>
+
+        <div class="question">
+            <p>5. ¿Cuál es el error lógico que debes revisar de inmediato en tu código mBlock 5 de acuerdo a la Guía 1?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q30" value="no"> Olvidar registrar la dirección IP del Gateway del laboratorio.</label>
+                <label class="option-item"><input type="radio" name="q30" value="no"> Que el buzzer pasivo no tenga cargada la melodía a 3200 Kelvin.</label>
+                <label class="option-item"><input type="radio" name="q30" value="si"> Que el bloque condicional <code>si [sensor RGB detecta color] entonces</code> esté configurado para evaluar un color diferente (como verde o azul) en lugar de evaluar el color rojo</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-submit" onclick="calificarYGenerar()">FINALIZAR EVALUACIÓN Y GENERAR COMPROBANTE</button>
+        <div id="result-banner"></div>
+    </div>
+</div>
+
+<script {is_jsx="false"}>
+    function calificarYGenerar() {
+        const nombreInput = document.getElementById('nombre');
+        const validationBanner = document.getElementById('validation-banner');
+        const resultBanner = document.getElementById('result-banner');
+        const nombre = nombreInput.value.trim();
+
+        // Limpiar alertas de validación previas
+        validationBanner.style.display = 'none';
+        validationBanner.innerText = '';
+
+        if (!nombre || nombre.length < 5) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, ingrese sus apellidos y nombres completos para poder procesar y calificar su evaluación.";
+            nombreInput.focus();
+            return;
+        }
+
+        let puntos = 0;
+
+        // Serie I: Verdadero o Falso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q1"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q2"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q3"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q4"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q5"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie II: Selección Única (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q6"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q7"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q8"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q9"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q10"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie III: Dropdowns (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.getElementById('q11').value === 'si') puntos += 1;
+        if (document.getElementById('q12').value === 'si') puntos += 1;
+        if (document.getElementById('q13').value === 'si') puntos += 1;
+        if (document.getElementById('q14').value === 'si') puntos += 1;
+        if (document.getElementById('q15').value === 'si') puntos += 1;
+
+        // Serie IV: Estudios de Caso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q26"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q27"]:checked')?.value === 'si') puntos += 2; // (ajustado de forma unificada)
+        if (document.querySelector('input[name="q28"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q29"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q30"]:checked')?.value === 'si') puntos += 1;
+
+        // Validar límite para evitar desfases matemáticos
+        puntos = Math.min(20, puntos);
+
+        // Desplegar resultado en pantalla
+        resultBanner.style.display = 'block';
+        resultBanner.innerText = `¡EXAMEN REGISTRADO CON ÉXITO! NOTA OBTENIDA: ${puntos} / 20 PUNTOS. Tu comprobante PDF se está descargando automáticamente...`;
+
+        // Generar PDF profesional
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Encabezado decorativo del comprobante (Emerald 500)
+        doc.setFillColor(16, 185, 129); // Emerald 500
+        doc.rect(0, 0, 210, 42, 'F');
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.text("COLEGIO DE INFORMÁTICA J.R.B.", 105, 18, { align: "center" });
+        doc.setFontSize(11);
+        doc.text("COMPROBANTE OFICIAL DE EVALUACIÓN DIGITAL - ROBÓTICA", 105, 28, { align: "center" });
+
+        // Bloque de metadatos académicos
+        doc.setTextColor(15, 23, 42); // Slate 900
+        doc.setFontSize(12);
+        doc.text("DATOS ACADÉMICOS DEL ESTUDIANTE", 20, 58);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.text(`Nombre Completo: ${nombre.toUpperCase()}`, 20, 68);
+        doc.text("Curso: Robótica Educativa I (RGB, Animación 2D y Ondas de Sonido)", 20, 75);
+        doc.text("Grado: Primero Básico", 20, 82);
+        doc.text(`Fecha y Hora de Emisión: ${new Date().toLocaleString()}`, 20, 89);
+
+        // Divisor visual
+        doc.setLineWidth(0.5);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 98, 190, 98);
+
+        // Calificación final sobre 20 puntos
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(26);
+        doc.setTextColor(16, 185, 129); // Emerald 500
+        doc.text(`CALIFICACIÓN: ${puntos} / 20 PUNTOS`, 105, 120, { align: "center" });
+
+        // Consideraciones éticas y de entrega
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Este documento sirve como evidencia inalterable de la realización de la evaluación digital", 105, 140, { align: "center" });
+        doc.text("correspondiente a las Guías de la 1 a la 3 en el Laboratorio de Robótica de la IV Unidad.", 105, 145, { align: "center" });
+        doc.text("Instrucciones: Guarde este comprobante y súbalo a la tarea en Google Classroom.", 105, 152, { align: "center" });
+
+        // Código de seguridad hash unificado e inalterable
+        const securityHash = "ROB1B-U4-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        doc.setFont("courier", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(30, 41, 59);
+        doc.text(`CÓDIGO DE VALIDACIÓN UNIFICADO: ${securityHash}`, 20, 180);
+
+        // Descarga automatizada del archivo
+        doc.save(`Robotica_Primero_Basico_U4_${nombre.replace(/\s+/g, '_')}.pdf`);
+    }
+</script>
+
+</body>
+</html>

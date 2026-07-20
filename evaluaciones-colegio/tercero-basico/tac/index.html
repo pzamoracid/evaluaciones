@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación TAC Tercero Básico - IV Unidad - JRB</title>
+    <!-- Librería externa para generación de comprobantes en PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #0f172a; /* Slate 900 - Textos y cabeceras sólidas */
+            --primary-light: #1e293b; /* Slate 800 */
+            --accent: #10b981; /* Emerald 500 - Identidad y tecnologías */
+            --accent-hover: #059669; /* Emerald 600 */
+            --accent-light: #ecfdf5; /* Emerald 50 - Fondos de interacción */
+            --light-bg: #f8fafc; /* Slate 50 - Fondo general de pantalla */
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1; /* Slate 300 */
+            --text-muted: #64748b; /* Slate 500 */
+            --success: #10b981; /* Emerald 500 */
+            --success-light: #ecfdf5; /* Emerald 50 */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--light-bg); 
+            margin: 0; 
+            padding: 40px 15px;
+            color: var(--primary);
+        }
+
+        .exam-card { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+            border-top: 10px solid var(--accent);
+        }
+
+        /* Encabezado Principal */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 35px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+        }
+
+        .header-info h1 { 
+            margin: 0; 
+            font-size: 1.6rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        .header-info p { 
+            margin: 6px 0 0; 
+            opacity: 0.85; 
+            font-size: 0.95rem; 
+            color: #94a3b8;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Identificación del Estudiante (Ancho Completo) */
+        .student-section { 
+            padding: 25px 35px;
+            background: #fdfdfd;
+            border-bottom: 1px solid #f1f5f9;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .field { width: 100%; }
+        .field label { 
+            display: block; 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            color: var(--accent); 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            letter-spacing: 0.8px;
+        }
+        .field input { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            background-color: var(--card-bg);
+            color: var(--primary);
+        }
+        .field input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Estructura de las Series */
+        .serie { 
+            padding: 35px 35px; 
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .serie-title { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--accent); 
+            padding-left: 15px; 
+            margin-bottom: 15px; 
+        }
+        .serie-title h2 { margin: 0; font-size: 1.25rem; color: var(--primary); text-transform: uppercase; }
+        .badge-points {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .instruction-box {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            color: #065f46;
+        }
+        
+        .question { margin-bottom: 28px; }
+        .question p { margin-top: 0; font-weight: 600; font-size: 1rem; color: var(--primary); line-height: 1.5; }
+
+        /* Controles de Selección e Inputs Estéticos */
+        .options-container { display: grid; gap: 10px; }
+        .option-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .option-item:hover { border-color: var(--accent); background: var(--accent-light); }
+        .option-item input { margin-right: 12px; cursor: pointer; width: 16px; height: 16px; }
+
+        .select-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: var(--card-bg);
+            color: var(--primary);
+            transition: border 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .select-input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        .case-container {
+            background-color: #f8fafc;
+            border: 1.5px dashed var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Banner de Alerta */
+        .error-message {
+            display: none;
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 35px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Botón de Finalización */
+        .btn-container { padding: 40px 35px; text-align: center; }
+        .btn-submit { 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            padding: 16px 50px; 
+            font-size: 1.15rem; 
+            font-weight: bold; 
+            border-radius: 50px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+        }
+        .btn-submit:hover { 
+            background: var(--accent-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        #result-banner {
+            display: none;
+            margin: 20px 35px;
+            padding: 25px;
+            background: var(--success-light);
+            color: #065f46;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid #a7f3d0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-card">
+    <header class="header">
+        <div class="header-info">
+            <p>COLEGIO DE INFORMÁTICA JUSTO RUFINO BAUTISTA</p>
+            <h1>Evaluación Parcial - Cuarta Unidad</h1>
+            <p>Curso: Tecnologías de la Aprendizaje y la Comunicación (TAC) | Tercero Básico</p>
+        </div>
+        <div class="logo-container">
+            <!-- Logo oficial desde la carpeta public -->
+            <img src="public/descarga.png" alt="Logo JRB" onerror="this.src='https://placehold.co/100x100?text=J.R.B.'">
+        </div>
+    </header>
+
+    <section class="student-section">
+        <div class="field">
+            <label for="nombre">Nombre Completo del Estudiante</label>
+            <input type="text" id="nombre" placeholder="Escriba sus apellidos y nombres completos aquí..." required>
+        </div>
+    </section>
+
+    <!-- Banner de Validación de Formulario -->
+    <div id="validation-banner" class="error-message"></div>
+
+    <!-- I SERIE: VERDADERO O FALSO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>I Serie: Identidad Digital y Netiqueta (Verdadero o Falso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analice de forma reflexiva cada una de las siguientes afirmaciones sobre huella digital, reputación en línea y normas de comportamiento en la red (Netiqueta). Seleccione <strong>Verdadero (V)</strong> o <strong>Falso (F)</strong> según corresponda. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. La "huella digital" se compone únicamente de las contraseñas privadas de acceso y no incluye las fotos, comentarios o publicaciones que compartes públicamente en internet.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q1" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q1" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. La reputación online es la percepción o imagen que otros construyen sobre nosotros en la red basándose en nuestra huella digital, la cual puede influir en nuestro futuro académico o laboral.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q2" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q2" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. Las normas de "Netiqueta" son un conjunto de reglas de comportamiento y cortesía que garantizan una comunicación respetuosa y evitan conflictos en las redes y videojuegos.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q3" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q3" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. En entornos educativos como Google Classroom, escribir mensajes completamente en letras MAYÚSCULAS se considera una práctica correcta para resaltar textos normales.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q4" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q4" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. Una vez que subes una imagen o comentario a una plataforma digital pública, se pierde el control absoluto sobre esa información y es técnicamente inviable borrarla por completo de la red.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q5" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q5" value="no"> Falso (F)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- II SERIE: SELECCIÓN MÚLTIPLE -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>II Serie: Propiedad Intelectual y Licencias (Selección Múltiple)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lea detenidamente cada planteamiento sobre derechos de autor y licencias libres Creative Commons. Seleccione <strong>las dos alternativas correctas</strong> de las opciones presentadas. (1 punto por reactivo completo; 0.5 puntos por acierto parcial)
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cuáles de las siguientes opciones describen correctamente la diferencia entre el "Plagio Académico" y el "Uso Respetuoso" de la información en un proyecto?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="checkbox" name="q11" value="si"> El plagio es copiar y presentar el trabajo ajeno como propio, mientras que el uso respetuoso utiliza citas y atribuciones legales</label>
+                <label class="option-item"><input type="checkbox" name="q11" value="no"> El uso respetuoso te permite vender obras comerciales ajenas sin necesidad de avisar al autor original</label>
+                <label class="option-item"><input type="checkbox" name="q11" value="si"> El uso respetuoso respeta el derecho de autor reconociendo la procedencia de los contenidos mediante licencias o citas académicas</label>
+                <label class="option-item"><input type="checkbox" name="q11" value="no"> El plagio es completamente legal si los contenidos se descargaron del buscador de imágenes de Google</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. ¿Qué elementos integran de forma obligatoria el estándar internacional de atribución legal TASL para acreditar recursos libres de internet?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="checkbox" name="q12" value="si"> Título (Title) y Autor (Author) de la obra original</label>
+                <label class="option-item"><input type="checkbox" name="q12" value="no"> Tipo de letra (Font) y resolución física de captura</label>
+                <label class="option-item"><input type="checkbox" name="q12" value="si"> Fuente original (Source) y Licencia Creative Commons (License) bajo la que se distribuye</label>
+                <label class="option-item"><input type="checkbox" name="q12" value="no"> Nombre del proveedor de internet (SSID) y geolocalización de red</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. Al utilizar un recurso digital bajo licencia "CC BY-NC-ND", ¿qué condiciones o restricciones te impone de forma estricta la licencia?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="checkbox" name="q13" value="si"> Debes atribuir obligatoriamente al autor (BY) y no utilizar la obra para fines comerciales (NC)</label>
+                <label class="option-item"><input type="checkbox" name="q13" value="no"> Tienes total libertad de vender adaptaciones y modificaciones físicas de la obra</label>
+                <label class="option-item"><input type="checkbox" name="q13" value="si"> No tienes permitido alterar, transformar o crear obras derivadas a partir de la original (ND)</label>
+                <label class="option-item"><input type="checkbox" name="q13" value="no"> Debes mantener el sistema de capas de la infografía bloqueado en modo local</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué prácticas promueven una correcta Netiqueta y convivencia pacífica en foros y grupos virtuales de estudio?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="checkbox" name="q14" value="no"> Utilizar un lenguaje agresivo o con letras mayúsculas sostenidas para ganar discusiones rápidamente</label>
+                <label class="option-item"><input type="checkbox" name="q14" value="si"> Dirigirse a los compañeros y docentes con respeto, empatía, cordialidad y claridad</label>
+                <label class="option-item"><input type="checkbox" name="q14" value="si"> Respetar las opiniones ajenas debatiendo de forma asertiva con argumentos y evitar propagar noticias falsas</label>
+                <label class="option-item"><input type="checkbox" name="q14" value="no"> Compartir capturas de pantalla de chats privados de tus compañeros sin su consentimiento previo</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. ¿Cuáles de las siguientes siglas corresponden a condiciones válidas que estructuran las licencias libres de Creative Commons?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="checkbox" name="q15" value="si"> SA (Compartir Igual - Share Alike) que exige licenciar las obras derivadas bajo la misma licencia</label>
+                <label class="option-item"><input type="checkbox" name="q15" value="no"> CR (Copyright Estricto con reserva de copia física comercial)</label>
+                <label class="option-item"><input type="checkbox" name="q15" value="si"> NC (No Comercial - Non Commercial) que restringe el uso lucrativo de la obra</label>
+                <label class="option-item"><input type="checkbox" name="q15" value="no"> LAN (Local Area Network para interconexión por cable Ethernet)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- III SERIE: SELECCIÓN ÚNICA -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>III Serie: Ciberseguridad Social y Privacidad (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Complete conceptualmente cada una de las interrogantes de seguridad e interacción digital. Seleccione del menú desplegable la única respuesta correcta de acuerdo a lo estudiado en las Guías 2 y 3. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cómo se define técnicamente el conjunto de técnicas de manipulación psicológica que emplean los ciberdelincuentes para engañar a las personas y conseguir que revelen información privada?</p>
+            <select class="select-input" id="q16">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Ingeniería Social (Phishing, suplantación)</option>
+                <option value="no">Propiedad Intelectual</option>
+                <option value="no">Auditoría de Netiqueta</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>2. Al descargar e instalar una nueva red social de entretenimiento y hacer clic rápidamente en "Aceptar términos y condiciones" sin leerlos, ¿qué privilegios lógicos le estás otorgando legalmente a esa compañía?</p>
+            <select class="select-input" id="q17">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Un decálogo unificado de Netiqueta para Classroom.</option>
+                <option value="si">Acceso y recopilación legal de tus datos personales, geolocalización, contactos o micrófono según sus políticas de privacidad.</option>
+                <option value="no">La dirección IP física fija de tu computadora local.</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>3. En un debate académico presencial, ¿cómo se le denomina a la falacia lógica de atacar directamente la personalidad o carácter del expositor contrario en lugar de refutar sus argumentos técnicos con datos?</p>
+            <select class="select-input" id="q18">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Atribución TASL desalineada</option>
+                <option value="si">Ataque Personal o Falacia "Ad Hominem"</option>
+                <option value="no">Ingeniería Social pasiva</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué acción técnica en tu cuenta personal de redes sociales optimiza tu seguridad, limitando que extraños recopilen tus fotos familiares para campañas de manipulación digital?</p>
+            <select class="select-input" id="q19">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Configurar la cuenta en modo público sin restricciones de red.</option>
+                <option value="si">Configurar el perfil como "Privado", limitando la visibilidad del contenido únicamente a tus contactos de confianza.</option>
+                <option value="no">Cambiar el SSID de tu módem Wi-Fi comunitario.</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>5. Si un usuario descarga una imagen de internet, la utiliza en su infografía e incluye de forma estructurada su atribución respectiva mediante el método TASL, se dice que está haciendo un uso:</p>
+            <select class="select-input" id="q20">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Plagio Académico encubierto.</option>
+                <option value="si">Uso Respetuoso y honesto de la propiedad intelectual.</option>
+                <option value="no">Hackeo técnico inalterable.</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- IV SERIE: ESTUDIOS DE CASO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>IV Serie: Aplicación Práctica y Ciudadanía Digital (Estudios de Caso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analice detenidamente las situaciones cotidianas y profesionales planteadas. Seleccione la respuesta óptima que resuelva el caso de estudio aplicando la lógica técnica y ética. (1 punto por acierto)
+        </div>
+
+        <!-- Caso 1 -->
+        <div class="case-container">
+            <strong>CASO A: LA POSTULACIÓN A LA BECA UNIVERSITARIA</strong><br>
+            Andrés se postulará a una beca académica muy estricta el próximo año. Un amigo le advierte que revise su perfil de redes sociales, ya que de hace 3 años conserva publicaciones públicas participando en burlas despectivas hacia otros compañeros.
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cómo influye esto en su futuro y qué principio de huella digital se está cumpliendo?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q26" value="no"> Ninguno, el historial de publicaciones se borra automáticamente de internet al cumplir la mayoría de edad.</label>
+                <label class="option-item"><input type="radio" name="q26" value="si"> Afectará negativamente su reputación online ante el comité evaluador, demostrando que la huella digital es un registro permanente que define nuestra identidad digital histórica</label>
+                <label class="option-item"><input type="radio" name="q26" value="no"> Mejorará su estatus, ya que demuestra alta interacción en foros y redes sociales públicas.</label>
+            </div>
+        </div>
+
+        <!-- Caso 2 -->
+        <div class="case-container">
+            <strong>CASO B: LA INFOGRAFÍA DE LA FERIA CIENTÍFICA</strong><br>
+            Sofía diseña una infografía sobre el calentamiento global para su presentación del 06 de junio. Encuentra en internet una excelente ilustración de un mapamundi licenciado bajo "CC BY-SA". Ella decide recortarlo, aplicarle colores e integrarlo en su cartel final.
+        </div>
+
+        <div class="question">
+            <p>2. ¿Bajo qué condiciones legales debe compartir Sofía su infografía final según la cláusula "SA" (Compartir Igual)?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q27" value="no"> Puede vender comercialmente su infografía sin atribuir al autor original.</label>
+                <label class="option-item"><input type="radio" name="q27" value="si"> Debe acreditar obligatoriamente al autor original del mapamundi y licenciar su propia infografía final bajo la misma licencia "CC BY-SA" (Compartir Igual)</label>
+                <label class="option-item"><input type="radio" name="q27" value="no"> Debe mantener su infografía guardada localmente sin subirla a internet para evitar el plagio.</label>
+            </div>
+        </div>
+
+        <!-- Caso 3 -->
+        <div class="case-container">
+            <strong>CASO C: LA ALERTA DE BANCO FALSA</strong><br>
+            El abuelo de Carlos recibe un correo electrónico que simula ser de su banco de confianza, advirtiéndole de un supuesto hackeo de su cuenta y exigiéndole que haga clic de urgencia en un enlace para ingresar sus contraseñas en menos de 10 minutos.
+        </div>
+
+        <div class="question">
+            <p>3. ¿Qué tipo de ataque digital se está ejecutando en este escenario?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q28" value="no"> Un error de conexión de red LAN inalámbrica Wi-Fi.</label>
+                <label class="option-item"><input type="radio" name="q28" value="si"> Un ataque de Phishing (ingeniería social) que se aprovecha del sentido de urgencia y del miedo para robar contraseñas</label>
+                <label class="option-item"><input type="radio" name="q28" value="no"> Una actualización automatizada de su S.O. licenciado original.</label>
+            </div>
+        </div>
+
+        <!-- Caso 4 -->
+        <div class="case-container">
+            <strong>CASO D: EL RETO DE LA DEFINICIÓN CIENTÍFICA</strong><br>
+            Para su reporte de TAC, Lucía necesita definir "Ciberseguridad". Encuentra una definición perfecta en un sitio especializado de internet. En lugar de copiar y pegar el texto haciéndolo pasar como suyo, lo encierra entre comillas, nombra la página de origen y coloca la URL de enlace.
+        </div>
+
+        <div class="question">
+            <p>4. ¿Cómo se clasifica éticamente la acción realizada por Lucía?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q29" value="no"> Se clasifica como un plagio académico encubierto que tendrá penalizaciones en el Classroom.</label>
+                <label class="option-item"><input type="radio" name="q29" value="si"> Se clasifica como un uso respetuoso y honesto de la información mediante una cita bibliográfica y atribución de autor correcta</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Se clasifica como un hackeo no destructivo de derechos de autor.</label>
+            </div>
+        </div>
+
+        <!-- Caso 5 -->
+        <div class="case-container">
+            <strong>CASO E: CONFLICTO EN EL FORO VIRTUAL</strong><br>
+            Durante un foro de Classroom, un alumno nota que su compañero de grupo no ha subido el avance correspondiente al proyecto y publica en el foro general: "COMPAÑERO IRRESPONSABLE POR TU CULPA NOS VAN A PONER CERO A TODOS".
+        </div>
+
+        <div class="question">
+            <p>5. ¿Qué regla fundamental de Netiqueta se infringió y cómo se debió canalizar el conflicto?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q30" value="no"> Ninguna, es correcto gritar públicamente para que los compañeros trabajen bajo presión.</label>
+                <label class="option-item"><input type="radio" name="q30" value="si"> Se infringió la cortesía y el respeto mutuo; se debió establecer comunicación de forma privada, educada y asertiva para resolver la situación sin humillaciones públicas</label>
+                <label class="option-item"><input type="radio" name="q30" value="no"> Se infringieron los parámetros de la licencia Creative Commons de atribución.</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-submit" onclick="calificarYGenerar()">FINALIZAR EVALUACIÓN Y GENERAR COMPROBANTE</button>
+        <div id="result-banner"></div>
+    </div>
+</div>
+
+<script {is_jsx="false"}>
+    function calificarYGenerar() {
+        const nombreInput = document.getElementById('nombre');
+        const validationBanner = document.getElementById('validation-banner');
+        const resultBanner = document.getElementById('result-banner');
+        const nombre = nombreInput.value.trim();
+
+        // Limpiar alertas previas
+        validationBanner.style.display = 'none';
+        validationBanner.innerText = '';
+
+        if (!nombre || nombre.length < 5) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, ingrese sus apellidos y nombres completos para poder procesar y calificar su evaluación.";
+            nombreInput.focus();
+            return;
+        }
+
+        let puntos = 0;
+
+        // Serie I: Verdadero o Falso (5 ítems, 1 punto c/u)
+        if (document.querySelector('input[name="q1"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q2"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q3"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q4"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q5"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie II: Selección Múltiple (5 ítems, 1 punto c/u -> 0.5 puntos por cada check correcto)
+        // Item 11 (si = a, c)
+        const q11Options = document.querySelectorAll('input[name="q11"]:checked');
+        let q11CorrectCount = 0;
+        q11Options.forEach(opt => { if (opt.value === 'si') q11CorrectCount++; });
+        if (q11Options.length <= 2) { puntos += q11CorrectCount * 0.5; }
+
+        // Item 12 (si = a, c)
+        const q12Options = document.querySelectorAll('input[name="q12"]:checked');
+        let q12CorrectCount = 0;
+        q12Options.forEach(opt => { if (opt.value === 'si') q12CorrectCount++; });
+        if (q12Options.length <= 2) { puntos += q12CorrectCount * 0.5; }
+
+        // Item 13 (si = a, c)
+        const q13Options = document.querySelectorAll('input[name="q13"]:checked');
+        let q13CorrectCount = 0;
+        q13Options.forEach(opt => { if (opt.value === 'si') q13CorrectCount++; });
+        if (q13Options.length <= 2) { puntos += q13CorrectCount * 0.5; }
+
+        // Item 14 (si = b, c)
+        const q14Options = document.querySelectorAll('input[name="q14"]:checked');
+        let q14CorrectCount = 0;
+        q14Options.forEach(opt => { if (opt.value === 'si') q14CorrectCount++; });
+        if (q14Options.length <= 2) { puntos += q14CorrectCount * 0.5; }
+
+        // Item 15 (si = a, c)
+        const q15Options = document.querySelectorAll('input[name="q15"]:checked');
+        let q15CorrectCount = 0;
+        q15Options.forEach(opt => { if (opt.value === 'si') q15CorrectCount++; });
+        if (q15Options.length <= 2) { puntos += q15CorrectCount * 0.5; }
+
+        // Serie III: Selección Única (5 ítems, 1 punto c/u)
+        if (document.getElementById('q16').value === 'si') puntos += 1;
+        if (document.getElementById('q17').value === 'si') puntos += 1;
+        if (document.getElementById('q18').value === 'si') puntos += 1;
+        if (document.getElementById('q19').value === 'si') puntos += 1;
+        if (document.getElementById('q20').value === 'si') puntos += 1;
+
+        // Serie IV: Estudio de Caso (5 ítems, 1 punto c/u)
+        if (document.querySelector('input[name="q26"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q27"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q28"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q29"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q30"]:checked')?.value === 'si') puntos += 1;
+
+        // Limitar la puntuación matemática para evitar problemas de coma flotante
+        puntos = Math.min(20, Math.round(puntos * 10) / 10);
+
+        // Desplegar resultado en pantalla
+        resultBanner.style.display = 'block';
+        resultBanner.innerText = `¡EXAMEN FINALIZADO CON ÉXITO! NOTA REGISTRADA: ${puntos} / 20 PUNTOS. Tu comprobante oficial en PDF se ha generado y descargado automáticamente.`;
+
+        // Generar PDF con jsPDF
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Encabezado decorativo del comprobante (Verde esmeralda institucional)
+        doc.setFillColor(16, 185, 129); // Emerald 500
+        doc.rect(0, 0, 210, 42, 'F');
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.text("COLEGIO DE INFORMÁTICA J.R.B.", 105, 18, { align: "center" });
+        doc.setFontSize(11);
+        doc.text("COMPROBANTE OFICIAL DE EVALUACIÓN DIGITAL - TAC", 105, 28, { align: "center" });
+
+        // Bloque de metadatos académicos
+        doc.setTextColor(15, 23, 42); // Slate 900
+        doc.setFontSize(12);
+        doc.text("DATOS ACADÉMICOS DEL ESTUDIANTE", 20, 58);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.text(`Nombre Completo: ${nombre.toUpperCase()}`, 20, 68);
+        doc.text("Curso: Tecnologías de la Aprendizaje y la Comunicación (TAC)", 20, 75);
+        doc.text("Grado: Tercero Básico", 20, 82);
+        doc.text(`Fecha y Hora de Emisión: ${new Date().toLocaleString()}`, 20, 89);
+
+        // Divisor visual
+        doc.setLineWidth(0.5);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 98, 190, 98);
+
+        // Calificación final en gran formato sobre 20 puntos
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(26);
+        doc.setTextColor(16, 185, 129); // Emerald 500
+        doc.text(`CALIFICACIÓN: ${puntos} / 20 PUNTOS`, 105, 120, { align: "center" });
+
+        // Mensaje del colegio e instructivo
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Este documento sirve como evidencia inalterable de la evaluación digital de la cuarta unidad", 105, 140, { align: "center" });
+        doc.text("en el Laboratorio Tecnológico de TAC correspondientes a las Guías del 1 al 3.", 105, 145, { align: "center" });
+        doc.text("Instrucciones: Guarde este comprobante y súbalo a la tarea unificada en Google Classroom.", 105, 152, { align: "center" });
+
+        // Código de seguridad unificado
+        const securityHash = "TACTB-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        doc.setFont("courier", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(30, 41, 59);
+        doc.text(`CÓDIGO DE VALIDACIÓN UNIFICADO: ${securityHash}`, 20, 180);
+
+        // Descarga automatizada del archivo
+        doc.save(`TAC_Tercero_Basico_U4_${nombre.replace(/\s+/g, '_')}.pdf`);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Robótica Avanzada - IV Unidad - JRB</title>
+    <!-- Librería externa para generación de comprobantes en PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #0f172a; /* Slate 900 - Textos y cabeceras sólidas */
+            --primary-light: #1e293b; /* Slate 800 */
+            --accent: #10b981; /* Emerald 500 - Identidad y tecnología */
+            --accent-hover: #059669; /* Emerald 600 */
+            --accent-light: #ecfdf5; /* Emerald 50 - Fondos de interacción */
+            --light-bg: #f8fafc; /* Slate 50 - Fondo general de pantalla */
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1; /* Slate 300 */
+            --text-muted: #64748b; /* Slate 500 */
+            --success: #10b981; /* Emerald 500 */
+            --success-light: #ecfdf5; /* Emerald 50 */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--light-bg); 
+            margin: 0; 
+            padding: 40px 15px;
+            color: var(--primary);
+        }
+
+        .exam-card { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+            border-top: 10px solid var(--accent);
+        }
+
+        /* Encabezado Principal */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 35px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+        }
+
+        .header-info h1 { 
+            margin: 0; 
+            font-size: 1.6rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        .header-info p { 
+            margin: 6px 0 0; 
+            opacity: 0.85; 
+            font-size: 0.95rem; 
+            color: #94a3b8;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Identificación del Estudiante (Ancho Completo y Especialidad) */
+        .student-section { 
+            padding: 25px 35px;
+            background: #fdfdfd;
+            border-bottom: 1px solid #f1f5f9;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .student-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .field { width: 100%; }
+        .field label { 
+            display: block; 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            color: var(--accent); 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            letter-spacing: 0.8px;
+        }
+        .field input, .field select { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            background-color: var(--card-bg);
+            color: var(--primary);
+        }
+        .field input:focus, .field select:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Estructura de las Series */
+        .serie { 
+            padding: 35px 35px; 
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .serie-title { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--accent); 
+            padding-left: 15px; 
+            margin-bottom: 15px; 
+        }
+        .serie-title h2 { margin: 0; font-size: 1.25rem; color: var(--primary); text-transform: uppercase; }
+        .badge-points {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .instruction-box {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            color: #065f46;
+        }
+        
+        .question { margin-bottom: 28px; }
+        .question p { margin-top: 0; font-weight: 600; font-size: 1rem; color: var(--primary); line-height: 1.5; }
+
+        /* Controles de Selección e Inputs Estéticos */
+        .options-container { display: grid; gap: 10px; }
+        .option-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .option-item:hover { border-color: var(--accent); background: var(--accent-light); }
+        .option-item input { margin-right: 12px; cursor: pointer; width: 16px; height: 16px; }
+
+        .select-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: var(--card-bg);
+            color: var(--primary);
+            transition: border 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .select-input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        .case-container {
+            background-color: #f8fafc;
+            border: 1.5px dashed var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Banner de Alerta */
+        .error-message {
+            display: none;
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 35px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Botón de Finalización */
+        .btn-container { padding: 40px 35px; text-align: center; }
+        .btn-submit { 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            padding: 16px 50px; 
+            font-size: 1.15rem; 
+            font-weight: bold; 
+            border-radius: 50px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+        }
+        .btn-submit:hover { 
+            background: var(--accent-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        #result-banner {
+            display: none;
+            margin: 20px 35px;
+            padding: 25px;
+            background: var(--success-light);
+            color: #065f46;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid #a7f3d0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-card">
+    <header class="header">
+        <div class="header-info">
+            <p>COLEGIO DE INFORMÁTICA JUSTO RUFINO BAUTISTA</p>
+            <h1>Evaluación Parcial - Cuarta Unidad</h1>
+            <p>Curso: Robótica Aplicada | Quinto Bachillerato</p>
+        </div>
+        <div class="logo-container">
+            <!-- Logo oficial desde la carpeta public descarga.png -->
+            <img src="public/descarga.png" alt="Logo JRB" onerror="this.src='https://placehold.co/100x100?text=J.R.B.'">
+        </div>
+    </header>
+
+    <section class="student-section">
+        <div class="field">
+            <label for="nombre">Nombre Completo del Estudiante</label>
+            <input type="text" id="nombre" placeholder="Escriba sus apellidos y nombres completos aquí..." required>
+        </div>
+        <div class="field">
+            <label for="orientacion">Especialidad / Orientación</label>
+            <select id="orientacion" required>
+                <option value="">-- Seleccione su especialidad --</option>
+                <option value="Computación (5BACO)">Ciencias y Letras con Orientación en Computación</option>
+                <option value="Diseño Gráfico (5DISE)">Ciencias y Letras con Orientación en Diseño Gráfico</option>
+                <option value="Biología (5BIOLO)">Ciencias y Letras con Orientación en Biología</option>
+            </select>
+        </div>
+    </section>
+
+    <!-- Banner de Validación de Formulario -->
+    <div id="validation-banner" class="error-message"></div>
+
+    <!-- I SERIE: VERDADERO O FALSO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>I Serie: Ondas de Sonido, Interfaces y Celdas de Energía (Verdadero o Falso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analiza detenidamente cada enunciado sobre la física del sonido, la estructura de Photopea y el comportamiento de las baterías. Selecciona <strong>Verdadero (V)</strong> o <strong>Falso (F)</strong> según corresponda. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. El instrumento musical Theremin destaca en la historia de la música porque se toca en el aire, utilizando el movimiento de las manos cerca de sus antenas sin necesidad de tocarlo de forma física.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q1" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q1" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. El sensor de ultrasonidos del mBot2 calcula la distancia midiendo el tiempo que tarda una onda de sonido en ir y regresar tras rebotar en un objeto.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q2" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q2" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. En el software de edición Photopea, trabajar con un sistema de capas independientes es una desventaja porque impide hacer cambios de color de forma libre.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q3" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q3" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. La pila voltaica inventada por Alessandro Volta en el año 1800 generaba corriente eléctrica constante mediante una reacción química.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q4" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q4" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. En el motor de un automóvil, la batería es la que produce electricidad de forma infinita mientras el auto corre, sin necesidad de un alternador.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q5" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q5" value="si"> Falso (F)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- II SERIE: SELECCIÓN ÚNICA -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>II Serie: Diseño de Interfaces Gráficas y Lógica de Sensores (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lea detenidamente cada planteamiento técnico sobre la maquetación en Photopea y la lógica de programación en mBlock. Seleccione la única respuesta correcta de las opciones presentadas. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. ¿Qué tipo de onda es físicamente el sonido que viaja por el aire para poder propagarse y ser escuchado?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q6" value="si"> Una onda mecánica que necesita de un medio elástico (como el aire)</label>
+                <label class="option-item"><input type="radio" name="q6" value="no"> Una onda electromagnética que solo viaja en el vacío absoluto</label>
+                <label class="option-item"><input type="radio" name="q6" value="no"> Una corriente de energía estroboscópica luminosa</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. ¿Cuál es el formato de archivo de imagen ideal al guardar tus diseños en Photopea para mantener la transparencia del fondo en los botones de una aplicación?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q7" value="no"> Formato plano comprimido JPG</label>
+                <label class="option-item"><input type="radio" name="q7" value="si"> Formato de imagen con transparencia PNG</label>
+                <label class="option-item"><input type="radio" name="q7" value="no"> Formato de base de datos relacional SQL</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. ¿Cómo se conoce conceptualmente al diseño de botones, pantallas y gráficos amigables que facilitan que un usuario controle un robot?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q8" value="no"> Sistema de Retículas o Medianiles</label>
+                <label class="option-item"><input type="radio" name="q8" value="si"> Interfaz de Usuario (UI)</label>
+                <label class="option-item"><input type="radio" name="q8" value="no"> Servidor de Base de Datos remota</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué aparato del automóvil se encarga de generar electricidad de forma constante con el movimiento del motor para recargar la batería de plomo?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q9" value="no"> La celda electroquímica de Volta</label>
+                <label class="option-item"><input type="radio" name="q9" value="si"> El Alternador</label>
+                <label class="option-item"><input type="radio" name="q9" value="no"> El sensor ultrasónico de sonido</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. Si queremos ocultar un elemento del lienzo de forma temporal en Photopea sin borrarlo del archivo, ¿qué icono presionamos al lado de su capa?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q10" value="no"> El icono de la papelera de reciclaje</label>
+                <label class="option-item"><input type="radio" name="q10" value="si"> El icono con forma de Ojo</label>
+                <label class="option-item"><input type="radio" name="q10" value="no"> La barra de escala o jerarquía de tamaño</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- III SERIE: SELECCIÓN ÚNICA CON DROP DOWN -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>III Serie: Anatomía y Estructuras de Energía (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Complete conceptualmente cada uno de los siguientes enunciados sobre el funcionamiento químico de las baterías y los componentes lógicos. Seleccione de la lista desplegable la única respuesta correcta. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. Pequeño aparato médico que usa una pila de larga duración para mandar impulsos que regulan los latidos del corazón de manera segura:</p>
+            <select class="select-input" id="q11">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">El marcapasos</option>
+                <option value="no">El estetoscopio digital</option>
+                <option value="no">El alternador químico</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>2. ¿Qué tipo de circuito eléctrico se necesita para que la energía fluya sin interrupción desde la batería hacia el componente (como un LED) y regrese al polo opuesto?</p>
+            <select class="select-input" id="q12">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Circuito Cerrado</option>
+                <option value="no">Circuito Abierto</option>
+                <option value="no">Circuito por inducción de aire</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>3. La energía que se encuentra acumulada de forma pasiva en los materiales químicos de una batería se llama:</p>
+            <select class="select-input" id="q13">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Energía Potencial Química</option>
+                <option value="no">Energía Cinética de rotación</option>
+                <option value="no">Energía estroboscópica de luz</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>4. En programación con la CyberPi, para tomar decisiones según la distancia medida por el sensor de ultrasonido se utiliza:</p>
+            <select class="select-input" id="q14">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">La barra de formato de interlineado</option>
+                <option value="si">Bloques condicionales de control (Si-Entonces)</option>
+                <option value="no">La asignación dinámica de la dirección MAC</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>5. ¿A qué nos referimos cuando separamos los textos, fondos e iconos en capas independientes y editables en Photopea?</p>
+            <select class="select-input" id="q15">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Foliado o sangrado automático</option>
+                <option value="si">Organización jerárquica y ordenada del diseño</option>
+                <option value="no">Vectorización automática del lienzo</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- IV SERIE: ESTUDIOS DE CASO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>IV Serie: Aplicaciones de Especialidad y Casos de Laboratorio (Estudios de Caso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analice detenidamente las siguientes situaciones escolares e industriales adaptadas a cada especialidad de bachillerato. Seleccione la opción técnica correcta. (1 punto por acierto)
+        </div>
+
+        <!-- Caso A: Computación -->
+        <div class="case-container">
+            <strong>CASO COMPUTACIÓN (BACO): EL THEREMIN SILENCIOSO</strong><br>
+            Estás programando un piano theremin ultrasónico en mBlock 5. Al mover tu mano, la CyberPi lee de forma continua la variación física del sensor de ultrasonido y la muestra en la pantalla, pero el zumbador (buzzer) sigue en completo silencio.
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cómo interactúa el programador con las variables para que el sonido empiece a sonar de acuerdo a la Guía 1?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q26" value="no"> Cambiar el chasis de metal por uno de plástico reciclado.</label>
+                <label class="option-item"><input type="radio" name="q26" value="si"> Revisar que la variable de distancia esté enviando de forma correcta los valores de rango al bloque de volumen y notas del zumbador</label>
+                <label class="option-item"><input type="radio" name="q26" value="no"> Conectar un alternador químico en los puertos analógicos de la placa.</label>
+            </div>
+        </div>
+
+        <!-- Caso B: Biología -->
+        <div class="case-container">
+            <strong>CASO BIOLOGÍA (BIOLO): FISIOLOGÍA ACÚSTICA SUBMARINA</strong><br>
+            Un estudiante de biología investiga cómo viajan los pulsos de sonido de las ballenas bajo el agua. Al comparar la velocidad de la onda acústica en el agua densa versus el aire gaseoso, quiere predecir dónde viajará más rápido el sonido.
+        </div>
+
+        <div class="question">
+            <p>2. Basándote en la física de las ondas mecánicas de la Guía 1, ¿cómo se comporta el sonido bajo el agua?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q27" value="no"> Viaja más lento porque la densidad del agua absorbe la vibración mecánica.</label>
+                <label class="option-item"><input type="radio" name="q27" value="si"> El sonido viaja más rápido en el agua líquida que en el aire gaseoso porque las moléculas están más juntas, transmitiendo la vibración con mayor velocidad</label>
+                <label class="option-item"><input type="radio" name="q27" value="no"> El sonido no se puede propagar debido a la falta de oxígeno libre bajo el agua.</label>
+            </div>
+        </div>
+
+        <!-- Caso C: Diseño Gráfico -->
+        <div class="case-container">
+            <strong>CASO DISEÑO GRÁFICO (DISE): LA SINESTESIA DE LA INTERFAZ DE CONTROL</strong><br>
+            Se te encomienda diseñar la interfaz visual (UI) en Photopea para controlar el piano theremin. Buscas aplicar el concepto de "sinestesia visual" para que los usuarios sientan a través de los colores y formas cuándo tocan un sonido agudo (alto) y cuándo uno grave (bajo).
+        </div>
+
+        <div class="question">
+            <p>3. ¿Qué propuesta visual es la adecuada aplicando de forma estética este principio de la Guía 1?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q28" value="no"> Usar una sola forma cuadrada gris opaca con letras mayúsculas sostenidas para todas las opciones por igual.</label>
+                <label class="option-item"><input type="radio" name="q28" value="si"> Representar las notas agudas con formas triangulares de colores cálidos (como naranja o amarillo), y las notas graves con círculos amplios de colores fríos y profundos (como azul o violeta)</label>
+                <label class="option-item"><input type="radio" name="q28" value="no"> Colocar el logotipo en formato de curvas industriales DXF en toda la pantalla.</label>
+            </div>
+        </div>
+
+        <!-- Caso D: Robótica y Energía -->
+        <div class="case-container">
+            <strong>CASO DE INGENIERÍA FÍSICA: EL REPRODUCTOR COLAPSADO</strong><br>
+            Diseñas un robot recolector de basura para la feria comunitaria. Al levantar una botella pesada con una pequeña pila de reloj de 1.5V, la placa CyberPi se apaga por completo al instante en cuanto se encienden los motores.
+        </div>
+
+        <div class="question">
+            <p>4. ¿Cuál es el diagnóstico de energía física que explica por qué ocurre este colapso según la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q29" value="si"> La pila pequeña no tiene la capacidad de entregar la corriente eléctrica necesaria para la fuerza de los motores, provocando una caída de voltaje inmediata</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Que la CyberPi borró el código de mBlock de forma autónoma por culpa de la humedad del aire.</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Que el sensor ultrasónico de distancia consumió el doble de energía estática.</label>
+            </div>
+        </div>
+
+        <!-- Caso E: Diseño Digital de la Interfaz -->
+        <div class="case-container">
+            <strong>SITUACIÓN E: EL BOTÓN TAPADO EN PHOTOPEA</strong><br>
+            Durante la maquetación de tu interfaz de control en Photopea, creas un botón interactivo que dice "REPRODUCIR" en la capa 1 y luego colocas una fotografía de fondo muy bonita en la capa 2. De repente, notas con preocupación que el botón desapareció del lienzo y solo se ve el fondo.
+        </div>
+
+        <div class="question">
+            <p>5. ¿Cómo resuelves de forma directa este problema técnico de capas en el programa según la Guía 2?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q30" value="no"> Borrar la capa del fondo (Capa 2) y dbuixar el botón de nuevo usando el pincel digital.</label>
+                <label class="option-item"><input type="radio" name="q30" value="no"> Exportar el archivo en formato de audio MP3 para comprobar la continuidad de los datos.</label>
+                <label class="option-item"><input type="radio" name="q30" value="si"> Reordenar las capas en el panel de control, arrastrando la capa del botón (Capa 1) para colocarla por encima de la capa de fondo (Capa 2)</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-submit" onclick="calificarYGenerar()">FINALIZAR EVALUACIÓN Y GENERAR COMPROBANTE</button>
+        <div id="result-banner"></div>
+    </div>
+</div>
+
+<script {is_jsx="false"}>
+    function calificarYGenerar() {
+        const nombreInput = document.getElementById('nombre');
+        const orientacionSelect = document.getElementById('orientacion');
+        const validationBanner = document.getElementById('validation-banner');
+        const resultBanner = document.getElementById('result-banner');
+        
+        const nombre = nombreInput.value.trim();
+        const orientacion = orientacionSelect.value;
+
+        // Limpiar alertas de validación de formulario previas
+        validationBanner.style.display = 'none';
+        validationBanner.innerText = '';
+
+        if (!nombre || nombre.length < 5) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, ingrese sus apellidos y nombres completos para poder procesar y calificar su evaluación.";
+            nombreInput.focus();
+            return;
+        }
+
+        if (!orientacion) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, seleccione su Especialidad / Orientación para registrar su prueba académica.";
+            orientacionSelect.focus();
+            return;
+        }
+
+        let puntos = 0;
+
+        // Serie I: Verdadero o Falso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q1"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q2"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q3"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q4"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q5"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie II: Selección Única (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q6"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q7"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q8"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q9"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q10"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie III: Dropdowns (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.getElementById('q11').value === 'si') puntos += 1;
+        if (document.getElementById('q12').value === 'si') puntos += 1;
+        if (document.getElementById('q13').value === 'si') puntos += 1;
+        if (document.getElementById('q14').value === 'si') puntos += 1;
+        if (document.getElementById('q15').value === 'si') puntos += 1;
+
+        // Serie IV: Estudios de Caso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q26"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q27"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q28"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q29"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q30"]:checked')?.value === 'si') puntos += 1;
+
+        // Validar límite para evitar problemas con números de punto flotante
+        puntos = Math.min(20, puntos);
+
+        // Desplegar resultado en pantalla
+        resultBanner.style.display = 'block';
+        resultBanner.innerText = `¡EXAMEN REGISTRADO CON ÉXITO! NOTA OBTENIDA: ${puntos} / 20 PUNTOS. Tu comprobante PDF se está descargando automáticamente...`;
+
+        // Generar PDF profesional
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Encabezado decorativo del comprobante (Emerald 500)
+        doc.setFillColor(16, 185, 129); // Emerald 500
+        doc.rect(0, 0, 210, 42, 'F');
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.text("COLEGIO DE INFORMÁTICA J.R.B.", 105, 18, { align: "center" });
+        doc.setFontSize(11);
+        doc.text("COMPROBANTE OFICIAL DE EVALUACIÓN DIGITAL - ROBÓTICA", 105, 28, { align: "center" });
+
+        // Bloque de metadatos académicos
+        doc.setTextColor(15, 23, 42); // Slate 900
+        doc.setFontSize(12);
+        doc.text("DATOS ACADÉMICOS DEL ESTUDIANTE", 20, 58);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.text(`Nombre Completo: ${nombre.toUpperCase()}`, 20, 68);
+        doc.text("Curso: Robótica Aplicada (Theremin, Photopea y Celdas de Energía)", 20, 75);
+        doc.text(`Grado: Quinto Bachillerato en Ciencias y Letras con Orientación en ${orientacion}`, 20, 82);
+        doc.text(`Fecha y Hora de Emisión: ${new Date().toLocaleString()}`, 20, 89);
+
+        // Divisor visual
+        doc.setLineWidth(0.5);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 98, 190, 98);
+
+        // Calificación final sobre 20 puntos
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(26);
+        doc.setTextColor(16, 185, 129); // Emerald 500
+        doc.text(`CALIFICACIÓN: ${puntos} / 20 PUNTOS`, 105, 120, { align: "center" });
+
+        // Consideraciones éticas y de entrega
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Este documento sirve como evidencia inalterable de la realización de la evaluación digital", 105, 140, { align: "center" });
+        doc.text("correspondiente a las Guías de la 1 a la 3 en el Laboratorio de Robótica de la IV Unidad.", 105, 145, { align: "center" });
+        doc.text("Instrucciones: Guarde este comprobante y súbalo a la tarea en Google Classroom.", 105, 152, { align: "center" });
+
+        // Código de seguridad hash unificado e inalterable
+        const securityHash = "ROB5B-U4-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        doc.setFont("courier", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(30, 41, 59);
+        doc.text(`CÓDIGO DE VALIDACIÓN UNIFICADO: ${securityHash}`, 20, 180);
+
+        // Descarga automatizada del archivo
+        doc.save(`Robotica_Quinto_Bachillerato_U4_${nombre.replace(/\s+/g, '_')}.pdf`);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Diseño Computarizado II - IV Unidad - JRB</title>
+    <!-- Librería externa para generación de comprobantes en PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #1e293b; /* Slate 800 - Base industrial */
+            --primary-hover: #0f172a; /* Slate 900 */
+            --accent: #6c5ce7; /* Purple - Creatividad y Diseño Editorial/Moda */
+            --accent-hover: #5b4bc4; /* Purple oscuro */
+            --accent-light: #f5f4ff; /* Purple sutil para interacciones */
+            --light-bg: #f8fafc; /* Slate 50 - Fondo de pantalla */
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1; /* Slate 300 */
+            --text-muted: #64748b; /* Slate 500 */
+            --success: #10b981; /* Emerald 500 */
+            --success-light: #ecfdf5; /* Emerald 50 */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--light-bg); 
+            margin: 0; 
+            padding: 40px 15px;
+            color: var(--primary);
+        }
+
+        .exam-card { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+            border-top: 10px solid var(--accent);
+        }
+
+        /* Encabezado Principal con Gradiente Creativo */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 35px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+        }
+
+        .header-info h1 { 
+            margin: 0; 
+            font-size: 1.6rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        .header-info p { 
+            margin: 6px 0 0; 
+            opacity: 0.85; 
+            font-size: 0.95rem; 
+            color: #94a3b8;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Identificación del Estudiante (Ancho Completo) */
+        .student-section { 
+            padding: 25px 35px;
+            background: #fdfdfd;
+            border-bottom: 1px solid #f1f5f9;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .field { width: 100%; }
+        .field label { 
+            display: block; 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            color: var(--accent); 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            letter-spacing: 0.8px;
+        }
+        .field input { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            background-color: var(--card-bg);
+            color: var(--primary);
+        }
+        .field input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15);
+        }
+
+        /* Estructura de las Series */
+        .serie { 
+            padding: 35px 35px; 
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .serie-title { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--accent); 
+            padding-left: 15px; 
+            margin-bottom: 15px; 
+        }
+        .serie-title h2 { margin: 0; font-size: 1.25rem; color: var(--primary); text-transform: uppercase; }
+        .badge-points {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .instruction-box {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            color: #5b4bc4;
+        }
+        
+        .question { margin-bottom: 28px; }
+        .question p { margin-top: 0; font-weight: 600; font-size: 1rem; color: var(--primary); line-height: 1.5; }
+
+        /* Controles de Selección e Inputs Estéticos */
+        .options-container { display: grid; gap: 10px; }
+        .option-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .option-item:hover { border-color: var(--accent); background: var(--accent-light); }
+        .option-item input { margin-right: 12px; cursor: pointer; width: 16px; height: 16px; }
+
+        .select-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: var(--card-bg);
+            color: var(--primary);
+            transition: border 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .select-input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15);
+        }
+
+        .case-container {
+            background-color: #f8fafc;
+            border: 1.5px dashed var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Banner de Alerta */
+        .error-message {
+            display: none;
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 35px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Botón de Finalización */
+        .btn-container { padding: 40px 35px; text-align: center; }
+        .btn-submit { 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            padding: 16px 50px; 
+            font-size: 1.15rem; 
+            font-weight: bold; 
+            border-radius: 50px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
+        }
+        .btn-submit:hover { 
+            background: var(--accent-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        #result-banner {
+            display: none;
+            margin: 20px 35px;
+            padding: 25px;
+            background: var(--success-light);
+            color: #065f46;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid #a7f3d0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-card">
+    <header class="header">
+        <div class="header-info">
+            <p>COLEGIO DE INFORMÁTICA JUSTO RUFINO BAUTISTA</p>
+            <h1>Evaluación Parcial - Cuarta Unidad</h1>
+            <p>Curso: Diseño Computarizado II | Quinto Bachillerato en Diseño Gráfico</p>
+        </div>
+        <div class="logo-container">
+            <!-- Logo oficial desde la carpeta public descarga.png -->
+            <img src="public/descarga.png" alt="Logo JRB" onerror="this.src='https://placehold.co/100x100?text=J.R.B.'">
+        </div>
+    </header>
+
+    <section class="student-section">
+        <div class="field">
+            <label for="nombre">Nombre Completo del Estudiante</label>
+            <input type="text" id="nombre" placeholder="Escriba sus apellidos y nombres completos aquí..." required>
+        </div>
+    </section>
+
+    <!-- Banner de Validación de Formulario -->
+    <div id="validation-banner" class="error-message"></div>
+
+    <!-- I SERIE: IDENTIDAD CULTURAL Y MERCADO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>I Serie: Mercado de Diseño e Identidad Cultural (Verdadero o Falso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analiza detenidamente cada afirmación basada en los referentes culturales de Guatemala, la economía creativa y la oferta/demanda de diseño. Selecciona <strong>Verdadero (V)</strong> o <strong>Falso (F)</strong> según corresponda. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. En el mercado del diseño en Guatemala, la "demanda" representa la cantidad de diseñadores ofreciendo sus portafolios, mientras que la "oferta" representa los requerimientos de los clientes comerciales.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q1" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q1" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. La incorporación de textiles, tramas y colores tradicionales de Guatemala en empaques comerciales debe hacerse con profundo respeto y sentido de identidad para evitar caer en la apropiación cultural inadecuada.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q2" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q2" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. El concepto económico de "Economía Naranja" se refiere a la comercialización masiva de productos e insumos agrícolas de exportación en Centroamérica.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q3" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q3" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. El diseño de marcas y productos inspirados en la identidad textil guatemalteca (como huipiles o tramas tradicionales) aporta un gran valor diferenciador en los mercados globales.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q4" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q4" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. En la industria textil y de moda actual, la tipografía y la diagramación visual no tienen ninguna relación ni aportan valor a la presentación formal de un catálogo de productos.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q5" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q5" value="si"> Falso (F)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- II SERIE: DIGITALIZACIÓN TEXTIL Y CAD -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>II Serie: Digitalización de Patrones y Formatos Vectoriales (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lee comprensivamente cada planteamiento técnico sobre procesamiento de imágenes, vectorización y formatos CAD. Selecciona la única respuesta correcta de las opciones presentadas. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cómo se conoce a la unidad técnica de medida de resolución espacial (densidad de puntos) que configuramos al escanear un tejido físico para no perder detalles de su trama antes de vectorizar?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q6" value="no"> Grados Kelvin (K)</label>
+                <label class="option-item"><input type="radio" name="q6" value="si"> Puntos por Pulgada (DPI / PPP)</label>
+                <label class="option-item"><input type="radio" name="q6" value="no"> Formato de compresión de audio</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. ¿Qué formato de archivo de vectores (CAD) es el estándar universalmente utilizado en diseño web y maquetación interactiva debido a que mantiene su nitidez a cualquier escala?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q7" value="no"> Formato plano JPG</label>
+                <label class="option-item"><input type="radio" name="q7" value="si"> Formato vectorial SVG (Scalable Vector Graphics)</label>
+                <label class="option-item"><input type="radio" name="q7" value="no"> Formato industrial DWG</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. Al vectorizar un patrón o tejido tradicional utilizando curvas Bézier (Pluma), ¿por qué es crítico asegurar el "cierre de trayectos" en cada figura trazada?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q8" value="no"> Para que el archivo final de diseño se exporte directamente a formato de audio.</label>
+                <label class="option-item"><input type="radio" name="q8" value="si"> Para poder aplicar rellenos de color, tramas y degradados de forma limpia sin que el color se desborde del trazo</label>
+                <label class="option-item"><input type="radio" name="q8" value="no"> Para cambiar automáticamente el modo de color del lienzo de RGB a CMYK.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué ventaja técnica nos da organizar nuestro archivo digital de vectorización textil estructurándolo en diferentes "Capas Técnicas" en el programa?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q9" value="si"> Permite separar las guías de trazado, los contornos vectoriales y los colores de relleno para editarlos de forma segura sin desordenar la mesa de trabajo</label>
+                <label class="option-item"><input type="radio" name="q9" value="no"> Elimina de forma automática el margen de sangría del documento para la imprenta.</label>
+                <label class="option-item"><input type="radio" name="q9" value="no"> Aumenta la velocidad física de rotación del procesador de la computadora.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. Formato de archivo vectorial CAD ampliamente utilizado en la industria de la ingeniería, planos arquitectónicos y corte industrial en láser:</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q10" value="no"> Formato de imagen transparente PNG</label>
+                <label class="option-item"><input type="radio" name="q10" value="no"> Formato de maquetación PDF</label>
+                <label class="option-item"><input type="radio" name="q10" value="si"> Formatos DXF / DWG para dibujo asistido por computadora</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- III SERIE: NOMENCLATURAS Y COMPOSICIÓN EDITORIAL -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>III Serie: Procesamiento Digital e Interfaces (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Complete conceptualmente cada uno de los enunciados sobre técnicas de digitalización y edición de imagen. Seleccione de la lista desplegable la única respuesta correcta de acuerdo con lo estudiado en la Guía 3. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. Proceso técnico que consiste en trazar con nodos (curvas Bézier) una imagen basada en píxeles (mapa de bits) para transformarla en líneas matemáticas escalables:</p>
+            <select class="select-input" id="q11">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Vectorización o Trazado (Tracing)</option>
+                <option value="no">Rasterización a baja resolución</option>
+                <option value="no">Empaquetado de fuentes tipográficas</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>2. Efecto de edición digital que oculta partes de una capa o textura para que se visualicen únicamente a través de la silueta de una palabra o un texto de gran grosor:</p>
+            <select class="select-input" id="q12">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Estilos de párrafo globales (F3)</option>
+                <option value="si">Máscara de Recorte o Enmascaramiento de Texto (Clipping Mask)</option>
+                <option value="no">Efecto estroboscópico de destello</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>3. En el procesamiento de imágenes escaneadas, la distorsión o deformación visual que provoca el lente de una cámara sobre las líneas rectas de un tejido se denomina:</p>
+            <select class="select-input" id="q13">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Foliado automático</option>
+                <option value="si">Distorsión de lente (Abombamiento / Cojín)</option>
+                <option value="no">Color fuera de gama (Gamut)</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>4. Herramienta de software en línea que emula funciones de edición por capas y máscaras para diseñar interfaces (UI) y texturas de moda de forma gratuita:</p>
+            <select class="select-input" id="q14">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Scribus de maquetación de libros</option>
+                <option value="si">Photopea (Editor basado en web)</option>
+                <option value="no">Microsoft PowerPoint con SmartArt</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>5. Para corregir la perspectiva de una fotografía de un tejido artesanal que fue tomada con inclinación en lugar de estar completamente plana frente a la cámara se utiliza:</p>
+            <select class="select-input" id="q15">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Un filtro estroboscópico de luces LED.</option>
+                <option value="si">Herramientas de Corrección de Perspectiva o Distorsión en el editor de imágenes</option>
+                <option value="no">La regla de los tres clics de usabilidad web.</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- IV SERIE: ESTUDIOS DE CASO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>IV Serie: Aplicación Práctica por Especialidades (Estudios de Caso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analiza detenidamente las siguientes situaciones del campo profesional del diseño. Selecciona la opción técnica idónea para solucionar el problema con un criterio ético y amigable. (1 punto por acierto)
+        </div>
+
+        <!-- Caso 1 -->
+        <div class="case-container">
+            <strong>CASO A: EL EMBALAJE TEXTIL PARA EXPORTACIÓN</strong><br>
+            Una cooperativa de tejedoras de Santiago Atitlán le solicita diseñar la etiqueta y empaque para exportar sus huipiles. Quieren incorporar las hermosas tramas de aves bordadas a mano en el diseño del cartón, pero al estirar la fotografía de un huipil para adaptarla al empaque, las líneas bordadas pierden nitidez, se ven pixeladas y borrosas.
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cómo debe proceder de forma técnica para solucionar este caso de manera profesional según la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q26" value="no"> Dejar la foto pixelada y explicar en la descripción del empaque que es un estilo rústico tradicional.</label>
+                <label class="option-item"><input type="radio" name="q26" value="si"> Escanear el tejido a alta resolución (mínimo 300 DPI) y realizar una vectorización limpia trazando las líneas bordadas para que sean escalables a cualquier tamaño</label>
+                <label class="option-item"><input type="radio" name="q26" value="no"> Usar una herramienta de inteligencia artificial generativa de internet para crear un logotipo genérico sin relación con el tejido.</label>
+            </div>
+        </div>
+
+        <!-- Caso 2 -->
+        <div class="case-container">
+            <strong>CASO B: EL PROTOTIPO DE TEXTURA DE MODA</strong><br>
+            Estás diseñando un afiche publicitario para una línea de ropa juvenil inspirada en tramas de la cultura maya. Quieres que el título principal de la marca ("GUATEMALA") tenga un efecto visual increíble, donde el fondo de las letras esté relleno exactamente con los colores y formas de un tejido típico tradicional.
+        </div>
+
+        <div class="question">
+            <p>2. ¿Qué técnica de edición digital en Photopea te permite lograr este efecto de forma directa en el diseño según la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q27" value="no"> Pintar manualmente cada una de las letras con pincel digital usando el mouse de la PC.</label>
+                <label class="option-item"><input type="radio" name="q27" value="si"> Colocar la imagen del tejido típico por encima del texto y aplicar una Máscara de Recorte (Clipping Mask) para que la textura solo se vea dentro de las letras</label>
+                <label class="option-item"><input type="radio" name="q27" value="no"> Convertir los textos a curvas vectoriales industriales en formato DXF.</label>
+            </div>
+        </div>
+
+        <!-- Caso 3 -->
+        <div class="case-container">
+            <strong>CASO C: LA MARCA CON IDENTIDAD EN EL EXTRANJERO</strong><br>
+            Un cliente de la industria hotelera busca abrir un nuevo resort en la selva de Petén. Le pide un logotipo que incorpore elementos de la cultura maya (como glifos o tramas). Sin embargo, el cliente exige que el diseño no caiga en la "apropiación cultural inadecuada" que pueda ofender o restarle valor al arte tradicional.
+        </div>
+
+        <div class="question">
+            <p>3. ¿Cómo respondes y qué propuesta de diseño debes plantear basándote en la ética de la Guía 1?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q28" value="no"> Copiar y calcar de forma exacta un glifo sagrado de un sitio arqueológico maya sin dar créditos ni investigar su significado.</label>
+                <label class="option-item"><input type="radio" name="q28" value="si"> Estudiar el significado de la iconografía tradicional, entablar un diálogo con las comunidades y diseñar una propuesta original basada en referentes inspiradores respetando la propiedad intelectual colectiva</label>
+                <label class="option-item"><input type="radio" name="q28" value="no"> Utilizar tipografías e imágenes genéricas que se descarguen de internet para evitar usar referentes tradicionales de Guatemala.</label>
+            </div>
+        </div>
+
+        <!-- Caso 4 -->
+        <div class="case-container">
+            <strong>CASO D: EL DISEÑO DE PATRÓN CAD DEFORME</strong><br>
+            Al escanear un huipil para crear un patrón vectorial en formato SVG, notas que el marco del diseño del tejido se ve "inflado" u abombado como un globo hacia el exterior debido a que se utilizó la cámara de un celular muy cerca de la prenda, distorsionando las líneas rectas originales.
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué ajuste debes aplicar antes de proceder a vectorizar el patrón según la teoría de la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q29" value="si"> Aplicar una herramienta de "Corrección de Distorsión de Lente" en el editor de imágenes para enderezar las líneas rectas y recuperar la simetría del patrón antes de trazar</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Forzar el trazado ignorando las guías reticulares para agilizar los tiempos de la imprenta.</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Guardar el archivo en formato DXF de ingeniería de tres ejes.</label>
+            </div>
+        </div>
+
+        <!-- Caso 5 -->
+        <div class="case-container">
+            <strong>CASO E: EL CATÁLOGO DE MODA SIFONADO</strong><br>
+            Al lanzar una nueva colección inspirada en tramas guatemaltecas, un diseñador de moda nota que la "demanda" (los clientes queriendo comprar sus productos) supera por mucho la "oferta" física de prendas bordadas a mano disponibles en su tienda.
+        </div>
+
+        <div class="question">
+            <p>5. ¿Qué fenómeno económico de mercado de diseño de la Guía 1 se está manifestando y qué decisión lógica de negocio debe tomar?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q30" value="no"> Se manifiesta un exceso de oferta; el diseñador debe reducir al mínimo sus precios para liquidar la ropa.</label>
+                <label class="option-item"><input type="radio" name="q30" value="si"> Se manifiesta un exceso de demanda; el diseñador debe planificar con las tejedoras plazos de entrega realistas o aumentar la oferta, valorando justamente el tiempo del trabajo hecho a mano</label>
+                <label class="option-item"><input type="radio" name="q30" value="no"> Detener de forma fija la producción y exportar todo el catálogo de modas a formato PDF cerrado.</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-submit" onclick="calificarYGenerar()">FINALIZAR EVALUACIÓN Y GENERAR COMPROBANTE</button>
+        <div id="result-banner"></div>
+    </div>
+</div>
+
+<script {is_jsx="false"}>
+    function calificarYGenerar() {
+        const nombreInput = document.getElementById('nombre');
+        const validationBanner = document.getElementById('validation-banner');
+        const resultBanner = document.getElementById('result-banner');
+        const nombre = nombreInput.value.trim();
+
+        // Limpiar alertas de validación de formulario previas
+        validationBanner.style.display = 'none';
+        validationBanner.innerText = '';
+
+        if (!nombre || nombre.length < 5) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, ingrese sus apellidos y nombres completos para poder procesar y calificar su evaluación.";
+            nombreInput.focus();
+            return;
+        }
+
+        let puntos = 0;
+
+        // Serie I: Verdadero o Falso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q1"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q2"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q3"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q4"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q5"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie II: Selección Única (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q6"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q7"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q8"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q9"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q10"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie III: Dropdowns (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.getElementById('q11').value === 'si') puntos += 1;
+        if (document.getElementById('q12').value === 'si') puntos += 1;
+        if (document.getElementById('q13').value === 'si') puntos += 1;
+        if (document.getElementById('q14').value === 'si') puntos += 1;
+        if (document.getElementById('q15').value === 'si') puntos += 1;
+
+        // Serie IV: Estudios de Caso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q26"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q27"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q28"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q29"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q30"]:checked')?.value === 'si') puntos += 1;
+
+        // Validar límite para evitar problemas con números de punto flotante
+        puntos = Math.min(20, puntos);
+
+        // Desplegar resultado en pantalla
+        resultBanner.style.display = 'block';
+        resultBanner.innerText = `¡EXAMEN REGISTRADO CON ÉXITO! NOTA OBTENIDA: ${puntos} / 20 PUNTOS. Tu comprobante PDF se está descargando automáticamente...`;
+
+        // Generar PDF profesional
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Encabezado decorativo del comprobante (Creative Purple #6c5ce7)
+        doc.setFillColor(108, 92, 231); // Purple 500
+        doc.rect(0, 0, 210, 42, 'F');
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.text("COLEGIO DE INFORMÁTICA J.R.B.", 105, 18, { align: "center" });
+        doc.setFontSize(11);
+        doc.text("COMPROBANTE OFICIAL DE EVALUACIÓN DIGITAL - DISEÑO GRÁFICO II", 105, 28, { align: "center" });
+
+        // Bloque de metadatos académicos
+        doc.setTextColor(15, 23, 42); // Slate 900
+        doc.setFontSize(12);
+        doc.text("DATOS ACADÉMICOS DEL ESTUDIANTE", 20, 58);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.text(`Nombre Completo: ${nombre.toUpperCase()}`, 20, 68);
+        doc.text("Curso: Diseño Computarizado II (CAD, Textiles, Identidad Cultural y Capas)", 20, 75);
+        doc.text("Grado: Quinto Bachillerato en Diseño Gráfico (5DISE)", 20, 82);
+        doc.text(`Fecha y Hora de Emisión: ${new Date().toLocaleString()}`, 20, 89);
+
+        // Divisor visual
+        doc.setLineWidth(0.5);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 98, 190, 98);
+
+        // Calificación final sobre 20 puntos
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(26);
+        doc.setTextColor(108, 92, 231); // Creative Purple
+        doc.text(`CALIFICACIÓN: ${puntos} / 20 PUNTOS`, 105, 120, { align: "center" });
+
+        // Consideraciones éticas y de entrega
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Este documento sirve como evidencia inalterable de la realización de la evaluación digital", 105, 140, { align: "center" });
+        doc.text("correspondiente a las Guías de la 1 a la 3 en el Laboratorio de Diseño de la IV Unidad.", 105, 145, { align: "center" });
+        doc.text("Instrucciones: Guarde este comprobante y súbalo a la tarea en Google Classroom.", 105, 152, { align: "center" });
+
+        // Código de seguridad hash unificado e inalterable
+        const securityHash = "DIS5B-U4-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        doc.setFont("courier", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(30, 41, 59);
+        doc.text(`CÓDIGO DE VALIDACIÓN UNIFICADO: ${securityHash}`, 20, 180);
+
+        // Descarga automatizada del archivo
+        doc.save(`Diseno_ComputarizadoII_Quinto_U4_${nombre.replace(/\s+/g, '_')}.pdf`);
+    }
+</script>
+
+</body>
+</html>

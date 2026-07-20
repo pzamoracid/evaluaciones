@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Producción de Contenido Digital - IV Unidad - JRB</title>
+    <!-- Librería externa para generación de comprobantes en PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #0f172a; /* Slate 900 - Textos y cabeceras sólidas */
+            --primary-light: #1e293b; /* Slate 800 */
+            --accent: #f97316; /* Orange 500 - Creatividad, video y producción */
+            --accent-hover: #ea580c; /* Orange 600 */
+            --accent-light: #fff7ed; /* Orange 50 - Fondos de interacción */
+            --light-bg: #f8fafc; /* Slate 50 - Fondo de pantalla */
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1; /* Slate 300 */
+            --text-muted: #64748b; /* Slate 500 */
+            --success: #10b981; /* Emerald 500 */
+            --success-light: #ecfdf5; /* Emerald 50 */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--light-bg); 
+            margin: 0; 
+            padding: 40px 15px;
+            color: var(--primary);
+        }
+
+        .exam-card { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+            border-top: 10px solid var(--accent);
+        }
+
+        /* Encabezado Principal */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 35px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+        }
+
+        .header-info h1 { 
+            margin: 0; 
+            font-size: 1.6rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        .header-info p { 
+            margin: 6px 0 0; 
+            opacity: 0.85; 
+            font-size: 0.95rem; 
+            color: #94a3b8;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Identificación del Estudiante (Ancho Completo y Orientación) */
+        .student-section { 
+            padding: 25px 35px;
+            background: #fdfdfd;
+            border-bottom: 1px solid #f1f5f9;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .student-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .field { width: 100%; }
+        .field label { 
+            display: block; 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            color: var(--accent); 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            letter-spacing: 0.8px;
+        }
+        .field input, .field select { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            background-color: var(--card-bg);
+            color: var(--primary);
+        }
+        .field input:focus, .field select:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+        }
+
+        /* Estructura de las Series */
+        .serie { 
+            padding: 35px 35px; 
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .serie-title { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--accent); 
+            padding-left: 15px; 
+            margin-bottom: 15px; 
+        }
+        .serie-title h2 { margin: 0; font-size: 1.25rem; color: var(--primary); text-transform: uppercase; }
+        .badge-points {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .instruction-box {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            color: #c2410c;
+        }
+        
+        .question { margin-bottom: 28px; }
+        .question p { margin-top: 0; font-weight: 600; font-size: 1rem; color: var(--primary); line-height: 1.5; }
+
+        /* Controles de Selección e Inputs Estéticos */
+        .options-container { display: grid; gap: 10px; }
+        .option-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .option-item:hover { border-color: var(--accent); background: var(--accent-light); }
+        .option-item input { margin-right: 12px; cursor: pointer; width: 16px; height: 16px; }
+
+        .select-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: var(--card-bg);
+            color: var(--primary);
+            transition: border 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .select-input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+        }
+
+        .case-container {
+            background-color: #f8fafc;
+            border: 1.5px dashed var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Banner de Alerta */
+        .error-message {
+            display: none;
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 35px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Botón de Finalización */
+        .btn-container { padding: 40px 35px; text-align: center; }
+        .btn-submit { 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            padding: 16px 50px; 
+            font-size: 1.15rem; 
+            font-weight: bold; 
+            border-radius: 50px; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(249, 115, 22, 0.2);
+        }
+        .btn-submit:hover { 
+            background: var(--accent-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);
+        }
+
+        #result-banner {
+            display: none;
+            margin: 20px 35px;
+            padding: 25px;
+            background: var(--success-light);
+            color: #065f46;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid #a7f3d0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-card">
+    <header class="header">
+        <div class="header-info">
+            <p>COLEGIO DE INFORMÁTICA JUSTO RUFINO BAUTISTA</p>
+            <h1>Evaluación Parcial - Cuarta Unidad</h1>
+            <p>Curso: Producción de Contenido Digital | Quinto Bachillerato</p>
+        </div>
+        <div class="logo-container">
+            <!-- Logo oficial desde la carpeta public descarga.png -->
+            <img src="public/descarga.png" alt="Logo JRB" onerror="this.src='https://placehold.co/100x100?text=J.R.B.'">
+        </div>
+    </header>
+
+    <section class="student-section">
+        <div class="field">
+            <label for="nombre">Nombre Completo del Estudiante</label>
+            <input type="text" id="nombre" placeholder="Escriba sus apellidos y nombres completos aquí..." required>
+        </div>
+        <div class="field">
+            <label for="orientacion">Orientación / Especialidad</label>
+            <select id="orientacion" required>
+                <option value="">-- Seleccione su especialidad --</option>
+                <option value="Computación (BACO)">Ciencias y Letras con Orientación en Computación</option>
+                <option value="Diseño Gráfico (DISE)">Ciencias y Letras con Orientación en Diseño Gráfico</option>
+                <option value="Biología (BIOLO)">Ciencias y Letras con Orientación en Biología</option>
+            </select>
+        </div>
+    </section>
+
+    <!-- Banner de Validación de Formulario -->
+    <div id="validation-banner" class="error-message"></div>
+
+    <!-- I SERIE: VERDADERO O FALSO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>I Serie: Curación, Inteligencia Artificial y Nube (Verdadero o Falso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analiza detenidamente cada enunciado basado en la curación académica, la interacción con inteligencias artificiales y la gestión documental. Selecciona <strong>Verdadero (V)</strong> o <strong>Falso (F)</strong> según corresponda. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. En la era digital, la "infoxicación" es un término que describe el exceso de información que abruma al usuario, haciendo necesario un filtro o curación académica para encontrar datos reales.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q1" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q1" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. Al usar inteligencias artificiales generativas (como ChatGPT o Gemini), se puede asumir de forma segura que el 100% de la información que devuelven es exacta, verídica y no requiere verificación.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q2" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q2" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. En el formato APA 7.ª edición, es obligatorio citar las respuestas de inteligencias artificiales de forma académica para evitar el plagio y mantener la transparencia de la investigación.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q3" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q3" value="no"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. El "historial de versiones" de Google Drive es un metadato inservible que no permite auditar qué usuario realizó aportaciones específicas en un trabajo grupal compartido.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q4" value="no"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q4" value="si"> Falso (F)</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. Las normas Vancouver se emplean con frecuencia en el ámbito médico y biológico, mientras que las normas APA se orientan mayormente a las ciencias sociales y diseño.</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q5" value="si"> Verdadero (V)</label>
+                <label class="option-item"><input type="radio" name="q5" value="no"> Falso (F)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- II SERIE: SELECCIÓN ÚNICA (PROMPTS Y ALUCINACIONES) -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>II Serie: Ingeniería de Prompts y Desafíos de la IA (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Lea detenidamente cada planteamiento técnico sobre la interacción correcta con los modelos de lenguaje (LLM). Seleccione la única respuesta correcta de las opciones presentadas. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cómo se define técnicamente el texto, instrucción o pregunta específica que le escribes a una Inteligencia Artificial para indicarle la tarea que deseas que realice?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q6" value="no"> Operador Booleano de red</label>
+                <label class="option-item"><input type="radio" name="q6" value="si"> Prompt (Instrucción de entrada)</label>
+                <label class="option-item"><input type="radio" name="q6" value="no"> Metadato de archivo de Drive</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. ¿Cómo se le denomina al error técnico por el cual un modelo de Inteligencia Artificial inventa datos falsos con total seguridad y los presenta como si fueran reales?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q7" value="no"> Sesgo algorítmico</label>
+                <label class="option-item"><input type="radio" name="q7" value="si"> Alucinación (Hallucination)</label>
+                <label class="option-item"><input type="radio" name="q7" value="no"> Infiltración condicional</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. ¿Qué componentes indispensables estructuran a un "Megaprompt" profesional para asegurar que la IA devuelva una respuesta precisa y de alta calidad?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q8" value="no"> Una pregunta simple de una sola línea sin detalles.</label>
+                <label class="option-item"><input type="radio" name="q8" value="si"> Definición de un Rol, Contexto claro de la tarea, Restricciones y el Formato de salida deseado</label>
+                <label class="option-item"><input type="radio" name="q8" value="no"> Códigos de bases de datos y la dirección MAC de la computadora.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. ¿A qué nos referimos con "sesgo algorítmico" en las inteligencias artificiales según la Guía de Trabajo No. 2?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q9" value="no"> A un virus informático que borra los archivos en la nube.</label>
+                <label class="option-item"><input type="radio" name="q9" value="si"> A la inclinación o preferencia injusta que muestra un modelo debido a que fue entrenado con datos desbalanceados</label>
+                <label class="option-item"><input type="radio" name="q9" value="no"> A la traducción automática de formatos de normas de citación.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. Para citar de forma ética una interacción con una IA bajo el formato APA 7.ª edición, ¿qué datos se deben declarar principalmente en el reporte?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q10" value="no"> El número de serie físico de tu teléfono celular.</label>
+                <label class="option-item"><input type="radio" name="q10" value="si"> El nombre del autor del modelo (ej. OpenAI), año, el nombre del modelo de lenguaje y la fecha de consulta</label>
+                <label class="option-item"><input type="radio" name="q10" value="no"> El operador booleano utilizado para estructurar el prompt.</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- III SERIE: BÚSQUEDA Y GESTIÓN DOCUMENTAL -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>III Serie: Operadores Booleanos y Gestión Documental (Selección Única)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Complete de forma técnica cada uno de los siguientes enunciados sobre curación y almacenamiento digital. Seleccione del menú desplegable la única respuesta correcta de acuerdo con lo estudiado en las Guías 1 y 3. (1 punto por acierto)
+        </div>
+
+        <div class="question">
+            <p>1. Operador booleano que obliga al motor de búsqueda a encontrar documentos que contengan de forma obligatoria los dos términos indicados (restringiendo el resultado):</p>
+            <select class="select-input" id="q11">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Operador AND (Y lógico)</option>
+                <option value="no">Operador OR (O lógico)</option>
+                <option value="no">Operador NOT (Exclusión)</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>2. Operador booleano utilizado para excluir un término específico de la búsqueda, de forma que el motor no muestre resultados relacionados con esa palabra:</p>
+            <select class="select-input" id="q12">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Operador OR</option>
+                <option value="no">Operador AND</option>
+                <option value="si">Operador NOT / signo menos (-)</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>3. En la gestión documental en Google Drive, ¿cómo se denominan los datos invisibles de registro (como la fecha de creación, autor, tamaño y modificaciones) de un archivo?</p>
+            <select class="select-input" id="q13">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="si">Metadatos (Metadata)</option>
+                <option value="no">Cadenas de conexión SQL</option>
+                <option value="no">Ecuaciones lógicas booleanas</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>4. Estándar de citación académica internacional utilizado principalmente en el área médica y de biología que emplea números correlativos en el texto de forma secuencial:</p>
+            <select class="select-input" id="q14">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Normas APA 7.ª Edición</option>
+                <option value="si">Normas Vancouver</option>
+                <option value="no">Ficha de validación estroboscópica</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <p>5. Para mantener un repositorio seguro de evidencias en Google Drive y evitar que personas externas alteren los archivos, las políticas de seguridad exigen:</p>
+            <select class="select-input" id="q15">
+                <option value="">-- Seleccione una respuesta --</option>
+                <option value="no">Dejar los accesos completamente abiertos en modo editor público.</option>
+                <option value="si">Configurar los enlaces en modo "Restringido" y compartir acceso únicamente a los correos institucionales autorizados</option>
+                <option value="no">Convertir todos los documentos de texto a formato de base de datos SQL Server.</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- IV SERIE: ESTUDIOS DE CASO -->
+    <div class="serie">
+        <div class="serie-title">
+            <h2>IV Serie: Aplicación Práctica por Especialidades (Estudios de Caso)</h2>
+            <span class="badge-points">5 puntos</span>
+        </div>
+        <div class="instruction-box">
+            <strong>Instrucciones:</strong> Analiza detenidamente las situaciones escolares y profesionales planteadas. Selecciona la alternativa que solucione técnicamente el problema aplicando la curación de datos y la ética. (1 punto por acierto)
+        </div>
+
+        <!-- Caso A: Computación -->
+        <div class="case-container">
+            <strong>CASO COMPUTACIÓN (BACO): EL REPOSITORIO DE CÓDIGO VANDALIZADO</strong><br>
+            Un equipo de 5to. Computación trabaja de forma compartida en un portafolio digital de programación en Google Drive. El líder nota que un bloque de código CRUD fue borrado de forma sospechosa y un compañero afirma que él no fue y que el archivo se modificó solo por el sistema.
+        </div>
+
+        <div class="question">
+            <p>1. ¿Cómo debe proceder el líder para auditar con evidencias reales la autoría de las modificaciones según la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q26" value="no"> Reinstalar el sistema operativo local de todas las computadoras del grupo.</label>
+                <label class="option-item"><input type="radio" name="q26" value="si"> Consultar el historial de versiones o la sección "Detalles/Actividad" de Google Drive para rastrear qué usuario, fecha y hora exacta realizó los cambios en el archivo</label>
+                <label class="option-item"><input type="radio" name="q26" value="no"> Estructurar un prompt de tipo alucinación para que la IA repare el código.</label>
+            </div>
+        </div>
+
+        <!-- Caso B: Biología -->
+        <div class="case-container">
+            <strong>CASO BIOLOGÍA (BIOLO): EL INFORME DE BIODIVERSIDAD</strong><br>
+            Estás redactando un informe sobre botánica guatemalteca para la feria de ciencias. Al buscar información sobre la "Monja Blanca" en Google Académico, necesitas artículos científicos confiables, pero el motor de búsqueda te muestra miles de páginas comerciales que venden flores y blogs informales de turismo que desordenan tu estudio.
+        </div>
+
+        <div class="question">
+            <p>2. ¿Cómo debes estructurar una ecuación de búsqueda avanzada aplicando la teoría de la Guía 1 para limpiar tus resultados?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q27" value="no"> Escribir la frase "flores turísticas de Guatemala" en un cuadro de texto de área.</label>
+                <label class="option-item"><input type="radio" name="q27" value="si"> Diseñar una ecuación lógica en la barra del buscador académico como: <code>"Lycaste virginalis" AND "biodiversidad" NOT "venta"</code> para enfocar los resultados</label>
+                <label class="option-item"><input type="radio" name="q27" value="no"> Descargar una versión portable del software Scribus para maquetar de nuevo la consulta.</label>
+            </div>
+        </div>
+
+        <!-- Caso C: Diseño Gráfico -->
+        <div class="case-container">
+            <strong>CASO DISEÑO GRÁFICO (DISE): EL BRANDING DE LA STARTUP</strong><br>
+            Un grupo de diseño le solicita a una IA generativa ideas para el isotipo de su startup. El bot les arroja un concepto que parece espectacular, con combinaciones cromáticas de lujo. Sin embargo, al investigar en bases de datos de marcas reales, descubren que el isotipo propuesto es una copia exacta del logo de una empresa extranjera.
+        </div>
+
+        <div class="question">
+            <p>3. ¿Qué problema ético y técnico de la IA se manifestó en este escenario de acuerdo con la Guía 2?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q28" value="no"> Ocurrió un error de latencia en la velocidad de la red local del chatbot.</label>
+                <label class="option-item"><input type="radio" name="q28" value="si"> Se manifestó una alucinación y plagio de datos debido a que la IA replica información protegida de sus bases de entrenamiento; debieron curar la información y aplicar síntesis gráfica propia</label>
+                <label class="option-item"><input type="radio" name="q28" value="no"> Hizo falta configurar el puerto SQL 1433 en el panel del chatbot.</label>
+            </div>
+        </div>
+
+        <!-- Caso 4: Inteligencia Artificial/Prompting -->
+        <div class="case-container">
+            <strong>CASO GENERAL: EL CHATBOT INEXPRESIVO</strong><br>
+            Al solicitarle ayuda a un modelo de lenguaje para estructurar la introducción de su proyecto, un estudiante le escribe en el chat de forma simple: "hazme una introducción de robótica". La IA le devuelve una respuesta sumamente básica, infantil y que no se adecúa al nivel de bachillerato requerido.
+        </div>
+
+        <div class="question">
+            <p>4. ¿Cómo debe corregir el estudiante su instrucción aplicando la ingeniería de prompts de la Guía 2?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q29" value="no"> Repetir la misma pregunta escribiendo todo en letras mayúsculas para denotar urgencia.</label>
+                <label class="option-item"><input type="radio" name="q29" value="si"> Estructurar un megaprompt indicando un Rol específico ("Actúa como un profesor de robótica"), brindando Contexto de la feria y definiendo Restricciones de nivel académico</label>
+                <label class="option-item"><input type="radio" name="q29" value="no"> Guardar la respuesta de la IA en formato de imagen PNG con fondo de color transparente.</label>
+            </div>
+        </div>
+
+        <!-- Caso 5: Curación Documental -->
+        <div class="case-container">
+            <strong>CASO EDITORIAL: CITACIÓN DE MUESTRAS ACADÉMICAS</strong><br>
+            Estás finalizando tu proyecto unificado de la cuarta unidad. Al momento de armar las referencias bibliográficas de tus fuentes de curación, notas que tu compañero mezcló de forma desordenada el estilo de citas de autor-año (APA) con enumeraciones secuenciales (Vancouver).
+        </div>
+
+        <div class="question">
+            <p>5. ¿Cuál es el procedimiento técnico y ético correcto para la entrega del reporte final según la Guía 3?</p>
+            <div class="options-container">
+                <label class="option-item"><input type="radio" name="q30" value="no"> Dejar el reporte de referencias desordenado para reflejar que se usaron múltiples herramientas digitales.</label>
+                <label class="option-item"><input type="radio" name="q30" value="si"> Unificar de forma estricta todo el catálogo de referencias bajo un solo estándar coherente (ej: APA 7.ª para informática o Vancouver si es biología) según lo requiera el docente</label>
+                <label class="option-item"><input type="radio" name="q30" value="no"> Reemplazar todas las citas bibliográficas por enlaces públicos abiertos de Google Drive.</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-submit" onclick="calificarYGenerar()">FINALIZAR EVALUACIÓN Y GENERAR COMPROBANTE</button>
+        <div id="result-banner"></div>
+    </div>
+</div>
+
+<script {is_jsx="false"}>
+    function calificarYGenerar() {
+        const nombreInput = document.getElementById('nombre');
+        const orientacionSelect = document.getElementById('orientacion');
+        const validationBanner = document.getElementById('validation-banner');
+        const resultBanner = document.getElementById('result-banner');
+        
+        const nombre = nombreInput.value.trim();
+        const orientacion = orientacionSelect.value;
+
+        // Limpiar alertas de validación de formulario previas
+        validationBanner.style.display = 'none';
+        validationBanner.innerText = '';
+
+        if (!nombre || nombre.length < 5) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, ingrese sus apellidos y nombres completos para poder procesar y calificar su evaluación.";
+            nombreInput.focus();
+            return;
+        }
+
+        if (!orientacion) {
+            validationBanner.style.display = 'block';
+            validationBanner.innerText = "⚠️ Por favor, seleccione su Especialidad / Orientación para registrar su prueba académica.";
+            orientacionSelect.focus();
+            return;
+        }
+
+        let puntos = 0;
+
+        // Serie I: Verdadero o Falso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q1"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q2"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q3"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q4"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q5"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie II: Selección Única (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q6"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q7"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q8"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q9"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q10"]:checked')?.value === 'si') puntos += 1;
+
+        // Serie III: Dropdowns (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.getElementById('q11').value === 'si') puntos += 1;
+        if (document.getElementById('q12').value === 'si') puntos += 1;
+        if (document.getElementById('q13').value === 'si') puntos += 1;
+        if (document.getElementById('q14').value === 'si') puntos += 1;
+        if (document.getElementById('q15').value === 'si') puntos += 1;
+
+        // Serie IV: Estudios de Caso (5 ítems, 1 punto c/u -> Max 5.0)
+        if (document.querySelector('input[name="q26"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q27"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q28"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q29"]:checked')?.value === 'si') puntos += 1;
+        if (document.querySelector('input[name="q30"]:checked')?.value === 'si') puntos += 1;
+
+        // Validar límite para evitar problemas de redondeo
+        puntos = Math.min(20, puntos);
+
+        // Desplegar resultado en pantalla
+        resultBanner.style.display = 'block';
+        resultBanner.innerText = `¡EXAMEN REGISTRADO CON ÉXITO! NOTA OBTENIDA: ${puntos} / 20 PUNTOS. Tu comprobante PDF se está descargando automáticamente...`;
+
+        // Generar PDF profesional
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Encabezado decorativo del comprobante (Emerald 500)
+        doc.setFillColor(16, 185, 129); // Emerald 500
+        doc.rect(0, 0, 210, 42, 'F');
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.text("COLEGIO DE INFORMÁTICA J.R.B.", 105, 18, { align: "center" });
+        doc.setFontSize(11);
+        doc.text("COMPROBANTE OFICIAL DE EVALUACIÓN DIGITAL - PROD. CONTENIDO DIGITAL", 105, 28, { align: "center" });
+
+        // Bloque de metadatos académicos
+        doc.setTextColor(15, 23, 42); // Slate 900
+        doc.setFontSize(12);
+        doc.text("DATOS ACADÉMICOS DEL ESTUDIANTE", 20, 58);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.text(`Nombre Completo: ${nombre.toUpperCase()}`, 20, 68);
+        doc.text("Curso: Producción de Contenido Digital (Curación, Prompts y Citación en la Nube)", 20, 75);
+        doc.text(`Grado: Quinto Bachillerato en Ciencias y Letras con Orientación en ${orientacion}`, 20, 82);
+        doc.text(`Fecha y Hora de Emisión: ${new Date().toLocaleString()}`, 20, 89);
+
+        // Divisor visual
+        doc.setLineWidth(0.5);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 98, 190, 98);
+
+        // Calificación final sobre 20 puntos
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(26);
+        doc.setTextColor(16, 185, 129); // Emerald 500
+        doc.text(`CALIFICACIÓN: ${puntos} / 20 PUNTOS`, 105, 120, { align: "center" });
+
+        // Consideraciones éticas y de entrega
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Este documento sirve como evidencia inalterable de la realización de la evaluación digital", 105, 140, { align: "center" });
+        doc.text("correspondiente a las Guías de la 1 a la 3 en el Laboratorio de Computación de la IV Unidad.", 105, 145, { align: "center" });
+        doc.text("Instrucciones: Guarde este comprobante y súbalo a la tarea en Google Classroom.", 105, 152, { align: "center" });
+
+        // Código de seguridad hash unificado e inalterable
+        const securityHash = "PROD5B-U4-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        doc.setFont("courier", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(30, 41, 59);
+        doc.text(`CÓDIGO DE VALIDACIÓN UNIFICADO: ${securityHash}`, 20, 180);
+
+        // Descarga automatizada del archivo
+        doc.save(`Produccion_Contenido_Quinto_U4_${nombre.replace(/\s+/g, '_')}.pdf`);
+    }
+</script>
+
+</body>
+</html>
