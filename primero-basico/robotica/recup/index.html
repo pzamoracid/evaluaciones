@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Recuperación 2026 - Robótica Primero Básico</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-card {
+                border: 1px solid #94a3b8 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #0f172a !important;
+                padding-bottom: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-20">
+
+    <!-- Header / Banner -->
+    <header class="bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 text-white shadow-xl no-print border-b border-cyan-800/40">
+        <div class="max-w-5xl mx-auto px-6 py-7">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bg-amber-400 text-slate-950 text-xs font-black px-3 py-0.5 rounded-full uppercase tracking-wider">
+                            Ciclo Escolar 2026
+                        </span>
+                        <span class="bg-cyan-500/20 text-cyan-300 text-xs font-semibold px-3 py-0.5 rounded-full border border-cyan-400/30">
+                            Evaluación de Recuperación Oficial
+                        </span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+                        Curso: Robótica
+                    </h1>
+                    <p class="text-slate-300 text-sm mt-1">
+                        Colegio de Informática Justo Rufino Bautista &bull; Primero Básico (Plan Diario)
+                    </p>
+                    <p class="text-xs text-cyan-300 mt-0.5 font-medium">
+                        <i class="fa-solid fa-chalkboard-user mr-1"></i> Docente: Erick Enrique Zamora Paz
+                    </p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md px-6 py-3.5 rounded-2xl border border-white/20 text-center md:text-right w-full md:w-auto shadow-inner">
+                    <p class="text-[11px] uppercase tracking-widest text-cyan-200 font-bold">Ponderación Total</p>
+                    <p class="text-3xl font-black text-amber-400">100 <span class="text-sm font-semibold text-slate-200">pts</span></p>
+                    <p class="text-[11px] text-cyan-100 mt-0.5"><i class="fa-solid fa-robot mr-1"></i> Mínimo para aprobar: 60 pts</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 md:px-6 mt-6 space-y-6">
+
+        <!-- Student Identification Form Box -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-cyan-100 text-cyan-800 flex items-center justify-center font-bold text-lg">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Datos Generales del Estudiante</h2>
+                    <p class="text-xs text-slate-500">Ingresa tus datos exactos para registrar tu evaluación y generar tu acta oficial de recuperación.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                <div class="md:col-span-2">
+                    <label for="studentName" class="block font-semibold text-slate-700 text-xs mb-1">Nombre Completo del Estudiante *</label>
+                    <input type="text" id="studentName" oninput="syncStudentData()" placeholder="Apellidos, Nombres" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:border-cyan-600 text-slate-800 outline-none transition-all">
+                </div>
+
+                <div>
+                    <label for="studentGrade" class="block font-semibold text-slate-700 text-xs mb-1">Grado y Sección *</label>
+                    <select id="studentGrade" onchange="syncStudentData()" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:border-cyan-600 text-slate-800 outline-none transition-all bg-white">
+                        <option value="1ro. Básico - Sección A">1ro. Básico - Sección A</option>
+                        <option value="1ro. Básico - Sección B">1ro. Básico - Sección B</option>
+                        <option value="1ro. Básico - Sección C">1ro. Básico - Sección C</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="studentKey" class="block font-semibold text-slate-700 text-xs mb-1">Número de Clave *</label>
+                    <input type="number" id="studentKey" min="1" max="60" oninput="syncStudentData()" placeholder="Ej. 15" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:border-cyan-600 text-slate-800 outline-none transition-all">
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE I: Conocimientos Fundamentales (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">I SERIE — Conocimientos Fundamentales</h2>
+                        <p class="text-xs text-slate-500">Responde los enunciados seleccionando la definición técnica correcta (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span id="badge-serie1" class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie I: 5 preguntas
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Q1 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">1. ¿Qué diferencia existe entre el bucle «Repetir N veces» y el bucle «Para siempre»?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q1" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>«Repetir N veces» ejecuta las instrucciones un número fijo y determinado de iteraciones; «Para siempre» mantiene las instrucciones en ciclo infinito e ininterrumpido (ej. monitoreo de sensores).</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q1" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>«Para siempre» solo se ejecuta una sola vez al encender el robot y «Repetir N veces» nunca se detiene.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q1" value="opt_w2" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Ambos bloques realizan exactamente lo mismo, sin importar el valor de N programado en mBlock.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">2. ¿Qué es un sensor cuádruple RGB y cómo ayuda al mBot2 a seguir una línea?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q2" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Es una bocina ultrasónica que emite pitidos cada vez que el robot se sale de la pista.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q2" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Es un módulo con 4 sondas ópticas que emiten luz visible y miden la reflectancia y color de la superficie, detectando contrastes entre el suelo claro y la línea oscura.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q2" value="opt_w2" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Es una batería recargable que acelera las ruedas del robot cuando detecta oscuridad en la habitación.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">3. ¿Qué es una estructura condicional «si… si no» (if/else) y para qué sirve al programar un robot?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q3" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Es una bifurcación lógica que evalúa una condición booleana: si es verdadera ejecuta una acción específica, y si es falsa («si no») ejecuta una acción alternativa.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q3" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Es una instrucción que apaga el robot en caso de que la batería se descargue por completo.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q3" value="opt_w2" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Sirve exclusivamente para cambiar el color de la pantalla CyberPi a verde o rojo sin tomar decisiones.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q4 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">4. ¿Qué es un sensor de sonido y qué información puede proporcionar a la placa CyberPi?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q4" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Es un motor paso a paso que reproduce archivos MP3 de música almacenados en una memoria USB.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q4" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Es un micrófono transductor integrado que capta las ondas acústicas del entorno y entrega un valor numérico proporcional a la intensidad o volumen del sonido (dB).</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q4" value="opt_w2" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Es un sensor que mide la distancia en centímetros rebotando luz infrarroja sobre paredes sólidas.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">5. ¿Qué es Animaker y qué utilidad tienen las escenas y la línea de tiempo en una animación?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q5" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Es una plataforma en la nube para crear animaciones y videos; las escenas dividen los momentos narrativos y la línea de tiempo controla la duración y sincronización exacta de personajes, textos y audios.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q5" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Es un compilador de lenguaje C++ utilizado para cargar firmware binario al procesador del mBot2.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s1_q5" value="opt_w2" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Es una hoja de cálculo diseñada para registrar las fórmulas estadísticas y promedios bimestrales de los estudiantes.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE II: Selección Múltiple (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-cyan-100 text-cyan-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">II SERIE — Selección Múltiple</h2>
+                        <p class="text-xs text-slate-500">Selecciona la opción correcta en cada inciso (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span id="badge-serie2" class="bg-cyan-50 text-cyan-700 border border-cyan-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie II: 5 preguntas
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Q6 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">6. En la guía del seguidor de líneas, el estado 3 binario (11) indica:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q6" value="opt_v1" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>a) Avanzar a 50 r.p.m.</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q6" value="opt_w1" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>b) Girar a la izquierda</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q6" value="opt_w2" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>c) Detener todos los motores</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q7 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">7. ¿Qué bloque permite ejecutar una acción de manera condicionada?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q7" value="opt_w1" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>a) Cambiar fondo</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q7" value="opt_v1" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>b) Si… entonces</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q7" value="opt_w2" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>c) Guardar imagen</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q8 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">8. ¿Qué medio permite la propagación de las ondas sonoras?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q8" value="opt_w1" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>a) Solo el vacío</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q8" value="opt_v1" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>b) Sólidos, líquidos y gases</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q8" value="opt_w2" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>c) Únicamente la luz</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q9 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">9. ¿Qué gráfico se utilizó para mostrar las horas dedicadas a actividades semanales en Excel?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q9" value="opt_v1" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>a) Columnas agrupadas</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q9" value="opt_w1" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>b) Mapa geográfico</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q9" value="opt_w2" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>c) Organigrama</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q10 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">10. ¿Qué herramienta de Animaker permite ordenar el momento exacto en que aparecen acciones y sonidos?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q10" value="opt_w1" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>a) Papelera</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q10" value="opt_v1" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>b) Línea de tiempo</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="r_s2_q10" value="opt_w2" onchange="updateProgressUI()" class="text-cyan-600">
+                            <span>c) Hoja de cálculo</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE III: Análisis y Resolución de Casos (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-puzzle-piece"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">III SERIE — Análisis y Resolución de Casos</h2>
+                        <p class="text-xs text-slate-500">Resuelve cada situación tecnológica seleccionando la solución precisa (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span id="badge-serie3" class="bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie III: 5 preguntas
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Case 11 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">11. Caso 1: Un robot debe revisar continuamente si hay un obstáculo frente a él en tiempo real. ¿Qué tipo de bucle usarías y por qué?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s3_q11" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Bucle «Para siempre» (infinito), porque un obstáculo puede aparecer en cualquier momento y el sensor debe permanecer en lectura continua sin detenerse.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s3_q11" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Bucle «Repetir 3 veces», porque después de 3 lecturas el robot ya memoriza todo el mapa de la pista.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 12 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">12. Caso 2: Un mBot2 detecta el estado (1) binario 01 en su sensor seguidor de líneas (L1=0 blanco, R1=1 negro). Según la guía oficial, ¿hacia dónde gira y a qué velocidad?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s3_q12" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Gira hacia la derecha a una velocidad de 40 r.p.m. para recentrar la línea negra bajo su chasis.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s3_q12" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Retrocede a máxima velocidad (-100 r.p.m.) porque se salió completamente de la superficie de prueba.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 13 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">13. Caso 3: El sensor de luz marca 35 y el programa indica: «si luz < 50, encender LED; si no, apagar LED». ¿Qué sucede exactamente?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s3_q13" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>El LED se enciende, debido a que la condición (35 < 50) resulta VERDADERA al existir un nivel bajo de luz ambiente.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s3_q13" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>El LED se apaga, porque el valor 35 supera el límite de seguridad programado en la placa CyberPi.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 14 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">14. Caso 4: En un laboratorio escolar se registran intensidades de sonido ambientales que cambian constantemente. ¿Por qué conviene representarlas con un gráfico de líneas o barras en Excel?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s3_q14" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Porque permite visualizar con claridad las fluctuaciones, picos de ruido y tendencias temporales a lo largo de las mediciones del laboratorio.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s3_q14" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span>Porque los gráficos en Excel eliminan el ruido exterior de las bocinas automáticamente.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 15 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">15. Caso 5: Se debe explicar cómo un vehículo autónomo se detiene ante una señal roja y avanza ante una verde. ¿Cuál es el guion estructurado de 3 escenas en Animaker para demostrarlo?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s3_q15" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span><strong>Escena 1:</strong> Vehículo avanza con semáforo en verde. <strong>Escena 2:</strong> Semáforo cambia a rojo, el sensor óptico detecta el color y el vehículo frena en seco. <strong>Escena 3:</strong> Vuelve la luz verde y el vehículo reanuda su marcha con texto explicativo.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s3_q15" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-cyan-600">
+                            <span><strong>Escena 1:</strong> Pantalla negra con música. <strong>Escena 2:</strong> Pantalla azul con créditos finales. <strong>Escena 3:</strong> Un logotipo escolar estático sin animación de vehículo.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE IV: Aplicación Práctica (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-gears"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">IV SERIE — Aplicación Práctica</h2>
+                        <p class="text-xs text-slate-500">Resuelve los ejercicios técnicos de lógica, tablas de estados y estadística (Valor: 25 pts)</p>
+                    </div>
+                </div>
+                <span id="badge-serie4" class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie IV: 3 actividades
+                </span>
+            </div>
+
+            <div class="space-y-5 text-xs">
+                <!-- Activity 16 (10 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">16. Algoritmo Lógico para Sensor de Luz con CyberPi (10 pts)</span>
+                        <span class="text-cyan-800 font-bold bg-cyan-100/70 px-2.5 py-0.5 rounded-md">Valor: 10 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">Requerimiento: Crear un algoritmo en bucle infinito que verifique el sensor de luz ambiental: si el valor leído es menor a 50 (< 50) debe encender el LED en color verde; de lo contrario («si no»), debe apagarlo.</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s4_q16" value="opt_v1" onchange="updateProgressUI()" class="mt-1 text-cyan-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Estructura Correcta (Pseudocódigo en Bucle Infinito):</p>
+                                <p class="font-mono text-slate-700 mt-1 bg-slate-50 p-2 rounded border border-slate-200">
+                                    INICIO<br>
+                                    &nbsp;&nbsp;PARA SIEMPRE:<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;SI (sensor_luz < 50) ENTONCES<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;encender_LED(VERDE)<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;SI NO<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;apagar_LED()<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;FIN_SI<br>
+                                    &nbsp;&nbsp;FIN_PARA_SIEMPRE<br>
+                                    FIN
+                                </p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s4_q16" value="opt_w1" onchange="updateProgressUI()" class="mt-1 text-cyan-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Estructura Incorrecta (Secuencia Lineal sin Bucle):</p>
+                                <p class="font-mono text-slate-700 mt-1 bg-slate-50 p-2 rounded border border-slate-200">
+                                    INICIO -> apagar_LED() -> encender_LED(ROJO) -> FIN (Sin evaluación de sensor ni repetición continua).
+                                </p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Activity 17 (10 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">17. Matriz de Estados del Seguidor de Líneas - Guía 1 (10 pts)</span>
+                        <span class="text-cyan-800 font-bold bg-cyan-100/70 px-2.5 py-0.5 rounded-md">Valor: 10 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">Selecciona la tabla que asocia con exactitud cada estado binario (L1 R1) de las sondas ópticas con el movimiento de los motores y sus velocidades correspondientes:</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s4_q17" value="opt_v1" onchange="updateProgressUI()" class="mt-1 text-cyan-600">
+                            <div class="w-full">
+                                <p class="font-bold text-slate-800 mb-1.5">Tabla de Estados Oficial (Guía Seguidor de Líneas):</p>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border border-slate-300 text-[11px]">
+                                        <tr class="bg-slate-100 font-bold"><th class="p-1.5 border">Estado (L1 R1)</th><th class="p-1.5 border">Movimiento del mBot2</th><th class="p-1.5 border">Velocidad</th></tr>
+                                        <tr><td class="p-1.5 border font-mono font-bold">11 (Ambos en negro)</td><td class="p-1.5 border">Avanzar hacia adelante</td><td class="p-1.5 border">50 r.p.m.</td></tr>
+                                        <tr><td class="p-1.5 border font-mono font-bold">01 (Izquierda fuera, derecha dentro)</td><td class="p-1.5 border">Girar a la derecha</td><td class="p-1.5 border">40 r.p.m.</td></tr>
+                                        <tr><td class="p-1.5 border font-mono font-bold">10 (Izquierda dentro, derecha fuera)</td><td class="p-1.5 border">Girar a la izquierda</td><td class="p-1.5 border">40 r.p.m.</td></tr>
+                                        <tr><td class="p-1.5 border font-mono font-bold">00 (Ambos fuera de línea)</td><td class="p-1.5 border">Detener motores / Parar</td><td class="p-1.5 border">0 r.p.m.</td></tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s4_q17" value="opt_w1" onchange="updateProgressUI()" class="mt-1 text-cyan-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Tabla Invertida / Errónea:</p>
+                                <p class="text-slate-600 mt-1">11 = Detenerse a 0 r.p.m. | 00 = Avanzar a 100 r.p.m. sin control de pista.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Activity 18 (5 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">18. Análisis de Datos Estadísticos en Excel (5 pts)</span>
+                        <span class="text-cyan-800 font-bold bg-cyan-100/70 px-2.5 py-0.5 rounded-md">Valor: 5 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">En una tabla se registraron las actividades semanales: <strong>Dormir: 56 horas</strong>, <strong>Ejercicio: 5 horas</strong> y <strong>Ocio: 20 horas</strong>. ¿Qué actividad tiene mayor y menor cantidad de horas, y qué tipo de gráfico es el más idóneo para compararlas?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s4_q18" value="opt_v1" onchange="updateProgressUI()" class="mt-1 text-cyan-600">
+                            <div>
+                                <p class="text-slate-800"><strong>Mayor dedicación:</strong> Dormir (56 hrs) &bull; <strong>Menor dedicación:</strong> Ejercicio (5 hrs) &bull; <strong>Gráfico recomendado:</strong> Columnas o barras agrupadas (para comparar magnitudes discretas entre categorías).</p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="r_s4_q18" value="opt_w1" onchange="updateProgressUI()" class="mt-1 text-cyan-600">
+                            <div>
+                                <p class="text-slate-800"><strong>Mayor dedicación:</strong> Ejercicio (5 hrs) &bull; <strong>Menor dedicación:</strong> Dormir (56 hrs) &bull; <strong>Gráfico recomendado:</strong> Mapa de superficie 3D.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Status & Action Bar (Sin mostrar notas al estudiante) -->
+        <section class="bg-slate-950 text-white rounded-2xl p-6 shadow-2xl no-print flex flex-col md:flex-row justify-between items-center gap-6 border border-slate-800">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-widest text-cyan-400">Progreso de la Evaluación</span>
+                <div class="flex items-baseline gap-2 mt-1">
+                    <span id="answered-count-display" class="text-3xl font-black text-amber-400">0</span>
+                    <span class="text-lg text-slate-400">/ 18 Ítems Respondidos</span>
+                </div>
+                <p id="progress-hint" class="text-xs text-slate-400 mt-1">Asegúrate de contestar todos los enunciados antes de generar tu acta.</p>
+            </div>
+
+            <div id="student-alert-box" class="hidden bg-amber-500/20 border border-amber-500/40 text-amber-200 px-4 py-2.5 rounded-xl text-xs max-w-sm">
+                <i class="fa-solid fa-circle-exclamation mr-1.5"></i>
+                <span>Debes ingresar tu Nombre Completo y Número de Clave antes de generar el acta.</span>
+            </div>
+
+            <button onclick="triggerPrintFlow()" class="bg-gradient-to-r from-cyan-500 via-teal-500 to-cyan-500 hover:opacity-95 text-slate-950 font-black px-7 py-3.5 rounded-xl transition-all shadow-lg flex items-center gap-2.5 text-sm">
+                <i class="fa-solid fa-file-pdf text-lg"></i>
+                <span>Generar e Imprimir Acta Oficial (PDF)</span>
+            </button>
+        </section>
+
+        <!-- PRINTABLE OFFICIAL REPORT ONLY (Visible solo al imprimir o en PDF) -->
+        <section id="official-print-sheet" class="bg-white rounded-2xl p-8 shadow-sm border border-slate-400 print-card">
+            
+            <!-- Institutional Header -->
+            <div class="border-b-2 border-slate-900 pb-4 mb-5 flex justify-between items-start">
+                <div>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">Colegio de Informática Justo Rufino Bautista &bull; Plan Diario</span>
+                    <h1 class="text-xl font-black text-slate-900 mt-0.5">EVALUACIÓN DE RECUPERACIÓN OFICIAL 2026</h1>
+                    <p class="text-xs font-bold text-cyan-900">Curso: Robótica &bull; Grado: Primero Básico</p>
+                    <p class="text-[11px] text-slate-600">Catedrático Titular: Erick Enrique Zamora Paz</p>
+                </div>
+                <div class="text-right">
+                    <div class="border-2 border-slate-900 px-4 py-2 rounded-xl bg-slate-50 inline-block text-center min-w-[120px]">
+                        <span class="text-[10px] font-extrabold uppercase text-slate-600 block">Calificación Final</span>
+                        <span id="print-final-num" class="text-2xl font-black text-slate-900">0.0 / 100</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Metadata Grid -->
+            <div class="grid grid-cols-3 gap-3 text-xs mb-5 bg-slate-50 p-3.5 rounded-xl border border-slate-300">
+                <div class="col-span-2">
+                    <span class="font-bold text-slate-500 block text-[10px]">Nombre Completo del Estudiante:</span>
+                    <span id="print-student-name" class="font-extrabold text-slate-900 text-sm">________________________________________________</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Número de Clave:</span>
+                    <span id="print-student-key" class="font-extrabold text-slate-900 text-sm">____</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Grado y Sección:</span>
+                    <span id="print-student-grade" class="font-bold text-slate-800">1ro. Básico</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Fecha de Evaluación:</span>
+                    <span id="print-evaluation-date" class="font-semibold text-slate-800">-- / -- / 2026</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Modalidad:</span>
+                    <span class="font-semibold text-slate-800">Recuperación Digital Oficial</span>
+                </div>
+            </div>
+
+            <!-- Score Breakdown Table -->
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-800 mb-2">Desglose Oficial de Rendimiento por Serie</h3>
+            <table class="w-full text-left border-collapse text-xs mb-5">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-900 font-extrabold border-b border-slate-300">
+                        <th class="p-2 border border-slate-300">Serie Evaluada</th>
+                        <th class="p-2 border border-slate-300">Competencias e Indicadores de Logro Evaluados</th>
+                        <th class="p-2 border border-slate-300 text-center w-24">Punteo Máx.</th>
+                        <th class="p-2 border border-slate-300 text-center w-24">Obtenido</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-300">
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">I. Conocimientos Fundamentales</td>
+                        <td class="p-2 border border-slate-300">Bucles (Repetir/Para siempre), sensor cuádruple RGB, condicionales if/else, sensor de sonido y Animaker.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s1-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">II. Selección Múltiple</td>
+                        <td class="p-2 border border-slate-300">Estados del seguidor de líneas (11), bloques de ejecución condicional, ondas sonoras, gráficos y línea de tiempo.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s2-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">III. Análisis y Resolución de Casos</td>
+                        <td class="p-2 border border-slate-300">Detección continua de obstáculos, estado 01 (giro derecho), umbrales de luz ambiental y animación de vehículo.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s3-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">IV. Aplicación Práctica</td>
+                        <td class="p-2 border border-slate-300">Algoritmo con sensor de luz en CyberPi, matriz completa del seguidor de líneas y análisis de datos en Excel.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s4-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr class="bg-slate-100 font-black text-slate-900">
+                        <td colspan="2" class="p-2 border border-slate-300 text-right uppercase">Calificación Total Obtenida:</td>
+                        <td class="p-2 border border-slate-300 text-center">100.0 pts</td>
+                        <td id="print-total-score" class="p-2 border border-slate-300 text-center text-cyan-900 text-sm">0.0</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Verdict Note -->
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-300 text-xs mb-8">
+                <span class="font-extrabold text-slate-800">Dictamen Académico: </span>
+                <span id="print-academic-verdict" class="text-slate-700 font-medium">Evaluación en proceso de resolución.</span>
+            </div>
+
+            <!-- Signatures Section -->
+            <div class="grid grid-cols-3 gap-6 pt-6 text-center text-xs">
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Firma del Estudiante</p>
+                    <p class="text-[10px] text-slate-500">Conformidad de Resultados</p>
+                </div>
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Erick Enrique Zamora Paz</p>
+                    <p class="text-[10px] text-slate-500">Docente de Robótica</p>
+                </div>
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Vo. Bo. Dirección</p>
+                    <p class="text-[10px] text-slate-500">Comisión de Evaluación</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('es-GT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            document.getElementById('print-evaluation-date').innerText = dateStr;
+            updateProgressUI();
+        });
+
+        function syncStudentData() {
+            const name = document.getElementById('studentName').value.trim();
+            const grade = document.getElementById('studentGrade').value;
+            const key = document.getElementById('studentKey').value.trim();
+
+            document.getElementById('print-student-name').innerText = name || "________________________________________________";
+            document.getElementById('print-student-key').innerText = key || "____";
+            document.getElementById('print-student-grade').innerText = grade;
+
+            if (name && key) {
+                document.getElementById('student-alert-box').classList.add('hidden');
+            }
+        }
+
+        // Contador discreto de progreso en pantalla
+        function updateProgressUI() {
+            const totalItems = 18;
+            const allItemNames = [
+                'r_s1_q1','r_s1_q2','r_s1_q3','r_s1_q4','r_s1_q5',
+                'r_s2_q6','r_s2_q7','r_s2_q8','r_s2_q9','r_s2_q10',
+                'r_s3_q11','r_s3_q12','r_s3_q13','r_s3_q14','r_s3_q15',
+                'r_s4_q16','r_s4_q17','r_s4_q18'
+            ];
+
+            let answered = 0;
+            allItemNames.forEach(n => {
+                if (document.querySelector(`input[name="${n}"]:checked`)) answered++;
+            });
+
+            document.getElementById('answered-count-display').innerText = answered;
+
+            const hint = document.getElementById('progress-hint');
+            if (answered === totalItems) {
+                hint.innerText = "¡Has completado todos los enunciados! Ya puedes generar tu acta oficial.";
+                hint.classList.remove('text-slate-400');
+                hint.classList.add('text-cyan-400');
+            } else {
+                hint.innerText = `Faltan ${totalItems - answered} ítems por responder.`;
+                hint.classList.add('text-slate-400');
+                hint.classList.remove('text-cyan-400');
+            }
+        }
+
+        // Calificación silenciosa ejecutada únicamente al solicitar la impresión
+        function triggerPrintFlow() {
+            const name = document.getElementById('studentName').value.trim();
+            const key = document.getElementById('studentKey').value.trim();
+
+            if (!name || !key) {
+                const alertBox = document.getElementById('student-alert-box');
+                alertBox.classList.remove('hidden');
+                document.getElementById('studentName').focus();
+                return;
+            }
+
+            // Serie 1 (25 pts - 5 pts c/u)
+            let s1 = 0;
+            ['r_s1_q1','r_s1_q2','r_s1_q3','r_s1_q4','r_s1_q5'].forEach(n => {
+                const checked = document.querySelector(`input[name="${n}"]:checked`);
+                if (checked && checked.value === 'opt_v1') s1 += 5.0;
+            });
+
+            // Serie 2 (25 pts - 5 pts c/u)
+            let s2 = 0;
+            ['r_s2_q6','r_s2_q7','r_s2_q8','r_s2_q9','r_s2_q10'].forEach(n => {
+                const checked = document.querySelector(`input[name="${n}"]:checked`);
+                if (checked && checked.value === 'opt_v1') s2 += 5.0;
+            });
+
+            // Serie 3 (25 pts - 5 pts c/u)
+            let s3 = 0;
+            ['r_s3_q11','r_s3_q12','r_s3_q13','r_s3_q14','r_s3_q15'].forEach(n => {
+                const checked = document.querySelector(`input[name="${n}"]:checked`);
+                if (checked && checked.value === 'opt_v1') s3 += 5.0;
+            });
+
+            // Serie 4 (25 pts: 10 + 10 + 5)
+            let s4 = 0;
+            const q16 = document.querySelector('input[name="r_s4_q16"]:checked');
+            const q17 = document.querySelector('input[name="r_s4_q17"]:checked');
+            const q18 = document.querySelector('input[name="r_s4_q18"]:checked');
+
+            if (q16 && q16.value === 'opt_v1') s4 += 10.0;
+            if (q17 && q17.value === 'opt_v1') s4 += 10.0;
+            if (q18 && q18.value === 'opt_v1') s4 += 5.0;
+
+            const total = s1 + s2 + s3 + s4;
+
+            // Inyectar en el reporte impreso
+            document.getElementById('print-s1-score').innerText = s1.toFixed(1);
+            document.getElementById('print-s2-score').innerText = s2.toFixed(1);
+            document.getElementById('print-s3-score').innerText = s3.toFixed(1);
+            document.getElementById('print-s4-score').innerText = s4.toFixed(1);
+            document.getElementById('print-total-score').innerText = `${total.toFixed(1)} / 100.0`;
+            document.getElementById('print-final-num').innerText = `${total.toFixed(1)} / 100`;
+
+            const verdictPrint = document.getElementById('print-academic-verdict');
+            if (total >= 80) {
+                verdictPrint.innerText = "APROBADO SATISFACTORIAMENTE (Rendimiento Destacado). El estudiante demuestra solvencia en programación robótica, algoritmos y sensores.";
+            } else if (total >= 60) {
+                verdictPrint.innerText = "APROBADO. El estudiante alcanza el estándar mínimo de aprobación en el área de robótica educativa.";
+            } else {
+                verdictPrint.innerText = "NO APROBADO. Punteo inferior a 60 pts. Requiere plan de reforzamiento en lógica de programación y periféricos robóticos.";
+            }
+
+            syncStudentData();
+            window.print();
+        }
+    </script>
+</body>
+</html>

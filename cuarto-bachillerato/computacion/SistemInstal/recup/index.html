@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Recuperación 2026 - Sistemas de Instalación 4.º Bach.</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-card {
+                border: 1px solid #94a3b8 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #0f172a !important;
+                padding-bottom: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-20">
+
+    <!-- Header / Banner -->
+    <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-xl no-print border-b border-indigo-800/40">
+        <div class="max-w-5xl mx-auto px-6 py-7">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bg-amber-400 text-slate-950 text-xs font-black px-3 py-0.5 rounded-full uppercase tracking-wider">
+                            Ciclo Escolar 2026
+                        </span>
+                        <span class="bg-indigo-500/20 text-indigo-300 text-xs font-semibold px-3 py-0.5 rounded-full border border-indigo-400/30">
+                            Evaluación de Recuperación Oficial
+                        </span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+                        Curso: Sistemas de Instalación de Software
+                    </h1>
+                    <p class="text-slate-300 text-sm mt-1">
+                        Colegio de Informática Justo Rufino Bautista &bull; 4.º Bachillerato en Computación
+                    </p>
+                    <p class="text-xs text-indigo-300 mt-0.5 font-medium">
+                        <i class="fa-solid fa-chalkboard-user mr-1"></i> Docente: Erick Enrique Zamora Paz
+                    </p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md px-6 py-3.5 rounded-2xl border border-white/20 text-center md:text-right w-full md:w-auto shadow-inner">
+                    <p class="text-[11px] uppercase tracking-widest text-indigo-200 font-bold">Ponderación Total</p>
+                    <p class="text-3xl font-black text-amber-400">100 <span class="text-sm font-semibold text-slate-200">pts</span></p>
+                    <p class="text-[11px] text-indigo-100 mt-0.5"><i class="fa-solid fa-server mr-1"></i> Mínimo para aprobar: 60 pts</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 md:px-6 mt-6 space-y-6">
+
+        <!-- Student Identification Form Box -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold text-lg">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Datos Generales del Estudiante</h2>
+                    <p class="text-xs text-slate-500">Completa tus datos personales para registrar tu evaluación y generar el acta oficial.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                <div class="md:col-span-2">
+                    <label for="studentName" class="block font-semibold text-slate-700 text-xs mb-1">Nombre Completo del Estudiante *</label>
+                    <input type="text" id="studentName" oninput="syncStudentData()" placeholder="Apellidos, Nombres" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 text-slate-800 outline-none transition-all">
+                </div>
+
+                <div>
+                    <label for="studentGrade" class="block font-semibold text-slate-700 text-xs mb-1">Grado y Sección *</label>
+                    <select id="studentGrade" onchange="syncStudentData()" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 text-slate-800 outline-none transition-all bg-white">
+                        <option value="4to. Bachillerato - Sección A">4to. Bachillerato - Sección A</option>
+                        <option value="4to. Bachillerato - Sección B">4to. Bachillerato - Sección B</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="studentKey" class="block font-semibold text-slate-700 text-xs mb-1">Número de Clave *</label>
+                    <input type="number" id="studentKey" min="1" max="60" oninput="syncStudentData()" placeholder="Ej. 14" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 text-slate-800 outline-none transition-all">
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE I: Conocimientos Fundamentales (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-violet-100 text-violet-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">I SERIE — Conocimientos Fundamentales</h2>
+                        <p class="text-xs text-slate-500">Responde los enunciados seleccionando la definición técnica correcta (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span class="bg-violet-50 text-violet-700 border border-violet-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie I: 5 preguntas
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Q1 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">1. Explique la diferencia entre software propietario y software de código abierto. Indique una ventaja legal de este último.</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q1" data-serie="1" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>El software propietario tiene código cerrado y restringe su distribución/modificación mediante licencias comerciales; el software de código abierto (Open Source) permite acceder al código fuente. Ventaja legal: Se puede auditar, modificar y distribuir libremente sin infringir derechos de autor, reduciendo costos de licenciamiento.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q1" data-serie="1" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>El software propietario siempre es gratis y el de código abierto requiere pagar mensualmente.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q1" data-serie="1" data-pts="0" value="opt_w2" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>No hay diferencia, ambos términos son sinónimos para sistemas operativos basados en Linux.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">2. ¿Qué es una máquina virtual? Distinga equipo anfitrión (host), hipervisor y sistema invitado.</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q2" data-serie="1" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Es un programa para reproducir juegos en 3D; el anfitrión es el usuario, el hipervisor es la tarjeta de video y el invitado es el disco duro.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q2" data-serie="1" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Es una computadora simulada por software. El "anfitrión" es la PC física real; el "hipervisor" (ej. VirtualBox) es el software que asigna recursos de hardware; y el "sistema invitado" es el SO que se instala y corre aislado dentro de la máquina virtual.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q2" data-serie="1" data-pts="0" value="opt_w2" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Es un navegador web; el anfitrión es la página web, el hipervisor es el módem y el invitado es Google.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">3. ¿Para qué sirve el gestor de fuentes de Word y cómo ayuda a evitar el plagio académico?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q3" data-serie="1" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Sirve para registrar, administrar e insertar automáticamente citas y bibliografías estructuradas (ej. APA); ayuda a evitar el plagio al dar crédito explícito y técnico a los autores originales de la información.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q3" data-serie="1" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Sirve exclusivamente para cambiar el tipo de letra (tipografía Arial, Times New Roman) de los títulos.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q3" data-serie="1" data-pts="0" value="opt_w2" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Es un corrector ortográfico que borra los textos copiados de Internet para evitar virus.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q4 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">4. ¿Qué función estructural cumplen las etiquetas semánticas HTML &lt;header&gt;, &lt;nav&gt; y &lt;footer&gt; al organizar un sitio web?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q4" data-serie="1" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Son etiquetas de estilo gráfico que cambian el color de fondo y el tamaño de las imágenes.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q4" data-serie="1" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Definen las regiones semánticas clave: &lt;header&gt; contiene el encabezado y logotipo; &lt;nav&gt; agrupa los enlaces del menú principal; y &lt;footer&gt; enmarca el pie de página con información de contacto o derechos legales.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q4" data-serie="1" data-pts="0" value="opt_w2" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Sirven para instalar un servidor Apache y compilar bases de datos MySQL localmente.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">5. Explique qué es la validación de datos y mencione dos reglas que deberían aplicarse en un formulario de soporte técnico.</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q5" data-serie="1" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Es el proceso de controlar qué información ingresa el usuario para evitar errores. Ejemplos de reglas: 1) Campo "Correo" debe contener obligatoriamente el formato @ y dominio; 2) Marcar el campo "Descripción del problema" como obligatorio (*) para no recibir reportes vacíos.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q5" data-serie="1" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Consiste en imprimir los datos en papel para validarlos con una firma y un sello.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q5" data-serie="1" data-pts="0" value="opt_w2" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Es un sistema de seguridad que impide que los usuarios envíen solicitudes por internet.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE II: Selección Múltiple (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">II SERIE — Selección Múltiple</h2>
+                        <p class="text-xs text-slate-500">Marca la respuesta correcta por cada inciso (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie II: 5 preguntas
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Q6 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">6. ¿Cuál herramienta de software permite instalar y probar otro sistema operativo (ej. Linux) de forma segura sin borrar ni sustituir el sistema principal de tu computadora?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q6" data-serie="2" data-pts="5" value="opt_v1" class="exam-radio text-indigo-600">
+                            <span>a) Máquina virtual (VirtualBox)</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q6" data-serie="2" data-pts="0" value="opt_w1" class="exam-radio text-indigo-600">
+                            <span>b) Papelera de reciclaje</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q6" data-serie="2" data-pts="0" value="opt_w2" class="exam-radio text-indigo-600">
+                            <span>c) Corrector ortográfico</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q7 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">7. ¿Qué funcionalidad ofimática permite redactar una carta maestra y generar automáticamente copias personalizadas utilizando una tabla de clientes o base de datos?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q7" data-serie="2" data-pts="5" value="opt_v1" class="exam-radio text-indigo-600">
+                            <span>a) Combinar correspondencia</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q7" data-serie="2" data-pts="0" value="opt_w1" class="exam-radio text-indigo-600">
+                            <span>b) Recortar imagen</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q7" data-serie="2" data-pts="0" value="opt_w2" class="exam-radio text-indigo-600">
+                            <span>c) Animar diapositiva</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q8 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">8. En diseño web, ¿qué etiqueta HTML se utiliza semánticamente para envolver los enlaces del menú principal de navegación?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q8" data-serie="2" data-pts="0" value="opt_w1" class="exam-radio text-indigo-600">
+                            <span>a) &lt;footer&gt;</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q8" data-serie="2" data-pts="5" value="opt_v1" class="exam-radio text-indigo-600">
+                            <span>b) &lt;nav&gt;</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q8" data-serie="2" data-pts="0" value="opt_w2" class="exam-radio text-indigo-600">
+                            <span>c) &lt;title&gt;</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q9 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">9. ¿Cuál es una medida técnica apropiada para mantener la calidad y veracidad de los datos recopilados mediante un formulario digital?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q9" data-serie="2" data-pts="0" value="opt_w1" class="exam-radio text-indigo-600">
+                            <span>a) Aceptar cualquier tipo de dato vacío</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q9" data-serie="2" data-pts="0" value="opt_w2" class="exam-radio text-indigo-600">
+                            <span>b) Publicar contraseñas en el formulario</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q9" data-serie="2" data-pts="5" value="opt_v1" class="exam-radio text-indigo-600">
+                            <span>c) Validar formatos estrictos (ej. correos válidos)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q10 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">10. Como administrador IT, antes de instalar una aplicación comercial o educativa en los laboratorios de computación, ¿qué factores principales debes comprobar para evitar problemas operativos?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q10" data-serie="2" data-pts="5" value="opt_v1" class="exam-radio text-indigo-600">
+                            <span>a) Tipo de licencia (EULA) y requisitos mínimos de hardware/sistema operativo.</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q10" data-serie="2" data-pts="0" value="opt_w1" class="exam-radio text-indigo-600">
+                            <span>b) Únicamente el diseño del logo o color del icono.</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q10" data-serie="2" data-pts="0" value="opt_w2" class="exam-radio text-indigo-600">
+                            <span>c) El número de fondos de pantalla que incluye.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE III: Resolución de Casos (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-puzzle-piece"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">III SERIE — Resolución de Casos</h2>
+                        <p class="text-xs text-slate-500">Analiza cada caso práctico de gestión y selecciona la acción administrativa o técnica correcta (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span class="bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie III: 5 preguntas
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Case 11 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">11. Caso 1: Una oficina administrativa te solicita instalar software privativo utilizando activadores piratas en ocho computadoras porque no tienen presupuesto. ¿Qué alternativa técnica y legal debes proponer?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q11" data-serie="3" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Proponer la instalación de software libre o de código abierto equivalente (ej. LibreOffice en lugar de MS Office, o Ubuntu en lugar de Windows). Esto soluciona la necesidad técnica sin incurrir en delitos informáticos, auditorías o riesgos de seguridad por troyanos en activadores.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q11" data-serie="3" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Instalar los activadores ilegales sin avisar a nadie porque el administrador está obligado a cumplir la orden para ahorrar presupuesto.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 12 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">12. Caso 2: Un estudiante desea practicar la instalación de la distribución Linux Mint en su PC principal, pero teme borrar sus archivos de Windows. ¿Cuál es la solución técnica segura y qué dos precauciones debe tomar?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q12" data-serie="3" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span><strong>Solución:</strong> Instalar Linux Mint dentro de una máquina virtual (VirtualBox) como sistema invitado. <strong>Precauciones:</strong> 1) Asegurarse de tener suficiente memoria RAM y espacio en disco para el hipervisor; 2) Habilitar la Virtualización por Hardware en la BIOS (VT-x/AMD-V) antes de iniciar.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q12" data-serie="3" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span><strong>Solución:</strong> Formatear el disco duro C: desde cero. <strong>Precauciones:</strong> Apagar el monitor durante el proceso para ahorrar luz eléctrica.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 13 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">13. Caso 3: Posees una base de datos en Excel con las columnas «Nombre», «Empresa» y «Correo». Explica cómo generar y enviar correos de actualización tecnológica masivos pero personalizados usando Word.</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q13" data-serie="3" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Redactar una plantilla en Word, ir a la pestaña «Correspondencia», seleccionar la tabla de Excel como "Lista de destinatarios", e insertar los "Campos combinados" (&laquo;Nombre&raquo;, &laquo;Empresa&raquo;) en el saludo y cuerpo. Finalmente, ejecutar la función "Finalizar y combinar" enviándolo por correo electrónico.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q13" data-serie="3" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>Copiar y pegar manualmente el texto 100 veces, borrando el nombre de un cliente para teclear el del siguiente e imprimir todo en hojas de papel para mandarlas por mensajería.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 14 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">14. Caso 4: Una empresa de soporte de software recibe tickets donde el correo de contacto no tiene «@» o la descripción del problema está vacía. Proponga dos reglas lógicas de validación para evitar esto desde el diseño de la base de datos.</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q14" data-serie="3" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>1) Aplicar una «Expresión Regular / Tipo Email» al campo de correo para rechazar el envío si no detecta la estructura usuario@dominio.com. 2) Marcar el campo de Descripción como «Obligatorio / Requerido» con un mínimo de 20 caracteres para que los clientes estén forzados a explicar la falla.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q14" data-serie="3" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>1) Poner el formulario en modo oculto para que no lleguen correos. 2) Cambiar el color de la página a rojo para asustar a quienes se equivoquen.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 15 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">15. Caso 5: Se construyó un sitio web corporativo con tres páginas diseñadas, pero el menú no permite pasar de la página principal (Inicio) a la página de Contacto. ¿Cuál es el problema lógico de arquitectura y cómo se soluciona?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q15" data-serie="3" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>El problema es la ausencia de hipervínculos funcionales en la sección de navegación. Se soluciona utilizando la etiqueta ancla dentro del menú: <code>&lt;a href="contacto.html"&gt;Contáctenos&lt;/a&gt;</code>, garantizando que todos los archivos (index.html, contacto.html) estén en la misma carpeta del servidor.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q15" data-serie="3" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-indigo-600">
+                            <span>El problema es que el monitor no es táctil. Se soluciona insertando la etiqueta <code>&lt;footer&gt;</code> para empujar la pantalla hacia abajo con el ratón.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE IV: Aplicación Técnica (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-code-merge"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">IV SERIE — Aplicación Técnica y Desarrollo</h2>
+                        <p class="text-xs text-slate-500">Evalúa el código, la arquitectura de tablas de datos y citas académicas (Valor: 25 pts)</p>
+                    </div>
+                </div>
+                <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie IV: 3 actividades
+                </span>
+            </div>
+
+            <div class="space-y-5 text-xs">
+                <!-- Activity 16 (10 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">16. Estructuración Semántica HTML5 (10 pts)</span>
+                        <span class="text-indigo-800 font-bold bg-indigo-100/70 px-2.5 py-0.5 rounded-md">Valor: 10 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">Requerimiento: Validar el esqueleto de un sitio web que integre jerárquicamente las regiones: &lt;header&gt; con un título H1, &lt;nav&gt; con un enlace ancla a contacto.html, &lt;main&gt; para el contenido central y un &lt;footer&gt; de cierre de derechos.</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q16" data-serie="4" data-pts="10" value="opt_v1" class="exam-radio mt-1 text-indigo-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Estructura Semántica Correcta y Validada:</p>
+                                <p class="font-mono text-slate-700 mt-1 bg-slate-50 p-2 rounded border border-slate-200 leading-relaxed text-[10px]">
+                                    &lt;!DOCTYPE html&gt;<br>
+                                    &lt;html&gt;<br>
+                                    &nbsp;&nbsp;&lt;body&gt;<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;header&gt;&lt;h1&gt;Mi Portal Web&lt;/h1&gt;&lt;/header&gt;<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;nav&gt;&lt;a href="contacto.html"&gt;Ir a Contacto&lt;/a&gt;&lt;/nav&gt;<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;main&gt;&lt;p&gt;Bienvenido al sistema principal.&lt;/p&gt;&lt;/main&gt;<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;footer&gt;Derechos Reservados 2026&lt;/footer&gt;<br>
+                                    &nbsp;&nbsp;&lt;/body&gt;<br>
+                                    &lt;/html&gt;
+                                </p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q16" data-serie="4" data-pts="0" value="opt_w1" class="exam-radio mt-1 text-indigo-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Estructura Plana / Obsoleta (Incorrecta):</p>
+                                <p class="font-mono text-slate-700 mt-1 bg-slate-50 p-2 rounded border border-slate-200 leading-relaxed text-[10px]">
+                                    &lt;html&gt;<br>
+                                    &lt;body&gt;<br>
+                                    Escribir texto normal aquí, sin etiquetas de navegación ni menús.<br>
+                                    &lt;/body&gt;<br>
+                                    &lt;/html&gt;
+                                </p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Activity 17 (10 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">17. Diseño de Base de Datos y Formulario de Soporte Técnico (10 pts)</span>
+                        <span class="text-indigo-800 font-bold bg-indigo-100/70 px-2.5 py-0.5 rounded-md">Valor: 10 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">Requerimiento: Generar un modelo relacional sencillo (Tabla de Registro) con cuatro campos útiles para IT Support, demostrando cómo se almacenarían 3 tickets de error y aplicando reglas de obligatoriedad (validación).</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q17" data-serie="4" data-pts="10" value="opt_v1" class="exam-radio mt-1 text-indigo-600">
+                            <div class="w-full">
+                                <p class="font-bold text-slate-800 mb-1.5">Arquitectura de Tabla y Registros Formulados:</p>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border border-slate-300 text-[11px]">
+                                        <tr class="bg-slate-100 font-bold"><th class="p-1.5 border">ID_Ticket</th><th class="p-1.5 border">Usuario_Solicitante</th><th class="p-1.5 border">Laboratorio_Area</th><th class="p-1.5 border">Descripción_Falla (Obligatorio)</th></tr>
+                                        <tr><td class="p-1.5 border font-mono">TK-01</td><td class="p-1.5 border">Ana Morales</td><td class="p-1.5 border">Laboratorio 1</td><td class="p-1.5 border">Pantalla azul al iniciar Word.</td></tr>
+                                        <tr><td class="p-1.5 border font-mono">TK-02</td><td class="p-1.5 border">Luis Osorio</td><td class="p-1.5 border">Dirección</td><td class="p-1.5 border">Sin conexión a Internet.</td></tr>
+                                        <tr><td class="p-1.5 border font-mono">TK-03</td><td class="p-1.5 border">María Gómez</td><td class="p-1.5 border">Laboratorio 2</td><td class="p-1.5 border">Impresora atascada.</td></tr>
+                                    </table>
+                                </div>
+                                <p class="text-slate-700 mt-2"><strong>Regla de Validación Aplicada:</strong> El campo «Descripción_Falla» no permite valores Nulos (NULL); el usuario no puede presionar ENVIAR en el formulario si deja este espacio en blanco.</p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q17" data-serie="4" data-pts="0" value="opt_w1" class="exam-radio mt-1 text-indigo-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Modelo Inadecuado:</p>
+                                <p class="text-slate-600 mt-1">Una tabla que solo pide «Color Favorito» y «Comida Preferida», sin almacenar identificadores (Tickets) ni reportes de fallas técnicas.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Activity 18 (5 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">18. Flujo de Propiedad Intelectual e Inserción de Bibliografía (5 pts)</span>
+                        <span class="text-indigo-800 font-bold bg-indigo-100/70 px-2.5 py-0.5 rounded-md">Valor: 5 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">Requerimiento: Explicar paso a paso el procedimiento metodológico y técnico para utilizar una fuente académica externa en un proyecto informático (Word), respetando las normas APA.</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q18" data-serie="4" data-pts="5" value="opt_v1" class="exam-radio mt-1 text-indigo-600">
+                            <div>
+                                <p class="text-slate-800"><strong>Pasos Operativos:</strong> 1) Ingresar a la pestaña "Referencias" > "Administrar fuentes". 2) Crear una "Nueva Fuente" registrando el Autor institucional, Título de investigación, URL y Fecha de consulta. 3) Insertar la cita (ej. Pérez, 2026) en el párrafo exacto donde se usó su idea. 4) Al final del documento, seleccionar "Bibliografía" y generar la tabla de referencias en formato automatizado.</p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q18" data-serie="4" data-pts="0" value="opt_w1" class="exam-radio mt-1 text-indigo-600">
+                            <div>
+                                <p class="text-slate-800"><strong>Pasos Operativos:</strong> 1) Seleccionar el texto de Internet. 2) Presionar Control + C. 3) Presionar Control + V en el documento final. 4) Imprimir entregando el proyecto sin mencionar de dónde salió la información.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Status & Action Bar -->
+        <section class="bg-slate-950 text-white rounded-2xl p-6 shadow-2xl no-print flex flex-col md:flex-row justify-between items-center gap-6 border border-slate-800">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-widest text-indigo-400">Progreso de la Evaluación</span>
+                <div class="flex items-baseline gap-2 mt-1">
+                    <span id="answered-count-display" class="text-3xl font-black text-amber-400">0</span>
+                    <span class="text-lg text-slate-400">/ 18 Ítems Respondidos</span>
+                </div>
+                <p id="progress-hint" class="text-xs text-slate-400 mt-1">Asegúrate de contestar todos los enunciados antes de generar tu acta.</p>
+            </div>
+
+            <div id="student-alert-box" class="hidden bg-amber-500/20 border border-amber-500/40 text-amber-200 px-4 py-2.5 rounded-xl text-xs max-w-sm">
+                <i class="fa-solid fa-circle-exclamation mr-1.5"></i>
+                <span>Debes ingresar tu Nombre Completo y Número de Clave arriba antes de generar el acta.</span>
+            </div>
+
+            <button type="button" onclick="triggerPrintFlow()" class="bg-gradient-to-r from-indigo-500 via-blue-500 to-indigo-500 hover:opacity-95 text-slate-950 font-black px-7 py-3.5 rounded-xl transition-all shadow-lg flex items-center gap-2.5 text-sm cursor-pointer">
+                <i class="fa-solid fa-file-pdf text-lg"></i>
+                <span>Generar e Imprimir Acta Oficial (PDF)</span>
+            </button>
+        </section>
+
+        <!-- PRINTABLE OFFICIAL REPORT ONLY -->
+        <section id="official-print-sheet" class="bg-white rounded-2xl p-8 shadow-sm border border-slate-400 print-card">
+            
+            <!-- Institutional Header -->
+            <div class="border-b-2 border-slate-900 pb-4 mb-5 flex justify-between items-start">
+                <div>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">Colegio de Informática Justo Rufino Bautista &bull; Plan Diario</span>
+                    <h1 class="text-xl font-black text-slate-900 mt-0.5">EVALUACIÓN DE RECUPERACIÓN OFICIAL 2026</h1>
+                    <p class="text-xs font-bold text-indigo-900">Curso: Sistemas de Instalación de Software &bull; 4.º Bachillerato en Computación</p>
+                    <p class="text-[11px] text-slate-600">Catedrático Titular: Erick Enrique Zamora Paz</p>
+                </div>
+                <div class="text-right">
+                    <div class="border-2 border-slate-900 px-4 py-2 rounded-xl bg-slate-50 inline-block text-center min-w-[120px]">
+                        <span class="text-[10px] font-extrabold uppercase text-slate-600 block">Calificación Final</span>
+                        <span id="print-final-num" class="text-2xl font-black text-slate-900">0.0 / 100</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Metadata Grid -->
+            <div class="grid grid-cols-3 gap-3 text-xs mb-5 bg-slate-50 p-3.5 rounded-xl border border-slate-300">
+                <div class="col-span-2">
+                    <span class="font-bold text-slate-500 block text-[10px]">Nombre Completo del Estudiante:</span>
+                    <span id="print-student-name" class="font-extrabold text-slate-900 text-sm">________________________________________________</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Número de Clave:</span>
+                    <span id="print-student-key" class="font-extrabold text-slate-900 text-sm">____</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Grado y Sección:</span>
+                    <span id="print-student-grade" class="font-bold text-slate-800">4to. Bachillerato</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Fecha de Evaluación:</span>
+                    <span id="print-evaluation-date" class="font-semibold text-slate-800">-- / -- / 2026</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Modalidad:</span>
+                    <span class="font-semibold text-slate-800">Recuperación Digital Oficial</span>
+                </div>
+            </div>
+
+            <!-- Score Breakdown Table -->
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-800 mb-2">Desglose Oficial de Rendimiento por Serie</h3>
+            <table class="w-full text-left border-collapse text-xs mb-5">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-900 font-extrabold border-b border-slate-300">
+                        <th class="p-2 border border-slate-300">Serie Evaluada</th>
+                        <th class="p-2 border border-slate-300">Competencias e Indicadores de Logro Evaluados</th>
+                        <th class="p-2 border border-slate-300 text-center w-24">Punteo Máx.</th>
+                        <th class="p-2 border border-slate-300 text-center w-24">Obtenido</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-300">
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">I. Conocimientos Fundamentales</td>
+                        <td class="p-2 border border-slate-300">Licencias (Open Source / Propietario), máquinas virtuales (Hipervisores), gestores bibliográficos y maquetación web.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s1-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">II. Selección Múltiple</td>
+                        <td class="p-2 border border-slate-300">Gestión de entornos virtuales, etiquetas HTML5, correspondencia cruzada de bases de datos y compatibilidad de software.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s2-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">III. Resolución de Casos IT</td>
+                        <td class="p-2 border border-slate-300">Auditorías éticas de software, despliegue de hipervisores (VT-x), validación de formularios y arquitectura de navegación.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s3-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">IV. Aplicación Técnica / Dev</td>
+                        <td class="p-2 border border-slate-300">Desarrollo y maquetación de HTML5, bases de datos orientadas a tickets de soporte y reglas de validación relacional.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s4-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr class="bg-slate-100 font-black text-slate-900">
+                        <td colspan="2" class="p-2 border border-slate-300 text-right uppercase">Calificación Total Obtenida:</td>
+                        <td class="p-2 border border-slate-300 text-center">100.0 pts</td>
+                        <td id="print-total-score" class="p-2 border border-slate-300 text-center text-indigo-900 text-sm">0.0</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Verdict Note -->
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-300 text-xs mb-8">
+                <span class="font-extrabold text-slate-800">Dictamen Académico: </span>
+                <span id="print-academic-verdict" class="text-slate-700 font-medium">Evaluación lista para calificación.</span>
+            </div>
+
+            <!-- Signatures Section -->
+            <div class="grid grid-cols-3 gap-6 pt-6 text-center text-xs">
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Firma del Estudiante</p>
+                    <p class="text-[10px] text-slate-500">Conformidad de Resultados</p>
+                </div>
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Erick Enrique Zamora Paz</p>
+                    <p class="text-[10px] text-slate-500">Docente Titular de Asignatura</p>
+                </div>
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Vo. Bo. Dirección</p>
+                    <p class="text-[10px] text-slate-500">Comisión de Evaluación</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Universal Bulletproof Script -->
+    <script>
+        function syncStudentData() {
+            const nameEl = document.getElementById('studentName');
+            const gradeEl = document.getElementById('studentGrade');
+            const keyEl = document.getElementById('studentKey');
+
+            const name = nameEl ? nameEl.value.trim() : '';
+            const grade = gradeEl ? gradeEl.value : '4to. Bachillerato - Sección A';
+            const key = keyEl ? keyEl.value.trim() : '';
+
+            document.getElementById('print-student-name').innerText = name || "________________________________________________";
+            document.getElementById('print-student-key').innerText = key || "____";
+            document.getElementById('print-student-grade').innerText = grade;
+
+            if (name && key) {
+                document.getElementById('student-alert-box').classList.add('hidden');
+            }
+        }
+
+        function updateProgressUI() {
+            const totalItems = 18;
+            const checkedRadios = document.querySelectorAll('input.exam-radio:checked');
+            const answered = checkedRadios.length;
+
+            const countDisplay = document.getElementById('answered-count-display');
+            if (countDisplay) countDisplay.innerText = answered;
+
+            const hint = document.getElementById('progress-hint');
+            if (hint) {
+                if (answered >= totalItems) {
+                    hint.innerText = "¡Has completado todos los enunciados! Ya puedes generar e imprimir tu acta oficial.";
+                    hint.classList.remove('text-slate-400');
+                    hint.classList.add('text-indigo-400');
+                } else {
+                    hint.innerText = "Faltan " + (totalItems - answered) + " ítems por responder.";
+                    hint.classList.add('text-slate-400');
+                    hint.classList.remove('text-indigo-400');
+                }
+            }
+        }
+
+        function triggerPrintFlow() {
+            const nameEl = document.getElementById('studentName');
+            const keyEl = document.getElementById('studentKey');
+            const name = nameEl ? nameEl.value.trim() : '';
+            const key = keyEl ? keyEl.value.trim() : '';
+
+            if (!name || !key) {
+                const alertBox = document.getElementById('student-alert-box');
+                if (alertBox) alertBox.classList.remove('hidden');
+                if (nameEl) nameEl.focus();
+                return;
+            }
+
+            let s1 = 0, s2 = 0, s3 = 0, s4 = 0;
+            const checkedRadios = document.querySelectorAll('input.exam-radio:checked');
+
+            checkedRadios.forEach(function(radio) {
+                const serie = radio.getAttribute('data-serie');
+                const pts = parseFloat(radio.getAttribute('data-pts') || '0');
+                if (serie === '1') s1 += pts;
+                if (serie === '2') s2 += pts;
+                if (serie === '3') s3 += pts;
+                if (serie === '4') s4 += pts;
+            });
+
+            const total = s1 + s2 + s3 + s4;
+
+            document.getElementById('print-s1-score').innerText = s1.toFixed(1);
+            document.getElementById('print-s2-score').innerText = s2.toFixed(1);
+            document.getElementById('print-s3-score').innerText = s3.toFixed(1);
+            document.getElementById('print-s4-score').innerText = s4.toFixed(1);
+            document.getElementById('print-total-score').innerText = total.toFixed(1) + " / 100.0";
+            document.getElementById('print-final-num').innerText = total.toFixed(1) + " / 100";
+
+            const verdictPrint = document.getElementById('print-academic-verdict');
+            if (total >= 80) {
+                verdictPrint.innerText = "APROBADO SATISFACTORIAMENTE (Rendimiento Destacado). El estudiante demuestra comprensión sólida sobre virtualización, licenciamiento, desarrollo web e infraestructura de bases de datos.";
+            } else if (total >= 60) {
+                verdictPrint.innerText = "APROBADO. El estudiante cumple con el estándar mínimo para administración e instalación de sistemas.";
+            } else {
+                verdictPrint.innerText = "NO APROBADO. Punteo inferior a 60 pts. Requiere reforzamiento en instalación de entornos virtuales, ofimática avanzada y sintaxis HTML5.";
+            }
+
+            syncStudentData();
+            window.print();
+        }
+
+        // Global event listeners
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.classList.contains('exam-radio')) {
+                updateProgressUI();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('es-GT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const dateEl = document.getElementById('print-evaluation-date');
+            if (dateEl) dateEl.innerText = dateStr;
+            updateProgressUI();
+        });
+    </script>
+</body>
+</html>

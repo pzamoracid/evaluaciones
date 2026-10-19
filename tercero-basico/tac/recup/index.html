@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Recuperación 2026 - TAC Tercero Básico</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-card {
+                border: 1px solid #94a3b8 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #0f172a !important;
+                padding-bottom: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-20">
+
+    <!-- Header / Banner -->
+    <header class="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 text-white shadow-xl no-print border-b border-teal-800/40">
+        <div class="max-w-5xl mx-auto px-6 py-7">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bg-amber-400 text-slate-950 text-xs font-black px-3 py-0.5 rounded-full uppercase tracking-wider">
+                            Ciclo Escolar 2026
+                        </span>
+                        <span class="bg-teal-500/20 text-teal-300 text-xs font-semibold px-3 py-0.5 rounded-full border border-teal-400/30">
+                            Evaluación de Recuperación Oficial
+                        </span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+                        Tecnologías del Aprendizaje y la Comunicación (TAC)
+                    </h1>
+                    <p class="text-slate-300 text-sm mt-1">
+                        Colegio de Informática Justo Rufino Bautista &bull; Tercero Básico (Plan Diario)
+                    </p>
+                    <p class="text-xs text-teal-300 mt-0.5 font-medium">
+                        <i class="fa-solid fa-chalkboard-user mr-1"></i> Docente: Erick Enrique Zamora Paz
+                    </p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md px-6 py-3.5 rounded-2xl border border-white/20 text-center md:text-right w-full md:w-auto shadow-inner">
+                    <p class="text-[11px] uppercase tracking-widest text-teal-200 font-bold">Ponderación Total</p>
+                    <p class="text-3xl font-black text-amber-400">100 <span class="text-sm font-semibold text-slate-200">pts</span></p>
+                    <p class="text-[11px] text-teal-100 mt-0.5"><i class="fa-solid fa-graduation-cap mr-1"></i> Mínimo para aprobar: 60 pts</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 md:px-6 mt-6 space-y-6">
+
+        <!-- Student Identification Form Box -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-lg">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Datos Generales del Estudiante</h2>
+                    <p class="text-xs text-slate-500">Completa tus datos para registrar tu evaluación y habilitar la generación del acta oficial.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                <div class="md:col-span-2">
+                    <label for="studentName" class="block font-semibold text-slate-700 text-xs mb-1">Nombre Completo del Estudiante *</label>
+                    <input type="text" id="studentName" oninput="syncStudentData()" placeholder="Apellidos, Nombres" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-teal-600 text-slate-800 outline-none transition-all">
+                </div>
+
+                <div>
+                    <label for="studentGrade" class="block font-semibold text-slate-700 text-xs mb-1">Grado y Sección *</label>
+                    <select id="studentGrade" onchange="syncStudentData()" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-teal-600 text-slate-800 outline-none transition-all bg-white">
+                        <option value="3ro. Básico - Sección A">3ro. Básico - Sección A</option>
+                        <option value="3ro. Básico - Sección B">3ro. Básico - Sección B</option>
+                        <option value="3ro. Básico - Sección C">3ro. Básico - Sección C</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="studentKey" class="block font-semibold text-slate-700 text-xs mb-1">Número de Clave *</label>
+                    <input type="number" id="studentKey" min="1" max="60" oninput="syncStudentData()" placeholder="Ej. 18" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-teal-600 text-slate-800 outline-none transition-all">
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE I: Conocimientos Fundamentales (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">I SERIE — Conocimientos Fundamentales</h2>
+                        <p class="text-xs text-slate-500">Analiza cada pregunta y selecciona la respuesta conceptualmente correcta (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span id="badge-serie1" class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie I: 5 preguntas
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Q1 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">1. ¿Cuál es la diferencia entre un buscador general y un buscador temático o especializado, y qué es una opción de búsqueda avanzada?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q1" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>El buscador general indexa todo tipo de páginas en la web (ej. Google), mientras que el temático se enfoca en áreas académicas o científicas (ej. Google Académico). Una opción avanzada es usar comillas (" ") o filtrar por tipo de archivo (filetype:pdf).</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q1" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>El buscador general funciona sin internet y el buscador temático solo busca fotografías de redes sociales.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q1" value="opt_w2" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>No existe diferencia; ambos son programas que sirven únicamente para limpiar virus del navegador.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">2. ¿Para qué sirve el protocolo o sistema FTP (File Transfer Protocol) y en qué situación práctica se utiliza?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q2" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Sirve para editar videos animados y agregar efectos de sonido en una línea de tiempo local.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q2" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Es un protocolo de red diseñado para transferir archivos entre un equipo cliente y un servidor remoto (por ejemplo, al subir los archivos HTML e imágenes de un sitio web a un servidor de alojamiento).</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q2" value="opt_w2" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Es una herramienta para calcular promedios matemáticos en una hoja de cálculo sin conexión.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">3. ¿Qué es el aprendizaje visual y cuáles son dos recursos que ayudan a presentar información visualmente?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q3" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Es un método de estudio que utiliza estímulos gráficos para organizar y comprender ideas; dos ejemplos son los mapas conceptuales/mentales y las infografías.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q3" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Consiste en escuchar grabaciones de voz sin mirar la pantalla utilizando únicamente bocinas y micrófonos.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q3" value="opt_w2" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Es memorizar textos largos sin imágenes, utilizando únicamente archivos de bloc de notas sin formato.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q4 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">4. ¿Para qué sirve una hoja de cálculo y cuáles son dos elementos propios de su entorno de trabajo?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q4" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Sirve para retocar fotografías digitales; sus elementos son el pincel corrector y la varita mágica.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q4" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Permite organizar, procesar y analizar datos numéricos mediante fórmulas y gráficas; dos elementos de su entorno son las celdas (intersección de fila y columna) y la barra de fórmulas.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q4" value="opt_w2" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Sirve únicamente para navegar por sitios web mediante pestañas de incógnito y marcadores.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">5. ¿Cuál es la diferencia entre una encuesta y una entrevista en una investigación escolar?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q5" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>La encuesta aplica un cuestionario estandarizado a muchas personas para obtener datos estadísticos; la entrevista es un diálogo directo y profundo con una persona o experto para conocer sus opiniones detalladas.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q5" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>La encuesta solo se hace por teléfono y la entrevista prohíbe hacer preguntas a los participantes.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s1_q5" value="opt_w2" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>No tienen diferencia, ambas consisten en copiar información de Wikipedia sin consultar personas.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE II: Selección Múltiple (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">II SERIE — Selección Múltiple</h2>
+                        <p class="text-xs text-slate-500">Marca la opción correcta para cada enunciado (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span id="badge-serie2" class="bg-teal-50 text-teal-700 border border-teal-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie II: 5 preguntas
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Q6 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">6. ¿Qué recurso permite presentar datos numéricos de forma visual?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q6" value="opt_v1" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>a) Gráfica estadística</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q6" value="opt_w1" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>b) Contraseña</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q6" value="opt_w2" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>c) Archivo de audio</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q7 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">7. Antes de publicar información en una red social es importante:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q7" value="opt_w1" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>a) Compartir datos privados</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q7" value="opt_v1" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>b) Considerar al público y verificar el contenido</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q7" value="opt_w2" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>c) Publicar sin revisar</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q8 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">8. ¿Cuál es un ejemplo de plataforma colaborativa para compartir archivos en la nube?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q8" value="opt_v1" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>a) Google Drive</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q8" value="opt_w1" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>b) Calculadora</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q8" value="opt_w2" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>c) Reproductor sin conexión</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q9 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">9. Ante un caso de ciberacoso, lo más adecuado es:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q9" value="opt_w1" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>a) Difundir los mensajes</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q9" value="opt_v1" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>b) Guardar evidencias y pedir ayuda</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q9" value="opt_w2" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>c) Responder con insultos</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q10 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">10. ¿Qué herramienta permite publicar entradas periódicas o artículos sobre una investigación?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q10" value="opt_v1" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>a) Blog</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q10" value="opt_w1" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>b) Papelera</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="t3_s2_q10" value="opt_w2" onchange="updateProgressUI()" class="text-teal-600">
+                            <span>c) Antivirus</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE III: Situaciones Prácticas (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">III SERIE — Situaciones Prácticas</h2>
+                        <p class="text-xs text-slate-500">Resuelve cada caso seleccionando el procedimiento correcto (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span id="badge-serie3" class="bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie III: 5 preguntas
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Case 11 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">11. Caso 1: Debes investigar sobre el reciclaje escolar. ¿Cuáles son dos palabras clave adecuadas y una técnica efectiva para mejorar la búsqueda?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s3_q11" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Palabras clave: «reciclaje escolar», «clasificación de residuos educativos»; mejorando la búsqueda mediante el uso de comillas exactas o consultando portales institucionales (.edu / .org).</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s3_q11" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Escribir una oración larga con signos de exclamación y hacer clic en el primer anuncio publicitario que aparezca.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 12 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">12. Caso 2: Un grupo obtuvo estos resultados de una encuesta: 12 estudiantes prefieren video, 8 infografía y 5 texto. ¿Cuántos estudiantes respondieron en total y qué opción fue la más elegida?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s3_q12" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Respondieron 25 estudiantes en total (12 + 8 + 5) y la opción más elegida (moda estadística) fue el Video con 12 votos.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s3_q12" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Respondieron 15 estudiantes en total y la opción más elegida fue el Texto con 5 votos.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 13 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">13. Caso 3: Un compañero recibe mensajes ofensivos en una plataforma social. ¿Cuáles son dos medidas responsables para ayudarlo?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s3_q13" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>1) No compartir ni dar «me gusta» a las agresiones y tomar capturas como evidencia; 2) Acompañarlo a informar de inmediato a un docente, orientador o adulto de confianza y bloquear/denunciar la cuenta agresora.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s3_q13" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Crear cuentas anónimas para responder con más insultos y reenviar las capturas a todos los grupos de WhatsApp.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 14 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">14. Caso 4: Tu grupo necesita compartir un informe en la nube. ¿Cómo organizarías el archivo y qué permiso asignarías a quienes solo deben leerlo?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s3_q14" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Ubicarlo dentro de una carpeta identificada por curso y proyecto con nombre claro, asignando el permiso de «Lector» (Solo lectura / visualización) para evitar que modifiquen o borren el contenido.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s3_q14" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span>Dejarlo sin nombre en la papelera y dar permiso de «Editor total / Propietario» a cualquier persona en internet.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 15 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">15. Caso 5: Para investigar un problema de tu comunidad, ¿cuál plantea una pregunta de investigación formal y dos pasos metodológicos lógicos?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s3_q15" value="opt_v1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span><strong>Pregunta:</strong> ¿Cómo afecta el manejo inadecuado de desechos sólidos a los vecinos de la colonia? <strong>Pasos:</strong> 1) Recolectar información mediante observación y una encuesta digital; 2) Tabular los datos en una hoja de cálculo y presentar propuestas.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s3_q15" value="opt_w1" onchange="updateProgressUI()" class="mt-0.5 text-teal-600">
+                            <span><strong>Pregunta:</strong> ¿Qué hora es? <strong>Pasos:</strong> 1) Inventar los resultados sin preguntar a nadie; 2) No registrar ningún dato.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE IV: Producción Digital (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">IV SERIE — Producción Digital</h2>
+                        <p class="text-xs text-slate-500">Evalúa y selecciona el diseño técnico adecuado para cada producto digital (Valor: 25 pts)</p>
+                    </div>
+                </div>
+                <span id="badge-serie4" class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie IV: 3 actividades
+                </span>
+            </div>
+
+            <div class="space-y-5 text-xs">
+                <!-- Activity 16 (10 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">16. Estructura de Infografía sobre Uso Responsable de Redes Sociales (10 pts)</span>
+                        <span class="text-teal-700 font-bold bg-teal-100/60 px-2.5 py-0.5 rounded-md">Valor: 10 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">Selecciona la propuesta de infografía que cumple con: un título claro, cuatro apartados temáticos coherentes y una recomendación final formativa:</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s4_q16" value="opt_v1" onchange="updateProgressUI()" class="mt-1 text-teal-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Propuesta Completa y Estructurada:</p>
+                                <p class="text-slate-600 mt-1">
+                                    &bull; <strong>Título:</strong> «Conéctate Seguro: Guía de Ciudadanía Digital en Redes Sociales»<br>
+                                    &bull; <strong>Apartados (4):</strong> 1. Configuración de privacidad del perfil; 2. Protección de datos personales y contraseñas; 3. Prevención del ciberacoso y netiqueta; 4. Verificación de noticias falsas (Fake News).<br>
+                                    &bull; <strong>Recomendación final:</strong> Piensa antes de publicar: todo lo que subes a la red deja una huella digital permanente.
+                                </p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s4_q16" value="opt_w1" onchange="updateProgressUI()" class="mt-1 text-teal-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Propuesta Incompleta / Sin Estructura:</p>
+                                <p class="text-slate-600 mt-1">Colocar únicamente logotipos grandes de aplicaciones sin título, sin secciones informativas y recomendando aceptar a cualquier desconocido.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Activity 17 (10 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">17. Tabulación y Graficación Estadística de Transporte Escolar (10 pts)</span>
+                        <span class="text-teal-700 font-bold bg-teal-100/60 px-2.5 py-0.5 rounded-md">Valor: 10 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">Datos recolectados: <strong>A pie: 9</strong>, <strong>Bus: 14</strong>, <strong>Automóvil: 7</strong>. Selecciona la tabla que organiza correctamente categorías, frecuencias, sumatoria total y tipo de gráfica recomendada:</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s4_q17" value="opt_v1" onchange="updateProgressUI()" class="mt-1 text-teal-600">
+                            <div class="w-full">
+                                <p class="font-bold text-slate-800 mb-1.5">Tabla Estadística Correcta:</p>
+                                <table class="w-full text-left border border-slate-300 text-[11px] mb-1.5">
+                                    <tr class="bg-slate-100 font-bold"><th class="p-1.5 border">Categoría (Medio de Transporte)</th><th class="p-1.5 border">Frecuencia (Estudiantes)</th><th class="p-1.5 border">Porcentaje</th></tr>
+                                    <tr><td class="p-1.5 border">A pie</td><td class="p-1.5 border">9</td><td class="p-1.5 border">30.0 %</td></tr>
+                                    <tr><td class="p-1.5 border">Bus</td><td class="p-1.5 border">14</td><td class="p-1.5 border">46.7 %</td></tr>
+                                    <tr><td class="p-1.5 border">Automóvil</td><td class="p-1.5 border">7</td><td class="p-1.5 border">23.3 %</td></tr>
+                                    <tr class="bg-slate-50 font-bold"><td class="p-1.5 border">TOTAL MUESTRA</td><td class="p-1.5 border">30 estudiantes</td><td class="p-1.5 border">100.0 %</td></tr>
+                                </table>
+                                <p class="text-slate-700"><strong>Gráfica recomendada:</strong> Gráfica de barras / columnas para comparar conteos o gráfica circular (pastel) para mostrar porcentajes.</p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s4_q17" value="opt_w1" onchange="updateProgressUI()" class="mt-1 text-teal-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Tabla Errónea:</p>
+                                <p class="text-slate-600 mt-1">Total = 18 estudiantes. Gráfica recomendada: Editor de audio MP3 sin ejes numéricos.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Activity 18 (5 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">18. Plan de Comunicación de Resultados de Investigación (5 pts)</span>
+                        <span class="text-teal-700 font-bold bg-teal-100/60 px-2.5 py-0.5 rounded-md">Valor: 5 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">Selecciona el plan que elige adecuadamente entre Blog, Wiki o Video y justifica técnicamente su utilidad para divulgar una investigación escolar:</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s4_q18" value="opt_v1" onchange="updateProgressUI()" class="mt-1 text-teal-600">
+                            <div>
+                                <p class="text-slate-800"><strong>Medio elegido: Blog Educativo.</strong> <strong>Justificación:</strong> Permite publicar los avances y conclusiones de la investigación mediante entradas ordenadas cronológicamente, integrando texto, gráficas estadísticas, videos e interacción con los lectores a través de comentarios moderados.</p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="t3_s4_q18" value="opt_w1" onchange="updateProgressUI()" class="mt-1 text-teal-600">
+                            <div>
+                                <p class="text-slate-800"><strong>Medio elegido: Archivo oculto sin compartir.</strong> <strong>Justificación:</strong> Guardar el documento únicamente en una memoria USB personal sin publicarlo ni mostrarlo a la comunidad educativa.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Status & Action Bar (Sin mostrar notas al estudiante) -->
+        <section class="bg-slate-950 text-white rounded-2xl p-6 shadow-2xl no-print flex flex-col md:flex-row justify-between items-center gap-6 border border-slate-800">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-widest text-teal-400">Progreso de la Evaluación</span>
+                <div class="flex items-baseline gap-2 mt-1">
+                    <span id="answered-count-display" class="text-3xl font-black text-amber-400">0</span>
+                    <span class="text-lg text-slate-400">/ 18 Ítems Respondidos</span>
+                </div>
+                <p id="progress-hint" class="text-xs text-slate-400 mt-1">Asegúrate de contestar todos los enunciados antes de generar tu acta.</p>
+            </div>
+
+            <div id="student-alert-box" class="hidden bg-amber-500/20 border border-amber-500/40 text-amber-200 px-4 py-2.5 rounded-xl text-xs max-w-sm">
+                <i class="fa-solid fa-circle-exclamation mr-1.5"></i>
+                <span>Debes ingresar tu Nombre Completo y Número de Clave antes de generar el acta.</span>
+            </div>
+
+            <button onclick="triggerPrintFlow()" class="bg-gradient-to-r from-teal-500 via-emerald-500 to-teal-500 hover:opacity-95 text-slate-950 font-black px-7 py-3.5 rounded-xl transition-all shadow-lg flex items-center gap-2.5 text-sm">
+                <i class="fa-solid fa-file-pdf text-lg"></i>
+                <span>Generar e Imprimir Acta Oficial (PDF)</span>
+            </button>
+        </section>
+
+        <!-- PRINTABLE OFFICIAL REPORT ONLY -->
+        <section id="official-print-sheet" class="bg-white rounded-2xl p-8 shadow-sm border border-slate-400 print-card">
+            
+            <!-- Institutional Header -->
+            <div class="border-b-2 border-slate-900 pb-4 mb-5 flex justify-between items-start">
+                <div>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">Colegio de Informática Justo Rufino Bautista &bull; Plan Diario</span>
+                    <h1 class="text-xl font-black text-slate-900 mt-0.5">EVALUACIÓN DE RECUPERACIÓN OFICIAL 2026</h1>
+                    <p class="text-xs font-bold text-teal-900">Materia: Tecnologías del Aprendizaje y la Comunicación (TAC) &bull; Tercero Básico</p>
+                    <p class="text-[11px] text-slate-600">Catedrático Titular: Erick Enrique Zamora Paz</p>
+                </div>
+                <div class="text-right">
+                    <div class="border-2 border-slate-900 px-4 py-2 rounded-xl bg-slate-50 inline-block text-center min-w-[120px]">
+                        <span class="text-[10px] font-extrabold uppercase text-slate-600 block">Calificación Final</span>
+                        <span id="print-final-num" class="text-2xl font-black text-slate-900">0.0 / 100</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Metadata Grid -->
+            <div class="grid grid-cols-3 gap-3 text-xs mb-5 bg-slate-50 p-3.5 rounded-xl border border-slate-300">
+                <div class="col-span-2">
+                    <span class="font-bold text-slate-500 block text-[10px]">Nombre Completo del Estudiante:</span>
+                    <span id="print-student-name" class="font-extrabold text-slate-900 text-sm">________________________________________________</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Número de Clave:</span>
+                    <span id="print-student-key" class="font-extrabold text-slate-900 text-sm">____</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Grado y Sección:</span>
+                    <span id="print-student-grade" class="font-bold text-slate-800">3ro. Básico</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Fecha de Evaluación:</span>
+                    <span id="print-evaluation-date" class="font-semibold text-slate-800">-- / -- / 2026</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Modalidad:</span>
+                    <span class="font-semibold text-slate-800">Recuperación Digital Oficial</span>
+                </div>
+            </div>
+
+            <!-- Score Breakdown Table -->
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-800 mb-2">Desglose Oficial de Rendimiento por Serie</h3>
+            <table class="w-full text-left border-collapse text-xs mb-5">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-900 font-extrabold border-b border-slate-300">
+                        <th class="p-2 border border-slate-300">Serie Evaluada</th>
+                        <th class="p-2 border border-slate-300">Competencias e Indicadores de Logro Evaluados</th>
+                        <th class="p-2 border border-slate-300 text-center w-24">Punteo Máx.</th>
+                        <th class="p-2 border border-slate-300 text-center w-24">Obtenido</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-300">
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">I. Conocimientos Fundamentales</td>
+                        <td class="p-2 border border-slate-300">Buscadores especializados, protocolo FTP, aprendizaje visual, hojas de cálculo y técnicas de investigación.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s1-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">II. Selección Múltiple</td>
+                        <td class="p-2 border border-slate-300">Gráficas estadísticas, seguridad en redes sociales, plataformas en la nube, prevención de ciberacoso y blogs.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s2-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">III. Situaciones Prácticas</td>
+                        <td class="p-2 border border-slate-300">Estrategias de búsqueda, interpretación de encuestas, actuación ante ciberacoso, permisos en la nube y proyectos.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s3-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">IV. Producción Digital</td>
+                        <td class="p-2 border border-slate-300">Diseño estructural de infografía, tabulación de frecuencias de transporte escolar y plan de divulgación digital.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s4-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr class="bg-slate-100 font-black text-slate-900">
+                        <td colspan="2" class="p-2 border border-slate-300 text-right uppercase">Calificación Total Obtenida:</td>
+                        <td class="p-2 border border-slate-300 text-center">100.0 pts</td>
+                        <td id="print-total-score" class="p-2 border border-slate-300 text-center text-teal-900 text-sm">0.0</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Verdict Note -->
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-300 text-xs mb-8">
+                <span class="font-extrabold text-slate-800">Dictamen Académico: </span>
+                <span id="print-academic-verdict" class="text-slate-700 font-medium">Evaluación en proceso de resolución.</span>
+            </div>
+
+            <!-- Signatures Section -->
+            <div class="grid grid-cols-3 gap-6 pt-6 text-center text-xs">
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Firma del Estudiante</p>
+                    <p class="text-[10px] text-slate-500">Conformidad de Resultados</p>
+                </div>
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Erick Enrique Zamora Paz</p>
+                    <p class="text-[10px] text-slate-500">Docente de TAC</p>
+                </div>
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Vo. Bo. Dirección</p>
+                    <p class="text-[10px] text-slate-500">Comisión de Evaluación</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('es-GT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            document.getElementById('print-evaluation-date').innerText = dateStr;
+            updateProgressUI();
+        });
+
+        function syncStudentData() {
+            const name = document.getElementById('studentName').value.trim();
+            const grade = document.getElementById('studentGrade').value;
+            const key = document.getElementById('studentKey').value.trim();
+
+            document.getElementById('print-student-name').innerText = name || "________________________________________________";
+            document.getElementById('print-student-key').innerText = key || "____";
+            document.getElementById('print-student-grade').innerText = grade;
+
+            if (name && key) {
+                document.getElementById('student-alert-box').classList.add('hidden');
+            }
+        }
+
+        function updateProgressUI() {
+            const totalItems = 18;
+            const allItemNames = [
+                't3_s1_q1','t3_s1_q2','t3_s1_q3','t3_s1_q4','t3_s1_q5',
+                't3_s2_q6','t3_s2_q7','t3_s2_q8','t3_s2_q9','t3_s2_q10',
+                't3_s3_q11','t3_s3_q12','t3_s3_q13','t3_s3_q14','t3_s3_q15',
+                't3_s4_q16','t3_s4_q17','t3_s4_q18'
+            ];
+
+            let answered = 0;
+            allItemNames.forEach(n => {
+                if (document.querySelector(`input[name="${n}"]:checked`)) answered++;
+            });
+
+            document.getElementById('answered-count-display').innerText = answered;
+
+            const hint = document.getElementById('progress-hint');
+            if (answered === totalItems) {
+                hint.innerText = "¡Has completado todos los enunciados! Ya puedes generar tu acta oficial.";
+                hint.classList.remove('text-slate-400');
+                hint.classList.add('text-teal-400');
+            } else {
+                hint.innerText = `Faltan ${totalItems - answered} ítems por responder.`;
+                hint.classList.add('text-slate-400');
+                hint.classList.remove('text-teal-400');
+            }
+        }
+
+        function triggerPrintFlow() {
+            const name = document.getElementById('studentName').value.trim();
+            const key = document.getElementById('studentKey').value.trim();
+
+            if (!name || !key) {
+                const alertBox = document.getElementById('student-alert-box');
+                alertBox.classList.remove('hidden');
+                document.getElementById('studentName').focus();
+                return;
+            }
+
+            let s1 = 0, s2 = 0, s3 = 0, s4 = 0;
+
+            ['t3_s1_q1','t3_s1_q2','t3_s1_q3','t3_s1_q4','t3_s1_q5'].forEach(n => {
+                const checked = document.querySelector(`input[name="${n}"]:checked`);
+                if (checked && checked.value === 'opt_v1') s1 += 5.0;
+            });
+
+            ['t3_s2_q6','t3_s2_q7','t3_s2_q8','t3_s2_q9','t3_s2_q10'].forEach(n => {
+                const checked = document.querySelector(`input[name="${n}"]:checked`);
+                if (checked && checked.value === 'opt_v1') s2 += 5.0;
+            });
+
+            ['t3_s3_q11','t3_s3_q12','t3_s3_q13','t3_s3_q14','t3_s3_q15'].forEach(n => {
+                const checked = document.querySelector(`input[name="${n}"]:checked`);
+                if (checked && checked.value === 'opt_v1') s3 += 5.0;
+            });
+
+            const q16 = document.querySelector('input[name="t3_s4_q16"]:checked');
+            const q17 = document.querySelector('input[name="t3_s4_q17"]:checked');
+            const q18 = document.querySelector('input[name="t3_s4_q18"]:checked');
+
+            if (q16 && q16.value === 'opt_v1') s4 += 10.0;
+            if (q17 && q17.value === 'opt_v1') s4 += 10.0;
+            if (q18 && q18.value === 'opt_v1') s4 += 5.0;
+
+            const total = s1 + s2 + s3 + s4;
+
+            document.getElementById('print-s1-score').innerText = s1.toFixed(1);
+            document.getElementById('print-s2-score').innerText = s2.toFixed(1);
+            document.getElementById('print-s3-score').innerText = s3.toFixed(1);
+            document.getElementById('print-s4-score').innerText = s4.toFixed(1);
+            document.getElementById('print-total-score').innerText = `${total.toFixed(1)} / 100.0`;
+            document.getElementById('print-final-num').innerText = `${total.toFixed(1)} / 100`;
+
+            const verdictPrint = document.getElementById('print-academic-verdict');
+            if (total >= 80) {
+                verdictPrint.innerText = "APROBADO SATISFACTORIAMENTE (Rendimiento Destacado). El estudiante demuestra solvencia en investigación digital, análisis de datos y comunicación visual.";
+            } else if (total >= 60) {
+                verdictPrint.innerText = "APROBADO. El estudiante alcanza las competencias mínimas requeridas en Tecnologías del Aprendizaje y la Comunicación.";
+            } else {
+                verdictPrint.innerText = "NO APROBADO. Punteo menor a 60 pts. Se requiere plan de nivelación en herramientas de productividad e investigación digital.";
+            }
+
+            syncStudentData();
+            window.print();
+        }
+    </script>
+</body>
+</html>

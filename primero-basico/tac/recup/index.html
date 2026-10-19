@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Recuperación 2026 - TAC Primero Básico</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-card {
+                border: 1px solid #94a3b8 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #0f172a !important;
+                padding-bottom: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-20">
+
+    <!-- Header / Banner -->
+    <header class="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 text-white shadow-xl no-print border-b border-teal-800/40">
+        <div class="max-w-5xl mx-auto px-6 py-7">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bg-amber-400 text-slate-950 text-xs font-black px-3 py-0.5 rounded-full uppercase tracking-wider">
+                            Ciclo Escolar 2026
+                        </span>
+                        <span class="bg-teal-500/20 text-teal-300 text-xs font-semibold px-3 py-0.5 rounded-full border border-teal-400/30">
+                            Evaluación de Recuperación Oficial
+                        </span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+                        Tecnologías del Aprendizaje y la Comunicación (TAC)
+                    </h1>
+                    <p class="text-slate-300 text-sm mt-1">
+                        Colegio de Informática Justo Rufino Bautista &bull; Primero Básico (Plan Diario)
+                    </p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md px-6 py-3.5 rounded-2xl border border-white/20 text-center md:text-right w-full md:w-auto shadow-inner">
+                    <p class="text-[11px] uppercase tracking-widest text-teal-200 font-bold">Ponderación Total</p>
+                    <p class="text-3xl font-black text-amber-400">100 <span class="text-sm font-semibold text-slate-200">pts</span></p>
+                    <p class="text-[11px] text-teal-100 mt-0.5"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Mínimo para aprobar: 60 pts</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 md:px-6 mt-6 space-y-6">
+
+        <!-- Student Identification -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-lg">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Datos Generales del Estudiante</h2>
+                    <p class="text-xs text-slate-500">Ingresa tus datos exactos para registrar tu evaluación y generar tu constancia de recuperación.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                <div class="md:col-span-2">
+                    <label for="studentName" class="block font-semibold text-slate-700 text-xs mb-1">Nombre Completo del Estudiante *</label>
+                    <input type="text" id="studentName" oninput="syncStudentData()" placeholder="Apellidos, Nombres" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-teal-600 text-slate-800 outline-none transition-all">
+                </div>
+
+                <div>
+                    <label for="studentGrade" class="block font-semibold text-slate-700 text-xs mb-1">Grado y Sección *</label>
+                    <select id="studentGrade" onchange="syncStudentData()" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-teal-600 text-slate-800 outline-none transition-all bg-white">
+                        <option value="1ro. Básico - Sección A">1ro. Básico - Sección A</option>
+                        <option value="1ro. Básico - Sección B">1ro. Básico - Sección B</option>
+                        <option value="1ro. Básico - Sección C">1ro. Básico - Sección C</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="studentKey" class="block font-semibold text-slate-700 text-xs mb-1">Número de Clave *</label>
+                    <input type="number" id="studentKey" min="1" max="60" oninput="syncStudentData()" placeholder="Ej. 12" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-600 focus:border-teal-600 text-slate-800 outline-none transition-all">
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE I: Conocimientos Fundamentales (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-microchip"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">I SERIE — Conocimientos Fundamentales</h2>
+                        <p class="text-xs text-slate-500">Analiza cada premisa y selecciona la respuesta correcta (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span id="badge-serie1" class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Subtotal: 0.0 / 25 pts
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Item 1 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">1. ¿Cuál es la diferencia conceptual exacta entre Hardware y Software con sus respectivos ejemplos?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q1" value="opt_v1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>El Hardware es la parte física y tangible (ej. Teclado, Disco Duro); el Software es la parte lógica o programas (ej. Sistema Operativo, Google Chrome).</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q1" value="opt_w1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>El Hardware son las aplicaciones instaladas en la nube y el Software son los cables que conectan a la computadora.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q1" value="opt_w2" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Hardware y Software son sinónimos para referirse a la memoria RAM de un equipo.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">2. ¿Cuáles son dos cuidados fundamentales al utilizar una computadora y por qué son importantes?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q2" value="opt_w1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Mantener el brillo al 100% todo el día y desconectar el cable de corriente de golpe al terminar.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q2" value="opt_v1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>No consumir alimentos ni líquidos cerca del equipo y apagarlo correctamente mediante el sistema operativo para evitar daños mecánicos o de archivos.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q2" value="opt_w2" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Limpiar la pantalla con abundante agua y jabón cada vez que se termine de escribir.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">3. ¿Cuál describe la función principal del teclado y del ratón (mouse)?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q3" value="opt_v1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>El teclado permite ingresar datos alfanuméricos e instrucciones mediante teclas; el mouse permite interactuar con la interfaz gráfica mediante un puntero.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q3" value="opt_w1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>El teclado se usa para amplificar el sonido y el mouse para proyectar la imagen en el monitor.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q3" value="opt_w2" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Ambos dispositivos sirven únicamente para almacenar archivos temporales cuando se apaga la PC.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">4. ¿Qué es un procesador de textos y qué dos tareas esenciales permite realizar?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q4" value="opt_w1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Es una aplicación para editar fotografías y montar pistas de audio en formato digital.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q4" value="opt_v1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Es un software de aplicación diseñado para redactar, editar, dar formato y guardar documentos escritos (informes, cartas, tablas).</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q4" value="opt_w2" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Es un componente electrónico que se conecta a la tarjeta madre para acelerar videojuegos.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">5. ¿Cuál es la diferencia fundamental entre un navegador web y un buscador de Internet?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q5" value="opt_v1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>El navegador es el programa instalado para abrir sitios web (Chrome, Edge); el buscador es un sitio web que indexa y encuentra información mediante palabras clave (Google, Bing).</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q5" value="opt_w1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>El buscador se instala en la memoria RAM y el navegador solo funciona si no hay conexión a internet.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s1_q5" value="opt_w2" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Son exactamente la misma herramienta con distinto nombre comercial.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE II: Selección Múltiple (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">II SERIE — Selección Múltiple</h2>
+                        <p class="text-xs text-slate-500">Selecciona la opción correcta en cada planteamiento (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span id="badge-serie2" class="bg-teal-50 text-teal-700 border border-teal-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Subtotal: 0.0 / 25 pts
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Item 6 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">6. ¿Cuál de los siguientes es un dispositivo de entrada?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q6" value="opt_w1" onchange="evaluateExam()" class="text-teal-600">
+                            <span>a) Monitor</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q6" value="opt_v1" onchange="evaluateExam()" class="text-teal-600">
+                            <span>b) Teclado</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q6" value="opt_w2" onchange="evaluateExam()" class="text-teal-600">
+                            <span>c) Bocinas</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Item 7 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">7. Para escribir un documento con títulos y párrafos se utiliza:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q7" value="opt_v1" onchange="evaluateExam()" class="text-teal-600">
+                            <span>a) Procesador de textos</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q7" value="opt_w1" onchange="evaluateExam()" class="text-teal-600">
+                            <span>b) Reproductor de audio</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q7" value="opt_w2" onchange="evaluateExam()" class="text-teal-600">
+                            <span>c) Calculadora</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Item 8 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">8. ¿Qué acción ayuda a encontrar información más precisa en Internet?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q8" value="opt_w1" onchange="evaluateExam()" class="text-teal-600">
+                            <span>a) Escribir cualquier palabra</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q8" value="opt_v1" onchange="evaluateExam()" class="text-teal-600">
+                            <span>b) Usar palabras clave específicas</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q8" value="opt_w2" onchange="evaluateExam()" class="text-teal-600">
+                            <span>c) Abrir todos los enlaces</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Item 9 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">9. Antes de descargar un archivo es recomendable:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q9" value="opt_v1" onchange="evaluateExam()" class="text-teal-600">
+                            <span>a) Verificar la fuente</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q9" value="opt_w1" onchange="evaluateExam()" class="text-teal-600">
+                            <span>b) Desactivar la protección</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q9" value="opt_w2" onchange="evaluateExam()" class="text-teal-600">
+                            <span>c) Compartir la contraseña</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Item 10 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">10. ¿Cuál de estas acciones respeta los derechos de autor?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q10" value="opt_w1" onchange="evaluateExam()" class="text-teal-600">
+                            <span>a) Copiar sin citar</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q10" value="opt_w2" onchange="evaluateExam()" class="text-teal-600">
+                            <span>b) Quitar el nombre del autor</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="s2_q10" value="opt_v1" onchange="evaluateExam()" class="text-teal-600">
+                            <span>c) Citar la fuente de la imagen</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE III: Aplicación de Aprendizajes y Casos (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">III SERIE — Aplicación de Aprendizajes</h2>
+                        <p class="text-xs text-slate-500">Resuelve los casos prácticos seleccionando la mejor decisión tecnológica (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span id="badge-serie3" class="bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Subtotal: 0.0 / 25 pts
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Case 11 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">11. Caso de Seguridad: Un compañero recibe un mensaje digital sospechoso donde le solicitan su contraseña. ¿Qué debe hacer y por qué?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s3_q11" value="opt_v1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>No proporcionarla bajo ningún motivo, bloquear/reportar al remitente e informar a un adulto o docente porque las contraseñas son privadas y es un intento de phishing/robo de identidad.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s3_q11" value="opt_w1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Entregarla rápidamente para comprobar si el mensaje es de una empresa de videojuegos o rifas.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 12 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">12. Búsqueda Efectiva: Necesitas investigar formalmente sobre el cuidado del agua en Guatemala. ¿Cuál combinación de palabras clave es la más precisa?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s3_q12" value="opt_w1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>"Hola buscador quiero ver cosas bonitas sobre el agua del río"</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s3_q12" value="opt_v1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>"conservación recursos hídricos Guatemala estrategias cuidado agua"</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 13 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">13. Netiqueta: ¿Cuáles son dos normas de respeto imprescindibles que deben cumplirse en un grupo escolar de trabajo digital?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s3_q13" value="opt_v1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Emplear un lenguaje respetuoso sin escribir todo en mayúsculas (equivale a gritar) y enviar mensajes únicamente dentro de horarios prudentes acordados.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s3_q13" value="opt_w1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Enviar cadenas virales y reenviar memes cómicos durante la medianoche para mantener activo el grupo.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 14 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">14. Gestión de Archivos: ¿Cuál es el orden lógico para guardar un documento y poder localizarlo fácilmente después?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s3_q14" value="opt_v1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Ir a Archivo > Guardar como > Seleccionar la carpeta de destino correspondiente > Asignar un nombre descriptivo > Clic en Guardar.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s3_q14" value="opt_w1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Cerrar la ventana con la X roja de inmediato y esperar que el sistema lo guarde en cualquier sitio.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case 15 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">15. Uso Ético: Encontraste una fotografía relevante en Internet para tu tarea. ¿Cómo debes utilizarla responsablemente?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s3_q15" value="opt_w1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Recortar o borrar la marca de agua del fotógrafo y decir que nosotros la tomamos con nuestra cámara.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s3_q15" value="opt_v1" onchange="evaluateExam()" class="mt-0.5 text-teal-600">
+                            <span>Verificar que su licencia permita el uso educativo y colocar al pie de la imagen la cita/crédito correspondiente con el autor y fuente.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE IV: Producción y Comunicación Digital (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">IV SERIE — Producción y Comunicación Digital</h2>
+                        <p class="text-xs text-slate-500">Completa y valida los criterios de comunicación formal digital (Valor: 25 pts)</p>
+                    </div>
+                </div>
+                <span id="badge-serie4" class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Subtotal: 0.0 / 25 pts
+                </span>
+            </div>
+
+            <div class="space-y-5 text-xs">
+                <!-- Activity 16 (10 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">16. Redacción Formal de Correo Electrónico Institucional (10 pts)</span>
+                        <span class="text-teal-700 font-bold bg-teal-100/60 px-2.5 py-0.5 rounded-md">Valor: 10 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">Selecciona el borrador que integra correctamente: Destinatario institucional, Asunto claro y específico, Saludo formal, Cuerpo descriptivo de entrega y Despedida completa.</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s4_q16" value="opt_v1" onchange="evaluateExam()" class="mt-1 text-teal-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Opción A (Estructura Formal y Completa):</p>
+                                <p class="text-slate-600 mt-1"><strong>Para:</strong> profesor.tac@lazarochacon.edu.gt | <strong>Asunto:</strong> Entrega Tarea 2 - TAC 1ro Básico - Clave 14<br>
+                                "Estimado Profesor Zamora: Espero se encuentre bien. Por este medio le hago entrega del informe sobre Hardware y Software en formato PDF adjunto. Quedo atento a sus observaciones. Atentamente: Ana Morales, 1ro. Básico B."</p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s4_q16" value="opt_w1" onchange="evaluateExam()" class="mt-1 text-teal-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Opción B (Informal / Incompleto):</p>
+                                <p class="text-slate-600 mt-1"><strong>Para:</strong> profe@gmail.com | <strong>Asunto:</strong> tarea<br>
+                                "hola profe ahi le mando lo que pidio ayer reviselo rapido xfa"</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Activity 17 (10 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">17. Plan de Trabajo Colaborativo Digital (10 pts)</span>
+                        <span class="text-teal-700 font-bold bg-teal-100/60 px-2.5 py-0.5 rounded-md">Valor: 10 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">Para crear una presentación colaborativa sobre "Uso Seguro de Internet", selecciona el esquema que distribuye equitativamente tareas entre 3 integrantes y define 2 reglas de convivencia efectivas:</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s4_q17" value="opt_v1" onchange="evaluateExam()" class="mt-1 text-teal-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Esquema Equitativo y Reglamentado:</p>
+                                <p class="text-slate-600 mt-1">&bull; <strong>Integrante 1:</strong> Investigar fuentes sobre ciberacoso y contraseñas seguras.<br>
+                                &bull; <strong>Integrante 2:</strong> Diseñar la estructura de diapositivas en Google Slides y redactar síntesis.<br>
+                                &bull; <strong>Integrante 3:</strong> Seleccionar imágenes educativas libres de derechos y revisar ortografía.<br>
+                                &bull; <strong>Reglas:</strong> 1) Respetar el plazo de entrega pactado para el jueves a las 18:00 hrs. 2) No modificar ni borrar diapositivas creadas por otro compañero sin previo acuerdo en el chat grupal.</p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s4_q17" value="opt_w1" onchange="evaluateExam()" class="mt-1 text-teal-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Esquema Centralizado / Sin Normas:</p>
+                                <p class="text-slate-600 mt-1">&bull; Integrante 1 hace toda la presentación el fin de semana. Los otros dos integrantes solo colocan sus nombres en la portada al inicio de la clase sin aportar contenido.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Activity 18 (5 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">18. Estructura de Referencia Bibliográfica Digital Básica (5 pts)</span>
+                        <span class="text-teal-700 font-bold bg-teal-100/60 px-2.5 py-0.5 rounded-md">Valor: 5 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">Selecciona el formato que reúne los cuatro elementos formales: Autor/Institución, Año/Título, Enlace completo (URL) y Fecha de consulta:</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s4_q18" value="opt_v1" onchange="evaluateExam()" class="mt-1 text-teal-600">
+                            <div>
+                                <p class="font-mono text-slate-800 bg-slate-100 p-2 rounded border border-slate-300">UNICEF. (2024). Consejos para el uso seguro de internet en jóvenes. Recuperado de https://www.unicef.org/es/ciberseguridad el 18 de octubre de 2026.</p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="s4_q18" value="opt_w1" onchange="evaluateExam()" class="mt-1 text-teal-600">
+                            <div>
+                                <p class="font-mono text-slate-800 bg-slate-100 p-2 rounded border border-slate-300">google.com y wikipedia</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Grade Summary Floating Action Bar -->
+        <section class="bg-slate-950 text-white rounded-2xl p-6 shadow-2xl no-print flex flex-col md:flex-row justify-between items-center gap-6 border border-slate-800">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-widest text-teal-400">Progreso de la Evaluación</span>
+                <div class="flex items-baseline gap-2 mt-1">
+                    <span id="answered-count-display" class="text-3xl font-black text-amber-400">0</span>
+                    <span class="text-lg text-slate-400">/ 18 Ítems Respondidos</span>
+                </div>
+                <p id="progress-hint" class="text-xs text-slate-400 mt-1">Asegúrate de contestar todos los enunciados antes de generar tu acta.</p>
+            </div>
+
+            <div id="student-alert-box" class="hidden bg-amber-500/20 border border-amber-500/40 text-amber-200 px-4 py-2.5 rounded-xl text-xs max-w-sm">
+                <i class="fa-solid fa-circle-exclamation mr-1.5"></i>
+                <span>Debes ingresar tu Nombre Completo y Número de Clave antes de generar el acta.</span>
+            </div>
+
+            <button onclick="triggerPrintFlow()" class="bg-gradient-to-r from-teal-500 via-emerald-500 to-teal-500 hover:opacity-95 text-slate-950 font-black px-7 py-3.5 rounded-xl transition-all shadow-lg flex items-center gap-2.5 text-sm">
+                <i class="fa-solid fa-file-pdf text-lg"></i>
+                <span>Generar e Imprimir Acta Oficial (PDF)</span>
+            </button>
+        </section>
+
+        <!-- PRINTABLE OFFICIAL REPORT ONLY -->
+        <section id="official-print-sheet" class="bg-white rounded-2xl p-8 shadow-sm border border-slate-400 print-card">
+            
+            <!-- Institutional Header -->
+            <div class="border-b-2 border-slate-900 pb-4 mb-5 flex justify-between items-start">
+                <div>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">Colegio de Informática Justo Rufino Bautista &bull; Plan Diario</span>
+                    <h1 class="text-xl font-black text-slate-900 mt-0.5">EVALUACIÓN DE RECUPERACIÓN OFICIAL 2026</h1>
+                    <p class="text-xs font-bold text-teal-900">Materia: Tecnologías del Aprendizaje y la Comunicación (TAC) &bull; Primero Básico</p>
+                </div>
+                <div class="text-right">
+                    <div class="border-2 border-slate-900 px-4 py-2 rounded-xl bg-slate-50 inline-block text-center min-w-[120px]">
+                        <span class="text-[10px] font-extrabold uppercase text-slate-600 block">Calificación Final</span>
+                        <span id="print-final-num" class="text-2xl font-black text-slate-900">0.0 / 100</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Metadata Grid -->
+            <div class="grid grid-cols-3 gap-3 text-xs mb-5 bg-slate-50 p-3.5 rounded-xl border border-slate-300">
+                <div class="col-span-2">
+                    <span class="font-bold text-slate-500 block text-[10px]">Nombre Completo del Estudiante:</span>
+                    <span id="print-student-name" class="font-extrabold text-slate-900 text-sm">________________________________________________</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Número de Clave:</span>
+                    <span id="print-student-key" class="font-extrabold text-slate-900 text-sm">____</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Grado y Sección:</span>
+                    <span id="print-student-grade" class="font-bold text-slate-800">1ro. Básico</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Fecha de Evaluación:</span>
+                    <span id="print-evaluation-date" class="font-semibold text-slate-800">-- / -- / 2026</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Modalidad:</span>
+                    <span class="font-semibold text-slate-800">Recuperación Digital Escolar</span>
+                </div>
+            </div>
+
+            <!-- Score Breakdown Table -->
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-800 mb-2">Resumen Cuantitativo de Rendimiento Académico</h3>
+            <table class="w-full text-left border-collapse text-xs mb-5">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-900 font-extrabold border-b border-slate-300">
+                        <th class="p-2 border border-slate-300">Serie Evaluada</th>
+                        <th class="p-2 border border-slate-300">Competencias e Indicadores de Logro Evaluados</th>
+                        <th class="p-2 border border-slate-300 text-center w-24">Punteo Máx.</th>
+                        <th class="p-2 border border-slate-300 text-center w-24">Obtenido</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-300">
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">I. Conocimientos Fundamentales</td>
+                        <td class="p-2 border border-slate-300">Hardware, software, mantenimiento preventivo, periféricos y navegadores.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s1-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">II. Selección Múltiple</td>
+                        <td class="p-2 border border-slate-300">Identificación de periféricos de entrada, procesador de textos y derechos de autor.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s2-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">III. Aplicación de Aprendizajes</td>
+                        <td class="p-2 border border-slate-300">Ciberseguridad, prevención de phishing, netiqueta y administración de archivos.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s3-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">IV. Producción y Comunicación</td>
+                        <td class="p-2 border border-slate-300">Redacción formal institucional, trabajo cooperativo y citación web formal.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s4-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr class="bg-slate-100 font-black text-slate-900">
+                        <td colspan="2" class="p-2 border border-slate-300 text-right uppercase">Calificación Total Obtenida:</td>
+                        <td class="p-2 border border-slate-300 text-center">100.0 pts</td>
+                        <td id="print-total-score" class="p-2 border border-slate-300 text-center text-teal-900 text-sm">0.0</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Verdict Note -->
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-300 text-xs mb-8">
+                <span class="font-extrabold text-slate-800">Dictamen Académico: </span>
+                <span id="print-academic-verdict" class="text-slate-700 font-medium">Evaluación en proceso de resolución.</span>
+            </div>
+
+            <!-- Signatures Section -->
+            <div class="grid grid-cols-3 gap-6 pt-6 text-center text-xs">
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Firma del Estudiante</p>
+                    <p class="text-[10px] text-slate-500">Conformidad de Resultados</p>
+                </div>
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Firma del Docente de Asignatura</p>
+                    <p class="text-[10px] text-slate-500">Catedrático de TAC</p>
+                </div>
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Vo. Bo. Dirección</p>
+                    <p class="text-[10px] text-slate-500">Comisión de Evaluación</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        // Set dynamic date
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('es-GT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            document.getElementById('print-evaluation-date').innerText = dateStr;
+            updateProgressUI();
+        });
+
+        function syncStudentData() {
+            const name = document.getElementById('studentName').value.trim();
+            const grade = document.getElementById('studentGrade').value;
+            const key = document.getElementById('studentKey').value.trim();
+
+            document.getElementById('print-student-name').innerText = name || "________________________________________________";
+            document.getElementById('print-student-key').innerText = key || "____";
+            document.getElementById('print-student-grade').innerText = grade;
+
+            if (name && key) {
+                document.getElementById('student-alert-box').classList.add('hidden');
+            }
+        }
+
+        // Actualiza solo el progreso de ítems contestados sin calificar
+        function evaluateExam() {
+            updateProgressUI();
+        }
+
+        function updateProgressUI() {
+            const totalItems = 18;
+            const allNames = [
+                's1_q1','s1_q2','s1_q3','s1_q4','s1_q5',
+                's2_q6','s2_q7','s2_q8','s2_q9','s2_q10',
+                's3_q11','s3_q12','s3_q13','s3_q14','s3_q15',
+                's4_q16','s4_q17','s4_q18'
+            ];
+
+            let answered = 0;
+            allNames.forEach(name => {
+                if (document.querySelector(`input[name="${name}"]:checked`)) answered++;
+            });
+
+            document.getElementById('answered-count-display').innerText = answered;
+            
+            // Ocultar números en los badges de cada serie para que no delaten puntajes
+            document.getElementById('badge-serie1').innerText = "Serie I: 5 preguntas";
+            document.getElementById('badge-serie2').innerText = "Serie II: 5 preguntas";
+            document.getElementById('badge-serie3').innerText = "Serie III: 5 preguntas";
+            document.getElementById('badge-serie4').innerText = "Serie IV: 3 actividades";
+
+            const hint = document.getElementById('progress-hint');
+            if (answered === totalItems) {
+                hint.innerText = "¡Has completado todos los ítems! Ya puedes generar tu acta oficial.";
+                hint.classList.remove('text-slate-400');
+                hint.classList.add('text-teal-400');
+            } else {
+                hint.innerText = `Faltan ${totalItems - answered} ítems por responder.`;
+                hint.classList.add('text-slate-400');
+                hint.classList.remove('text-teal-400');
+            }
+        }
+
+        // Cálculo silencioso que solo escribe en el reporte de impresión
+        function triggerPrintFlow() {
+            const name = document.getElementById('studentName').value.trim();
+            const key = document.getElementById('studentKey').value.trim();
+
+            if (!name || !key) {
+                const alertBox = document.getElementById('student-alert-box');
+                alertBox.classList.remove('hidden');
+                document.getElementById('studentName').focus();
+                return;
+            }
+
+            // Cálculo interno sin mostrar en pantalla
+            let s1 = 0, s2 = 0, s3 = 0, s4 = 0;
+
+            ['s1_q1','s1_q2','s1_q3','s1_q4','s1_q5'].forEach(n => {
+                const el = document.querySelector(`input[name="${n}"]:checked`);
+                if (el && el.value === 'opt_v1') s1 += 5.0;
+            });
+
+            ['s2_q6','s2_q7','s2_q8','s2_q9','s2_q10'].forEach(n => {
+                const el = document.querySelector(`input[name="${n}"]:checked`);
+                if (el && el.value === 'opt_v1') s2 += 5.0;
+            });
+
+            ['s3_q11','s3_q12','s3_q13','s3_q14','s3_q15'].forEach(n => {
+                const el = document.querySelector(`input[name="${n}"]:checked`);
+                if (el && el.value === 'opt_v1') s3 += 5.0;
+            });
+
+            const q16 = document.querySelector('input[name="s4_q16"]:checked');
+            const q17 = document.querySelector('input[name="s4_q17"]:checked');
+            const q18 = document.querySelector('input[name="s4_q18"]:checked');
+            if (q16 && q16.value === 'opt_v1') s4 += 10.0;
+            if (q17 && q17.value === 'opt_v1') s4 += 10.0;
+            if (q18 && q18.value === 'opt_v1') s4 += 5.0;
+
+            const total = s1 + s2 + s3 + s4;
+
+            // Poblar exclusivamente el acta imprimible
+            document.getElementById('print-s1-score').innerText = s1.toFixed(1);
+            document.getElementById('print-s2-score').innerText = s2.toFixed(1);
+            document.getElementById('print-s3-score').innerText = s3.toFixed(1);
+            document.getElementById('print-s4-score').innerText = s4.toFixed(1);
+            document.getElementById('print-total-score').innerText = `${total.toFixed(1)} / 100.0`;
+            document.getElementById('print-final-num').innerText = `${total.toFixed(1)} / 100`;
+
+            const verdictPrint = document.getElementById('print-academic-verdict');
+            if (total >= 80) {
+                verdictPrint.innerText = "APROBADO SATISFACTORIAMENTE (Rendimiento Destacado). El estudiante demuestra dominio de las competencias fundamentales de TAC.";
+            } else if (total >= 60) {
+                verdictPrint.innerText = "APROBADO. El estudiante alcanza el nivel de competencia mínimo obligatorio en el área tecnológica.";
+            } else {
+                verdictPrint.innerText = "NO APROBADO. El punteo obtenido no alcanza el mínimo de aprobación (60 pts). Requiere reforzamiento.";
+            }
+
+            syncStudentData();
+            window.print();
+        }
+    </script>
+</body>
+</html>

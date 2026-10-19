@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Recuperación 2026 - Computación Aplicada 4.º Bach.</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-card {
+                border: 1px solid #94a3b8 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #0f172a !important;
+                padding-bottom: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-20">
+
+    <!-- Header / Banner -->
+    <header class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white shadow-xl no-print border-b border-blue-800/40">
+        <div class="max-w-5xl mx-auto px-6 py-7">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bg-amber-400 text-slate-950 text-xs font-black px-3 py-0.5 rounded-full uppercase tracking-wider">
+                            Ciclo Escolar 2026
+                        </span>
+                        <span class="bg-blue-500/20 text-blue-300 text-xs font-semibold px-3 py-0.5 rounded-full border border-blue-400/30">
+                            Evaluación de Recuperación Oficial
+                        </span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+                        Curso: Computación Aplicada
+                    </h1>
+                    <p class="text-slate-300 text-sm mt-1">
+                        Colegio de Informática Justo Rufino Bautista &bull; 4.º Bachillerato en Computación
+                    </p>
+                    <p class="text-xs text-blue-300 mt-0.5 font-medium">
+                        <i class="fa-solid fa-chalkboard-user mr-1"></i> Docente: Erick Enrique Zamora Paz
+                    </p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md px-6 py-3.5 rounded-2xl border border-white/20 text-center md:text-right w-full md:w-auto shadow-inner">
+                    <p class="text-[11px] uppercase tracking-widest text-blue-200 font-bold">Ponderación Total</p>
+                    <p class="text-3xl font-black text-amber-400">100 <span class="text-sm font-semibold text-slate-200">pts</span></p>
+                    <p class="text-[11px] text-blue-100 mt-0.5"><i class="fa-solid fa-chart-pie mr-1"></i> Mínimo para aprobar: 60 pts</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 md:px-6 mt-6 space-y-6">
+
+        <!-- Student Identification Form Box -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center font-bold text-lg">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Datos Generales del Estudiante</h2>
+                    <p class="text-xs text-slate-500">Completa tus datos personales para registrar tu evaluación y generar el acta oficial.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                <div class="md:col-span-2">
+                    <label for="studentName" class="block font-semibold text-slate-700 text-xs mb-1">Nombre Completo del Estudiante *</label>
+                    <input type="text" id="studentName" oninput="syncStudentData()" placeholder="Apellidos, Nombres" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-slate-800 outline-none transition-all">
+                </div>
+
+                <div>
+                    <label for="studentGrade" class="block font-semibold text-slate-700 text-xs mb-1">Grado y Sección *</label>
+                    <select id="studentGrade" onchange="syncStudentData()" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-slate-800 outline-none transition-all bg-white">
+                        <option value="4to. Bachillerato - Sección A">4to. Bachillerato - Sección A</option>
+                        <option value="4to. Bachillerato - Sección B">4to. Bachillerato - Sección B</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="studentKey" class="block font-semibold text-slate-700 text-xs mb-1">Número de Clave *</label>
+                    <input type="number" id="studentKey" min="1" max="60" oninput="syncStudentData()" placeholder="Ej. 12" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-slate-800 outline-none transition-all">
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE I: Conocimientos Fundamentales (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">I SERIE — Conocimientos Fundamentales</h2>
+                        <p class="text-xs text-slate-500">Responde los enunciados seleccionando la definición técnica correcta (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie I: 5 preguntas
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Q1 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">1. Explica qué es la estadística descriptiva y menciona dos datos que puede resumir.</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q1" data-serie="1" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Es la rama de la estadística que recolecta, analiza y presenta datos de forma resumida para comprender sus características principales; puede resumir medidas de tendencia central (como el promedio/media) y frecuencias absolutas o relativas.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q1" data-serie="1" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Es un software antivirus que bloquea descargas sospechosas; resume contraseñas y cuentas bancarias.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q1" data-serie="1" data-pts="0" value="opt_w2" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Consiste en adivinar resultados del futuro sin datos numéricos previos; resume opiniones y creencias personales sin medición.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">2. ¿Cuál es la finalidad de un formulario digital en una investigación o registro?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q2" data-serie="1" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Servir como programa de edición fotográfica para aplicar filtros a las imágenes del laboratorio.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q2" data-serie="1" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Su finalidad es recopilar, estandarizar y tabular datos de múltiples usuarios en tiempo real, exportando la información directamente a una hoja de cálculo para su posterior análisis e interpretación.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q2" data-serie="1" data-pts="0" value="opt_w2" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Su finalidad es enviar correos no deseados (spam) a las personas que buscan productos comerciales.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">3. Explica la diferencia entre un gráfico de dispersión y un gráfico de áreas.</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q3" data-serie="1" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>El gráfico de dispersión usa coordenadas (X, Y) para mostrar la relación o correlación entre dos variables numéricas independientes; el gráfico de áreas muestra la evolución de datos cuantitativos a lo largo del tiempo, rellenando el espacio bajo la línea para enfatizar el volumen total.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q3" data-serie="1" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>El gráfico de dispersión es circular (pastel) y el de áreas es un organigrama empresarial.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q3" data-serie="1" data-pts="0" value="opt_w2" class="exam-radio mt-0.5 text-blue-600">
+                            <span>No hay diferencia, ambos son utilizados exclusivamente para escribir texto sin números en Word.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q4 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">4. ¿Qué significa "limpiar datos" antes de analizarlos? Menciona dos acciones.</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q4" data-serie="1" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Significa borrar todos los archivos del disco duro e instalar un nuevo sistema operativo Windows.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q4" data-serie="1" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Es el proceso de preparar una base de datos corrigiendo inconsistencias para que el análisis sea válido. Dos acciones incluyen: 1) Eliminar registros duplicados y 2) Corregir errores de formato o valores atípicos absurdos.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q4" data-serie="1" data-pts="0" value="opt_w2" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Significa limpiar la pantalla del monitor con alcohol isopropílico para ver mejor la tabla.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">5. ¿Qué es un mapa de navegación de un sitio web y para qué sirve?</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q5" data-serie="1" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Es un esquema o diagrama visual que muestra la jerarquía y las conexiones entre las distintas páginas de un sitio web; sirve para planificar la experiencia del usuario (UX) garantizando que la información sea fácil de encontrar.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q5" data-serie="1" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Es una aplicación de GPS parecida a Google Maps que ubica la dirección física del colegio.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q5" data-serie="1" data-pts="0" value="opt_w2" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Es un gráfico de barras que muestra cuántos visitantes tuvo la página durante un mes.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE II: Selección Múltiple (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">II SERIE — Selección Múltiple</h2>
+                        <p class="text-xs text-slate-500">Marca la respuesta correcta por cada inciso (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span class="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie II: 5 preguntas
+                </span>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Q6 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">6. Para resumir matemáticamente un conjunto de valores numéricos en una hoja de cálculo se utiliza:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q6" data-serie="2" data-pts="5" value="opt_v1" class="exam-radio text-blue-600">
+                            <span>a) Función PROMEDIO</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q6" data-serie="2" data-pts="0" value="opt_w1" class="exam-radio text-blue-600">
+                            <span>b) Comando PEGAR</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q6" data-serie="2" data-pts="0" value="opt_w2" class="exam-radio text-blue-600">
+                            <span>c) Herramienta IMPRIMIR</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q7 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">7. Antes de elaborar una gráfica definitiva con las respuestas de un formulario, lo más adecuado es:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q7" data-serie="2" data-pts="0" value="opt_w1" class="exam-radio text-blue-600">
+                            <span>a) Eliminar todas las respuestas</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q7" data-serie="2" data-pts="5" value="opt_v1" class="exam-radio text-blue-600">
+                            <span>b) Revisar y organizar (limpiar) los datos</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q7" data-serie="2" data-pts="0" value="opt_w2" class="exam-radio text-blue-600">
+                            <span>c) Cambiar/inventar los resultados</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q8 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">8. Para mostrar visualmente si existe una relación (correlación) entre dos variables, el gráfico más apropiado es:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q8" data-serie="2" data-pts="5" value="opt_v1" class="exam-radio text-blue-600">
+                            <span>a) Gráfico de dispersión (XY)</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q8" data-serie="2" data-pts="0" value="opt_w1" class="exam-radio text-blue-600">
+                            <span>b) Organigrama jerárquico</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q8" data-serie="2" data-pts="0" value="opt_w2" class="exam-radio text-blue-600">
+                            <span>c) Mapa de navegación web</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q9 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">9. En la arquitectura de un sitio web, la página de inicio o aterrizaje suele llamarse:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q9" data-serie="2" data-pts="5" value="opt_v1" class="exam-radio text-blue-600">
+                            <span>a) Home Page (o Index)</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q9" data-serie="2" data-pts="0" value="opt_w1" class="exam-radio text-blue-600">
+                            <span>b) Papelera de reciclaje</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q9" data-serie="2" data-pts="0" value="opt_w2" class="exam-radio text-blue-600">
+                            <span>c) Barra de fórmulas de Excel</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q10 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">10. Para evaluar si un sitio web es fácil de navegar e intuitivo para las personas, se puede aplicar:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q10" data-serie="2" data-pts="5" value="opt_v1" class="exam-radio text-blue-600">
+                            <span>a) Lista de cotejo de Experiencia de Usuario (UX)</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q10" data-serie="2" data-pts="0" value="opt_w1" class="exam-radio text-blue-600">
+                            <span>b) Un programa antivirus únicamente</span>
+                        </label>
+                        <label class="p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="q10" data-serie="2" data-pts="0" value="opt_w2" class="exam-radio text-blue-600">
+                            <span>c) Una operación aritmética de suma</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE III: Análisis de Datos (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-table"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">III SERIE — Análisis de Datos de Laboratorio</h2>
+                        <p class="text-xs text-slate-500">Resuelve el caso estadístico basándote en la tabla proporcionada (Valor: 25 pts &bull; 5 pts c/u)</p>
+                    </div>
+                </div>
+                <span class="bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie III: 5 preguntas
+                </span>
+            </div>
+
+            <div class="mb-4 overflow-hidden rounded-xl border border-slate-300">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-100 font-bold text-slate-700 border-b border-slate-300">
+                        <tr>
+                            <th class="p-3 border-r border-slate-300">Categoría</th>
+                            <th class="p-3 border-r border-slate-300">Registros Completados</th>
+                            <th class="p-3">Registros Pendientes</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 text-slate-800">
+                        <tr>
+                            <td class="p-3 border-r border-slate-300">Equipo A</td>
+                            <td class="p-3 border-r border-slate-300 font-mono">12</td>
+                            <td class="p-3 font-mono">2</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 border-r border-slate-300">Equipo B</td>
+                            <td class="p-3 border-r border-slate-300 font-mono">18</td>
+                            <td class="p-3 font-mono">3</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 border-r border-slate-300">Equipo C</td>
+                            <td class="p-3 border-r border-slate-300 font-mono">15</td>
+                            <td class="p-3 font-mono">1</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Q11 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">11. Calcula el total absoluto de registros completados entre las tres categorías. (5 pts.)</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q11" data-serie="3" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Suma: 12 + 18 + 15 = <strong>45 registros completados en total.</strong></span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q11" data-serie="3" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Suma de pendientes: 2 + 3 + 1 = 6 registros.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q12 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">12. Calcula la media aritmética (promedio) de los registros completados. (5 pts.)</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q12" data-serie="3" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Operación: Total completados (45) dividido la cantidad de equipos (3). Promedio = 45 / 3 = <strong>15 registros completados.</strong></span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q12" data-serie="3" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>Promedio = 12 * 18 * 15 = 3,240 registros.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q13 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">13. Observando los datos, ¿qué categoría tiene el mayor número de registros completados? (5 pts.)</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q13" data-serie="3" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>El <strong>Equipo B</strong> tiene el valor máximo, con 18 registros completados.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q13" data-serie="3" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>El Equipo A, con 12 registros.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q14 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">14. Elige un gráfico adecuado para comparar visualmente los registros completados por equipo y justifica tu elección. (5 pts.)</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q14" data-serie="3" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-blue-600">
+                            <span><strong>Gráfico de Columnas o Barras:</strong> Es el más idóneo porque permite contrastar y comparar fácilmente magnitudes discretas (cantidades absolutas) separadas por categorías categóricas (Equipo A, B y C).</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q14" data-serie="3" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-blue-600">
+                            <span><strong>Gráfico de Líneas:</strong> Porque el laboratorio midió los registros a lo largo de un período de 10 años, aunque la tabla no muestre fechas.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Q15 -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-2">15. Redacta una conclusión analítica objetiva basada en la tabla, sin inventar información no visible. (5 pts.)</p>
+                    <div class="space-y-1.5">
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q15" data-serie="3" data-pts="5" value="opt_v1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>El Equipo B presenta la mayor eficiencia general al concentrar la mayor cantidad de registros completados (18), mientras que el Equipo C muestra la menor tasa de rezago al poseer únicamente 1 registro pendiente en la base de datos.</span>
+                        </label>
+                        <label class="flex items-start gap-2.5 p-2.5 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q15" data-serie="3" data-pts="0" value="opt_w1" class="exam-radio mt-0.5 text-blue-600">
+                            <span>El Equipo A es el peor porque sus miembros llegaban tarde a trabajar y las computadoras se apagaban por virus.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERIE IV: Aplicación en Proyecto Digital (25 pts) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 no-print">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-laptop-code"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">IV SERIE — Aplicación en Proyecto Digital</h2>
+                        <p class="text-xs text-slate-500">Evalúa el diseño lógico de formularios y sitios web (Valor: 25 pts)</p>
+                    </div>
+                </div>
+                <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-1.5 rounded-xl">
+                    Serie IV: 3 actividades
+                </span>
+            </div>
+
+            <div class="space-y-5 text-xs">
+                <!-- Activity 16 (10 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">16. Estructura y Validación de Formulario de Soporte (10 pts)</span>
+                        <span class="text-blue-800 font-bold bg-blue-100/70 px-2.5 py-0.5 rounded-md">Valor: 10 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">Requerimiento: Diseñar un formulario digital lógico para reportar fallas en computadoras y explicar cómo validar el correo del usuario.</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q16" data-serie="4" data-pts="10" value="opt_v1" class="exam-radio mt-1 text-blue-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Diseño Estructurado Correcto:</p>
+                                <p class="text-slate-700 mt-1 bg-slate-50 p-2 rounded border border-slate-200">
+                                    &bull; <strong>Título:</strong> Portal de Reportes de Soporte Técnico<br>
+                                    &bull; <strong>Campos:</strong> 1) Nombre Completo (Texto corto); 2) Correo Electrónico (Texto corto); 3) Área o Laboratorio del equipo (Menú desplegable); 4) Descripción detallada del problema (Párrafo largo).<br>
+                                    &bull; <strong>Validación:</strong> En el campo de Correo Electrónico, se activa la opción "Validación de respuesta: Expresión regular o Tipo Email" para obligar al usuario a incluir un arroba (@) y un dominio válido, evitando datos erróneos en la base de datos.
+                                </p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q16" data-serie="4" data-pts="0" value="opt_w1" class="exam-radio mt-1 text-blue-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Diseño Informal y No Validado:</p>
+                                <p class="text-slate-700 mt-1 bg-slate-50 p-2 rounded border border-slate-200">
+                                    Título: Computadoras arruinadas. Campos: 1) Nombre, 2) ¿Qué le pasó?. No hace falta validar nada, si escriben mal su nombre no importa.
+                                </p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Activity 17 (10 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">17. Arquitectura de Navegación de un Sitio de Inventario (10 pts)</span>
+                        <span class="text-blue-800 font-bold bg-blue-100/70 px-2.5 py-0.5 rounded-md">Valor: 10 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">Requerimiento: Crear la estructura (menú) para un portafolio web de inventario y agregar un concepto de Experiencia de Usuario (UX) clave.</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q17" data-serie="4" data-pts="10" value="opt_v1" class="exam-radio mt-1 text-blue-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Mapa de Navegación y Principio UX:</p>
+                                <p class="text-slate-600 mt-1">
+                                    &bull; <strong>Nombre del Sitio:</strong> "Catálogo y Resguardo de Equipos JRB"<br>
+                                    &bull; <strong>3 Secciones de Menú:</strong> 1) Inicio (Resumen y misión); 2) Galería de Hardware (Fotos y especificaciones de las PC); 3) Formulario de Préstamos/Contacto.<br>
+                                    &bull; <strong>Recomendación UX:</strong> Implementar un diseño "Responsive" (adaptable) asegurando que el menú de navegación y las tablas del inventario se redimensionen y sean legibles correctamente desde teléfonos móviles, no solo en computadoras.
+                                </p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q17" data-serie="4" data-pts="0" value="opt_w1" class="exam-radio mt-1 text-blue-600">
+                            <div>
+                                <p class="font-bold text-slate-800">Arquitectura Deficiente:</p>
+                                <p class="text-slate-600 mt-1">Crear una sola página infinita con todas las tablas pegadas como imagen JPG para que nadie pueda leerlas desde el teléfono.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Activity 18 (5 pts) -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-900 text-sm">18. Resguardo de Evidencias Digitales en la Nube (5 pts)</span>
+                        <span class="text-blue-800 font-bold bg-blue-100/70 px-2.5 py-0.5 rounded-md">Valor: 5 pts</span>
+                    </div>
+                    <p class="text-slate-600 mb-3">¿Cómo demuestras de forma segura el trabajo de un sitio web elaborado en clase y evitas que el docente no tenga acceso al calificar?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q18" data-serie="4" data-pts="5" value="opt_v1" class="exam-radio mt-1 text-blue-600">
+                            <div>
+                                <p class="text-slate-800"><strong>Evidencia adecuada:</strong> Proveer la URL publicada final (ej. Google Sites) junto a capturas de pantalla del modo de edición. <br><strong>Para evitar bloqueos:</strong> Configurar el enlace compartido asegurando que los permisos de lectura sean "Públicos" o "Cualquier persona con el enlace", evitando restringirlo a cuentas cerradas.</p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                            <input type="radio" name="q18" data-serie="4" data-pts="0" value="opt_w1" class="exam-radio mt-1 text-blue-600">
+                            <div>
+                                <p class="text-slate-800">Copiar el enlace de la barra del navegador que dice <code>file:///C:/MisDocumentos/sitio.html</code> y enviarlo por WhatsApp con permisos privados.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Status & Action Bar -->
+        <section class="bg-slate-950 text-white rounded-2xl p-6 shadow-2xl no-print flex flex-col md:flex-row justify-between items-center gap-6 border border-slate-800">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-widest text-blue-400">Progreso de la Evaluación</span>
+                <div class="flex items-baseline gap-2 mt-1">
+                    <span id="answered-count-display" class="text-3xl font-black text-amber-400">0</span>
+                    <span class="text-lg text-slate-400">/ 18 Ítems Respondidos</span>
+                </div>
+                <p id="progress-hint" class="text-xs text-slate-400 mt-1">Asegúrate de contestar todos los enunciados antes de generar tu acta.</p>
+            </div>
+
+            <div id="student-alert-box" class="hidden bg-amber-500/20 border border-amber-500/40 text-amber-200 px-4 py-2.5 rounded-xl text-xs max-w-sm">
+                <i class="fa-solid fa-circle-exclamation mr-1.5"></i>
+                <span>Debes ingresar tu Nombre Completo y Número de Clave arriba antes de generar el acta.</span>
+            </div>
+
+            <button type="button" onclick="triggerPrintFlow()" class="bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-500 hover:opacity-95 text-slate-950 font-black px-7 py-3.5 rounded-xl transition-all shadow-lg flex items-center gap-2.5 text-sm cursor-pointer">
+                <i class="fa-solid fa-file-pdf text-lg"></i>
+                <span>Generar e Imprimir Acta Oficial (PDF)</span>
+            </button>
+        </section>
+
+        <!-- PRINTABLE OFFICIAL REPORT ONLY -->
+        <section id="official-print-sheet" class="bg-white rounded-2xl p-8 shadow-sm border border-slate-400 print-card">
+            
+            <!-- Institutional Header -->
+            <div class="border-b-2 border-slate-900 pb-4 mb-5 flex justify-between items-start">
+                <div>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">Colegio de Informática Justo Rufino Bautista &bull; Plan Diario</span>
+                    <h1 class="text-xl font-black text-slate-900 mt-0.5">EVALUACIÓN DE RECUPERACIÓN OFICIAL 2026</h1>
+                    <p class="text-xs font-bold text-blue-900">Curso: Computación Aplicada &bull; Grado: 4.º Bachillerato en Computación</p>
+                    <p class="text-[11px] text-slate-600">Catedrático Titular: Erick Enrique Zamora Paz</p>
+                </div>
+                <div class="text-right">
+                    <div class="border-2 border-slate-900 px-4 py-2 rounded-xl bg-slate-50 inline-block text-center min-w-[120px]">
+                        <span class="text-[10px] font-extrabold uppercase text-slate-600 block">Calificación Final</span>
+                        <span id="print-final-num" class="text-2xl font-black text-slate-900">0.0 / 100</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Metadata Grid -->
+            <div class="grid grid-cols-3 gap-3 text-xs mb-5 bg-slate-50 p-3.5 rounded-xl border border-slate-300">
+                <div class="col-span-2">
+                    <span class="font-bold text-slate-500 block text-[10px]">Nombre Completo del Estudiante:</span>
+                    <span id="print-student-name" class="font-extrabold text-slate-900 text-sm">________________________________________________</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Número de Clave:</span>
+                    <span id="print-student-key" class="font-extrabold text-slate-900 text-sm">____</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Grado y Sección:</span>
+                    <span id="print-student-grade" class="font-bold text-slate-800">4to. Bachillerato - Sección A</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Fecha de Evaluación:</span>
+                    <span id="print-evaluation-date" class="font-semibold text-slate-800">-- / -- / 2026</span>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-500 block text-[10px]">Modalidad:</span>
+                    <span class="font-semibold text-slate-800">Recuperación Digital Oficial</span>
+                </div>
+            </div>
+
+            <!-- Score Breakdown Table -->
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-800 mb-2">Desglose Oficial de Rendimiento por Serie</h3>
+            <table class="w-full text-left border-collapse text-xs mb-5">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-900 font-extrabold border-b border-slate-300">
+                        <th class="p-2 border border-slate-300">Serie Evaluada</th>
+                        <th class="p-2 border border-slate-300">Competencias e Indicadores de Logro Evaluados</th>
+                        <th class="p-2 border border-slate-300 text-center w-24">Punteo Máx.</th>
+                        <th class="p-2 border border-slate-300 text-center w-24">Obtenido</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-300">
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">I. Conocimientos Fundamentales</td>
+                        <td class="p-2 border border-slate-300">Estadística descriptiva, propósito de formularios web, tipos de gráficos, limpieza de datos y mapas de navegación.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s1-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">II. Selección Múltiple</td>
+                        <td class="p-2 border border-slate-300">Funciones de hojas de cálculo, diagramas de dispersión, estructura web (Home Page) y principios de UX.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s2-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">III. Análisis de Datos</td>
+                        <td class="p-2 border border-slate-300">Cálculo de sumatorias, medias aritméticas, interpretación de tablas, selección gráfica y deducciones lógicas.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s3-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">IV. Aplicación Digital</td>
+                        <td class="p-2 border border-slate-300">Arquitectura de formularios validados, diseño responsivo de sitios web y gestión de permisos en la nube.</td>
+                        <td class="p-2 border border-slate-300 text-center">25.0 pts</td>
+                        <td id="print-s4-score" class="p-2 border border-slate-300 text-center font-bold">0.0</td>
+                    </tr>
+                    <tr class="bg-slate-100 font-black text-slate-900">
+                        <td colspan="2" class="p-2 border border-slate-300 text-right uppercase">Calificación Total Obtenida:</td>
+                        <td class="p-2 border border-slate-300 text-center">100.0 pts</td>
+                        <td id="print-total-score" class="p-2 border border-slate-300 text-center text-blue-900 text-sm">0.0</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Verdict Note -->
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-300 text-xs mb-8">
+                <span class="font-extrabold text-slate-800">Dictamen Académico: </span>
+                <span id="print-academic-verdict" class="text-slate-700 font-medium">Evaluación lista para calificación.</span>
+            </div>
+
+            <!-- Signatures Section -->
+            <div class="grid grid-cols-3 gap-6 pt-6 text-center text-xs">
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Firma del Estudiante</p>
+                    <p class="text-[10px] text-slate-500">Conformidad de Resultados</p>
+                </div>
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Erick Enrique Zamora Paz</p>
+                    <p class="text-[10px] text-slate-500">Docente Titular de Asignatura</p>
+                </div>
+                <div>
+                    <div class="border-b border-slate-400 mb-1.5 w-4/5 mx-auto"></div>
+                    <p class="font-bold text-slate-900">Vo. Bo. Dirección</p>
+                    <p class="text-[10px] text-slate-500">Comisión de Evaluación</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Universal Bulletproof Script -->
+    <script>
+        function syncStudentData() {
+            const nameEl = document.getElementById('studentName');
+            const gradeEl = document.getElementById('studentGrade');
+            const keyEl = document.getElementById('studentKey');
+
+            const name = nameEl ? nameEl.value.trim() : '';
+            const grade = gradeEl ? gradeEl.value : '4to. Bachillerato - Sección A';
+            const key = keyEl ? keyEl.value.trim() : '';
+
+            document.getElementById('print-student-name').innerText = name || "________________________________________________";
+            document.getElementById('print-student-key').innerText = key || "____";
+            document.getElementById('print-student-grade').innerText = grade;
+
+            if (name && key) {
+                document.getElementById('student-alert-box').classList.add('hidden');
+            }
+        }
+
+        function updateProgressUI() {
+            const totalItems = 18;
+            const checkedRadios = document.querySelectorAll('input.exam-radio:checked');
+            const answered = checkedRadios.length;
+
+            const countDisplay = document.getElementById('answered-count-display');
+            if (countDisplay) countDisplay.innerText = answered;
+
+            const hint = document.getElementById('progress-hint');
+            if (hint) {
+                if (answered >= totalItems) {
+                    hint.innerText = "¡Has completado todos los enunciados! Ya puedes generar e imprimir tu acta oficial.";
+                    hint.classList.remove('text-slate-400');
+                    hint.classList.add('text-blue-400');
+                } else {
+                    hint.innerText = "Faltan " + (totalItems - answered) + " ítems por responder.";
+                    hint.classList.add('text-slate-400');
+                    hint.classList.remove('text-blue-400');
+                }
+            }
+        }
+
+        function triggerPrintFlow() {
+            const nameEl = document.getElementById('studentName');
+            const keyEl = document.getElementById('studentKey');
+            const name = nameEl ? nameEl.value.trim() : '';
+            const key = keyEl ? keyEl.value.trim() : '';
+
+            if (!name || !key) {
+                const alertBox = document.getElementById('student-alert-box');
+                if (alertBox) alertBox.classList.remove('hidden');
+                if (nameEl) nameEl.focus();
+                return;
+            }
+
+            let s1 = 0, s2 = 0, s3 = 0, s4 = 0;
+            const checkedRadios = document.querySelectorAll('input.exam-radio:checked');
+
+            checkedRadios.forEach(function(radio) {
+                const serie = radio.getAttribute('data-serie');
+                const pts = parseFloat(radio.getAttribute('data-pts') || '0');
+                if (serie === '1') s1 += pts;
+                if (serie === '2') s2 += pts;
+                if (serie === '3') s3 += pts;
+                if (serie === '4') s4 += pts;
+            });
+
+            const total = s1 + s2 + s3 + s4;
+
+            document.getElementById('print-s1-score').innerText = s1.toFixed(1);
+            document.getElementById('print-s2-score').innerText = s2.toFixed(1);
+            document.getElementById('print-s3-score').innerText = s3.toFixed(1);
+            document.getElementById('print-s4-score').innerText = s4.toFixed(1);
+            document.getElementById('print-total-score').innerText = total.toFixed(1) + " / 100.0";
+            document.getElementById('print-final-num').innerText = total.toFixed(1) + " / 100";
+
+            const verdictPrint = document.getElementById('print-academic-verdict');
+            if (total >= 80) {
+                verdictPrint.innerText = "APROBADO SATISFACTORIAMENTE (Rendimiento Destacado). El estudiante demuestra un dominio integral del análisis de datos, estadística, y diseño web / UX.";
+            } else if (total >= 60) {
+                verdictPrint.innerText = "APROBADO. El estudiante cumple con el estándar mínimo requerido para Computación Aplicada.";
+            } else {
+                verdictPrint.innerText = "NO APROBADO. Punteo inferior a 60 pts. Requiere intervención y reforzamiento en hojas de cálculo, estadística y planificación de sitios web.";
+            }
+
+            syncStudentData();
+            window.print();
+        }
+
+        // Global event listeners
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.classList.contains('exam-radio')) {
+                updateProgressUI();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('es-GT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const dateEl = document.getElementById('print-evaluation-date');
+            if (dateEl) dateEl.innerText = dateStr;
+            updateProgressUI();
+        });
+    </script>
+</body>
+</html>
